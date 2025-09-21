@@ -9,6 +9,14 @@ type SidebarState = {
   preferredWidth: number;
 };
 
+type BottomBarMode = 'push' | 'overlay';
+
+type BottomBarState = {
+  mode: BottomBarMode;
+  height: number;
+  isVisible: boolean;
+};
+
 type EnhancedSidebarContext = {
   // Left sidebar
   leftSidebar: SidebarState;
@@ -21,6 +29,13 @@ type EnhancedSidebarContext = {
   toggleRightSidebar: () => void;
   setRightSidebarWidth: (width: number) => void;
   setRightSidebarOpen: (open: boolean) => void;
+
+  // Bottom bar
+  bottomBar: BottomBarState;
+  setBottomBarMode: (mode: BottomBarMode) => void;
+  setBottomBarHeight: (height: number) => void;
+  setBottomBarVisible: (visible: boolean) => void;
+  toggleBottomBar: () => void;
 
   // Drag state
   isDragging: boolean;
@@ -38,6 +53,10 @@ const MIN_SIDEBAR_WIDTH = 200;
 const MAX_SIDEBAR_WIDTH = 500;
 const DEFAULT_LEFT_WIDTH = 244;
 const DEFAULT_RIGHT_WIDTH = 320;
+
+const MIN_BOTTOM_HEIGHT = 56;
+const MAX_BOTTOM_HEIGHT = 300;
+const DEFAULT_BOTTOM_HEIGHT = 200;
 
 export function useResizableSidebar() {
   const context = useContext(EnhancedSidebarContext);
@@ -60,6 +79,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     preferredWidth: DEFAULT_RIGHT_WIDTH,
   });
 
+  const [bottomBar, setBottomBar] = useState<BottomBarState>({
+    mode: 'push',
+    height: DEFAULT_BOTTOM_HEIGHT,
+    isVisible: false,
+  });
+
   const [isDragging, setIsDragging] = useState(false);
   const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
 
@@ -70,14 +95,17 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   const updateGridLayout = useCallback(() => {
     const leftWidth = leftSidebar.isOpen ? leftSidebar.width : 0;
     const rightWidth = rightSidebar.isOpen ? rightSidebar.width : 0;
+    const bottomHeight = bottomBar.isVisible ? bottomBar.height : MIN_BOTTOM_HEIGHT;
 
     document.documentElement.style.setProperty('--sidebar-left-width', `${leftWidth}px`);
     document.documentElement.style.setProperty('--sidebar-right-width', `${rightWidth}px`);
+    document.documentElement.style.setProperty('--bottombar-height', `${bottomHeight}px`);
+    document.documentElement.style.setProperty('--bottombar-mode', bottomBar.mode);
     document.documentElement.style.setProperty(
       '--grid-template-columns',
       `${leftWidth}px 1fr ${rightWidth}px`
     );
-  }, [leftSidebar.isOpen, leftSidebar.width, rightSidebar.isOpen, rightSidebar.width]);
+  }, [leftSidebar.isOpen, leftSidebar.width, rightSidebar.isOpen, rightSidebar.width, bottomBar]);
 
   // Load saved state from localStorage on mount
   useEffect(() => {
@@ -119,6 +147,25 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
           isOpen,
           width: validWidth,
           preferredWidth: validPreferred,
+        });
+      }
+
+      // Load bottom bar state
+      const savedBottomMode = localStorage.getItem('ui:bottomBarMode');
+      const savedBottomHeight = localStorage.getItem('ui:bottomBarHeight');
+      const savedBottomVisible = localStorage.getItem('ui:bottomBarVisible');
+
+      if (savedBottomMode !== null || savedBottomHeight !== null || savedBottomVisible !== null) {
+        const mode = (savedBottomMode === 'overlay' ? 'overlay' : 'push') as BottomBarMode;
+        const height = savedBottomHeight ? parseInt(savedBottomHeight, 10) : DEFAULT_BOTTOM_HEIGHT;
+        const isVisible = savedBottomVisible ? savedBottomVisible === 'true' : false;
+
+        const validHeight = !isNaN(height) && height >= MIN_BOTTOM_HEIGHT && height <= MAX_BOTTOM_HEIGHT ? height : DEFAULT_BOTTOM_HEIGHT;
+
+        setBottomBar({
+          mode,
+          height: validHeight,
+          isVisible,
         });
       }
     } catch (error) {
@@ -243,6 +290,57 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     });
   }, [saveToLocalStorage]);
 
+  // Bottom bar management functions
+  const setBottomBarMode = useCallback((mode: BottomBarMode) => {
+    setBottomBar(prev => {
+      const newState = { ...prev, mode };
+      try {
+        localStorage.setItem('ui:bottomBarMode', mode);
+      } catch (error) {
+        console.warn('Failed to save bottom bar mode to localStorage:', error);
+      }
+      return newState;
+    });
+  }, []);
+
+  const setBottomBarHeight = useCallback((height: number) => {
+    const clampedHeight = Math.max(MIN_BOTTOM_HEIGHT, Math.min(MAX_BOTTOM_HEIGHT, height));
+
+    setBottomBar(prev => {
+      const newState = { ...prev, height: clampedHeight };
+      try {
+        localStorage.setItem('ui:bottomBarHeight', clampedHeight.toString());
+      } catch (error) {
+        console.warn('Failed to save bottom bar height to localStorage:', error);
+      }
+      return newState;
+    });
+  }, []);
+
+  const setBottomBarVisible = useCallback((visible: boolean) => {
+    setBottomBar(prev => {
+      const newState = { ...prev, isVisible: visible };
+      try {
+        localStorage.setItem('ui:bottomBarVisible', visible.toString());
+      } catch (error) {
+        console.warn('Failed to save bottom bar visibility to localStorage:', error);
+      }
+      return newState;
+    });
+  }, []);
+
+  const toggleBottomBar = useCallback(() => {
+    setBottomBar(prev => {
+      const newState = { ...prev, isVisible: !prev.isVisible };
+      try {
+        localStorage.setItem('ui:bottomBarVisible', newState.isVisible.toString());
+      } catch (error) {
+        console.warn('Failed to save bottom bar visibility to localStorage:', error);
+      }
+      return newState;
+    });
+  }, []);
+
   const contextValue = React.useMemo(
     () => ({
       leftSidebar,
@@ -253,6 +351,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       toggleRightSidebar,
       setRightSidebarWidth,
       setRightSidebarOpen,
+      bottomBar,
+      setBottomBarMode,
+      setBottomBarHeight,
+      setBottomBarVisible,
+      toggleBottomBar,
       isDragging,
       setIsDragging,
       dragSide,
@@ -268,6 +371,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       toggleRightSidebar,
       setRightSidebarWidth,
       setRightSidebarOpen,
+      bottomBar,
+      setBottomBarMode,
+      setBottomBarHeight,
+      setBottomBarVisible,
+      toggleBottomBar,
       isDragging,
       setIsDragging,
       dragSide,
