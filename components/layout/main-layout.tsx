@@ -5,8 +5,8 @@ import { AppSidebar } from '@/components/layout/sidebar/app-sidebar';
 import { RightSidebar } from '@/components/layout/sidebar/right-sidebar';
 import {
    RightSidebarProvider,
-   useRightSidebar,
 } from '@/components/layout/sidebar/right-sidebar-provider';
+import { ResizableSidebarProvider, useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/components/common/issues/create-issue-modal-provider';
 import { cn } from '@/lib/utils';
@@ -33,30 +33,60 @@ const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
    return false;
 };
 
-function MainContent({ children, header, headersNumber = 2 }: MainLayoutProps) {
-   const { isOpen: isRightSidebarOpen } = useRightSidebar();
+function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
+   const { isDragging } = useResizableSidebar();
    const height = {
       1: 'h-[calc(100svh-40px)] lg:h-[calc(100svh-56px)]',
       2: 'h-[calc(100svh-80px)] lg:h-[calc(100svh-96px)]',
    };
 
    return (
-      <div className="h-svh overflow-hidden lg:p-2 w-full relative">
+      <div
+         className={cn(
+            'grid h-svh w-full',
+            !isDragging && 'transition-[grid-template-columns] duration-300 ease-in-out'
+         )}
+         style={{
+            gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
+            gridTemplateAreas: '"sidebar main right-sidebar"',
+         }}
+      >
+         {/* Left Sidebar Area */}
          <div
-            className={cn(
-               'lg:border lg:rounded-md overflow-hidden flex flex-col items-center justify-start bg-container h-full transition-all duration-300 ease-in-out',
-               isRightSidebarOpen ? 'mr-80' : 'mr-0'
-            )}
+            className="overflow-hidden"
+            style={{ gridArea: 'sidebar' }}
          >
-            {header}
+            <AppSidebar />
+         </div>
+
+         {/* Main Content Area */}
+         <div
+            className="overflow-hidden lg:p-2 w-full relative"
+            style={{ gridArea: 'main' }}
+         >
             <div
                className={cn(
-                  'overflow-auto w-full',
-                  isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height]
+                  'lg:border lg:rounded-md overflow-hidden flex flex-col items-center justify-start bg-container h-full'
                )}
             >
-               {children}
+               {header}
+               <div
+                  className={cn(
+                     'overflow-auto w-full',
+                     isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height]
+                  )}
+               >
+                  {children}
+               </div>
             </div>
+         </div>
+
+         {/* Right Sidebar Area */}
+         <div
+            className="overflow-hidden"
+            style={{ gridArea: 'right-sidebar' }}
+         >
+            <RightSidebar />
          </div>
       </div>
    );
@@ -64,15 +94,15 @@ function MainContent({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
 export default function MainLayout({ children, header, headersNumber = 2 }: MainLayoutProps) {
    return (
-      <SidebarProvider>
-         <RightSidebarProvider>
-            <CreateIssueModalProvider />
-            <AppSidebar />
-            <MainContent header={header} headersNumber={headersNumber}>
-               {children}
-            </MainContent>
-            <RightSidebar />
-         </RightSidebarProvider>
-      </SidebarProvider>
+      <ResizableSidebarProvider>
+         <SidebarProvider>
+            <RightSidebarProvider>
+               <CreateIssueModalProvider />
+               <LayoutGrid header={header} headersNumber={headersNumber}>
+                  {children}
+               </LayoutGrid>
+            </RightSidebarProvider>
+         </SidebarProvider>
+      </ResizableSidebarProvider>
    );
 }

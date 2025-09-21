@@ -149,3 +149,65 @@ input::-webkit-search-cancel-button {
 input[type='search'] {
    font-size: 16px !important;
 }
+
+/* Sidebar drag handle styles */
+.sidebar-drag-handle {
+   transition: all 0.2s ease-in-out;
+}
+
+.sidebar-drag-handle:hover {
+   background-color: rgba(59, 130, 246, 0.1);
+}
+
+.sidebar-drag-handle:active {
+   background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Prevent text selection during drag */
+.sidebar-dragging {
+   user-select: none;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+}
+
+/* Smooth transitions for sidebar width changes */
+.sidebar-width-transition {
+   transition: width 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Disable transitions during drag for better performance */
+.sidebar-dragging .sidebar-width-transition {
+   transition: none;
+}
+
+/* Only disable transitions for the resizable sidebar container and main content during drag */
+.sidebar-dragging [data-resizable-sidebar="left"],
+.sidebar-dragging [data-resizable-sidebar="right"],
+.sidebar-dragging [data-resizable-sidebar="main-content"],
+.sidebar-dragging [data-resizable-sidebar="content-inner"] {
+   transition: none !important;
+}
+
+/* Preserve the UI library sidebar transitions even during drag */
+.sidebar-dragging [data-slot="sidebar"] {
+   transition: left 0.2s ease-linear, right 0.2s ease-linear, width 0.2s ease-linear !important;
+}
+
+/* CSS Grid Layout System for Sidebars */
+:root {
+  --sidebar-left-width: 244px;
+  --sidebar-right-width: 0px;
+  --grid-template-columns: 244px 1fr 0px;
+}
+
+/* Smooth transitions for CSS Grid layout changes */
+.grid-layout {
+  transition: grid-template-columns 0.3s ease-in-out;
+}
+
+/* Disable grid transitions during drag for better performance */
+.sidebar-dragging .grid-layout {
+  transition: none !important;
+}
+

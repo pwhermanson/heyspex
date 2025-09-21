@@ -13,19 +13,30 @@ import { NavTeamsSettings } from '@/components/layout/sidebar/nav-teams-settings
 import { OrgSwitcher } from '@/components/layout/sidebar/org-switcher';
 import { Button } from '@/components/ui/button';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
+import { ResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar';
+import { SidebarToggleButton } from '@/components/layout/sidebar/sidebar-toggle-button';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { BackToApp } from '@/components/layout/sidebar/back-to-app';
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar() {
    const [open, setOpen] = React.useState(true);
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
+
    return (
-      <Sidebar collapsible="offcanvas" {...props}>
-         <SidebarHeader>{isSettings ? <BackToApp /> : <OrgSwitcher />}</SidebarHeader>
-         <SidebarContent>
+      <ResizableSidebar side="left">
+         {/* Sidebar Header */}
+         <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center">
+               {isSettings ? <BackToApp /> : <OrgSwitcher />}
+            </div>
+            <SidebarToggleButton side="left" />
+         </div>
+
+         {/* Sidebar Content */}
+         <div className="flex-1 overflow-y-auto">
             {isSettings ? (
                <>
                   <NavAccount />
@@ -39,8 +50,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <NavTeams />
                </>
             )}
-         </SidebarContent>
-         <SidebarFooter>
+         </div>
+
+         {/* Sidebar Footer */}
+         <div className="p-4 border-t">
             <div className="w-full flex flex-col gap-2">
                {open && (
                   <div className="group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full">
@@ -92,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </Button>
                </div>
             </div>
-         </SidebarFooter>
-      </Sidebar>
+         </div>
+      </ResizableSidebar>
    );
 }

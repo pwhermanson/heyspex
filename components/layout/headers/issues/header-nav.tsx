@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { LeftSidebarTrigger } from '@/components/layout/sidebar/left-sidebar-trigger';
 import { RightSidebarTrigger } from '@/components/layout/sidebar/right-sidebar-trigger';
 import { useSearchStore } from '@/store/search-store';
 import { SearchIcon } from 'lucide-react';
@@ -43,7 +43,7 @@ export default function HeaderNav() {
 
    return (
       <div className="w-full flex justify-between items-center border-b py-1.5 px-6 h-10">
-         <SidebarTrigger className="" />
+         <LeftSidebarTrigger className="" />
 
          <div className="flex items-center gap-2">
             {isSearchOpen ? (
