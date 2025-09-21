@@ -10,15 +10,11 @@ import { NavWorkspace } from '@/components/layout/sidebar/nav-workspace';
 import { NavAccount } from '@/components/layout/sidebar/nav-account';
 import { NavFeatures } from '@/components/layout/sidebar/nav-features';
 import { NavTeamsSettings } from '@/components/layout/sidebar/nav-teams-settings';
-import { OrgSwitcher } from '@/components/layout/sidebar/org-switcher';
 import { Button } from '@/components/ui/button';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { ResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar';
-import { SidebarToggleButton } from '@/components/layout/sidebar/sidebar-toggle-button';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { BackToApp } from '@/components/layout/sidebar/back-to-app';
 
 export function AppSidebar() {
    const [open, setOpen] = React.useState(true);
@@ -27,16 +23,8 @@ export function AppSidebar() {
 
    return (
       <ResizableSidebar side="left">
-         {/* Sidebar Header */}
-         <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center">
-               {isSettings ? <BackToApp /> : <OrgSwitcher />}
-            </div>
-            <SidebarToggleButton side="left" />
-         </div>
-
          {/* Sidebar Content */}
-         <div className="flex-1 overflow-y-auto">
+         <div className="flex-1 overflow-y-auto pt-4">
             {isSettings ? (
                <>
                   <NavAccount />

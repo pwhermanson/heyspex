@@ -9,6 +9,7 @@ import {
 import { ResizableSidebarProvider, useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/components/common/issues/create-issue-modal-provider';
+import { TopBar } from '@/components/layout/top-bar';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -41,52 +42,58 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
    };
 
    return (
-      <div
-         className={cn(
-            'grid h-svh w-full',
-            !isDragging && 'transition-[grid-template-columns] duration-300 ease-in-out'
-         )}
-         style={{
-            gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
-            gridTemplateAreas: '"sidebar main right-sidebar"',
-         }}
-      >
-         {/* Left Sidebar Area */}
-         <div
-            className="overflow-hidden"
-            style={{ gridArea: 'sidebar' }}
-         >
-            <AppSidebar />
-         </div>
+      <div className="h-svh w-full grid grid-rows-[56px_1fr] overflow-hidden">
+         {/* TopBar - spans full width */}
+         <TopBar />
 
-         {/* Main Content Area */}
+         {/* Main Area - contains the three-panel layout */}
          <div
-            className="overflow-hidden lg:p-2 w-full relative"
-            style={{ gridArea: 'main' }}
+            className={cn(
+               'grid w-full overflow-hidden',
+               !isDragging && 'transition-[grid-template-columns] duration-300 ease-in-out'
+            )}
+            style={{
+               gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
+               gridTemplateAreas: '"sidebar main right-sidebar"',
+            }}
          >
+            {/* Left Sidebar Area */}
             <div
-               className={cn(
-                  'lg:border lg:rounded-md overflow-hidden flex flex-col items-center justify-start bg-container h-full'
-               )}
+               className="overflow-hidden"
+               style={{ gridArea: 'sidebar' }}
             >
-               {header}
+               <AppSidebar />
+            </div>
+
+            {/* Main Content Area */}
+            <div
+               className="overflow-hidden lg:p-2 w-full relative"
+               style={{ gridArea: 'main' }}
+            >
                <div
                   className={cn(
-                     'overflow-auto w-full',
-                     isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height]
+                     'lg:border lg:rounded-md overflow-hidden flex flex-col items-center justify-start bg-container h-full'
                   )}
                >
-                  {children}
+                  {header}
+                  <div
+                     className={cn(
+                        'overflow-auto w-full',
+                        isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height]
+                     )}
+                  >
+                     {children}
+                  </div>
                </div>
             </div>
-         </div>
 
-         {/* Right Sidebar Area */}
-         <div
-            className="overflow-hidden"
-            style={{ gridArea: 'right-sidebar' }}
-         >
-            <RightSidebar />
+            {/* Right Sidebar Area */}
+            <div
+               className="overflow-hidden"
+               style={{ gridArea: 'right-sidebar' }}
+            >
+               <RightSidebar />
+            </div>
          </div>
       </div>
    );
