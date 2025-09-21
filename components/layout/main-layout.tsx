@@ -145,7 +145,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             >
                {/* Left Sidebar Area */}
                <div
-                  className="overflow-hidden"
+                  className="overflow-hidden lg:p-2"
                   style={{ gridArea: 'sidebar' }}
                >
                   <AppSidebar />
@@ -176,7 +176,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
                {/* Right Sidebar Area */}
                <div
-                  className="overflow-hidden"
+                  className="overflow-hidden lg:p-2"
                   style={{ gridArea: 'right-sidebar' }}
                >
                   <RightSidebar />

@@ -35,7 +35,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
     >
       <div
         className={cn(
-          'bg-background flex h-full w-full flex-col border-r shadow-sm relative',
+          'bg-container flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-hidden',
           side === 'right' && 'border-l border-r-0'
         )}
       >
