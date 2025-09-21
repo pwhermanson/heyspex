@@ -18,7 +18,7 @@ export function IssueLine({ issue, layoutId = false }: { issue: Issue; layoutId?
          <ContextMenuTrigger asChild>
             <motion.div
                {...(layoutId && { layoutId: `issue-line-${issue.identifier}` })}
-               //href={`/lndev-ui/issue/${issue.identifier}`}
+               //href={`/demo-user/issue/${issue.identifier}`}
                className="w-full flex items-center justify-start h-11 px-6 hover:bg-sidebar/50"
             >
                <div className="flex items-center gap-0.5">

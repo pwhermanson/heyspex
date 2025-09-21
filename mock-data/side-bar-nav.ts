@@ -19,7 +19,7 @@ import {
 export const inboxItems = [
    {
       name: 'Inbox',
-      url: '/lndev-ui/inbox',
+      url: '/demo-user/inbox',
       icon: Inbox,
    },
    {
@@ -32,17 +32,17 @@ export const inboxItems = [
 export const workspaceItems = [
    {
       name: 'Teams',
-      url: '/lndev-ui/teams',
+      url: '/demo-user/teams',
       icon: ContactRound,
    },
    {
       name: 'Projects',
-      url: '/lndev-ui/projects',
+      url: '/demo-user/projects',
       icon: Box,
    },
    {
       name: 'Members',
-      url: '/lndev-ui/members',
+      url: '/demo-user/members',
       icon: UserRound,
    },
 ];

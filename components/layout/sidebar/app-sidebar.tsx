@@ -52,27 +52,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <X className="size-4" />
                      </div>
                      <div className="text-balance text-lg font-semibold leading-tight group-hover/sidebar:underline">
-                        Open-source layouts by lndev-ui
+                        Welcome to HeySpex!
                      </div>
                      <div>
-                        Collection of beautifully crafted open-source layouts UI built with
-                        shadcn/ui.
+                        It's free forever! Or upgrade to Pro for unlimited projects, advanced analytics, and priority support.
                      </div>
                      <Link
                         target="_blank"
                         rel="noreferrer"
                         className="absolute inset-0"
-                        href="https://square.lndev.me"
+                        href="https://heyspex.com/upgrade"
                      >
-                        <span className="sr-only">Square by lndev-ui</span>
+                        <span className="sr-only">Upgrade to Pro</span>
                      </Link>
                      <Button size="sm" className="w-full">
                         <Link
-                           href="https://square.lndev.me"
+                           href="https://heyspex.com/upgrade"
                            target="_blank"
                            rel="noopener noreferrer"
                         >
-                           square.lndev.me
+                           Upgrade to Pro
                         </Link>
                      </Button>
                   </div>
@@ -84,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <HelpButton />
                   <Button size="icon" variant="secondary" asChild>
                      <Link
-                        href="https://github.com/ln-dev7/circle"
+                        href="https://github.com/pwhermanson/heyspex"
                         target="_blank"
                         rel="noopener noreferrer"
                      >

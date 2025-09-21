@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
    subsets: ['latin'],
 });
 
-const siteUrl = 'https://circle.lndev.me';
+const siteUrl = 'https://heyspex.com';
 
 export const metadata: Metadata = {
    title: {
-      template: '%s | Circle by lndev-ui',
-      default: 'Circle by lndev-ui',
+      template: '%s | HeySpex',
+      default: 'HeySpex',
    },
    description:
       'Project management interface inspired by Linear. Built with Next.js and shadcn/ui, this application allows tracking of issues, projects and teams with a modern, responsive UI.',
@@ -26,13 +26,13 @@ export const metadata: Metadata = {
       type: 'website',
       locale: 'en_US',
       url: siteUrl,
-      siteName: 'Circle',
+      siteName: 'HeySpex',
       images: [
          {
             url: `${siteUrl}/banner.png`,
             width: 2560,
             height: 1440,
-            alt: 'lndev/ui',
+            alt: 'HeySpex UI',
          },
       ],
    },
@@ -45,12 +45,12 @@ export const metadata: Metadata = {
             url: `${siteUrl}/banner.png`,
             width: 2560,
             height: 1440,
-            alt: 'Circle',
+            alt: 'HeySpex',
          },
       ],
    },
-   authors: [{ name: 'Leonel NGOYA', url: 'https://lndev.me/' }],
-   keywords: ['ui', 'lndev', 'components', 'template'],
+   authors: [{ name: 'HeySpex Team', url: 'https://heyspex.com/' }],
+   keywords: ['ui', 'heyspex', 'components', 'template', 'project-management'],
 };
 
 import { ThemeProvider } from '@/components/layout/theme-provider';

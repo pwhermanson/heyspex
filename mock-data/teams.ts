@@ -14,7 +14,7 @@ export interface Team {
 export const teams: Team[] = [
    {
       id: 'CORE',
-      name: 'LNDev Core',
+      name: 'HeySpex Core',
       icon: '🛠️',
       joined: true,
       color: '#FF0000',

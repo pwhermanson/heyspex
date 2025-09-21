@@ -31,7 +31,7 @@ export const cycles: Cycle[] = [
       id: '44',
       number: 44,
       name: 'Sprint 44 - Core Enhancements',
-      teamId: 'lndev-core',
+      teamId: 'demo-user-core',
       startDate: '2025-03-10',
       endDate: '2025-03-24',
       progress: 0,
