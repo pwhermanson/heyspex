@@ -12,6 +12,7 @@ import { useEffect, useRef } from 'react';
 import Notifications from '@/components/layout/headers/issues/notifications';
 import { OrgSwitcher } from '@/components/layout/sidebar/org-switcher';
 import { BackToApp } from '@/components/layout/sidebar/back-to-app';
+import { ProfileDropdown } from '@/components/layout/profile-dropdown';
 
 export function TopBar() {
    const pathname = usePathname();
@@ -126,17 +127,8 @@ export function TopBar() {
                   <Notifications />
                   <RightSidebarTrigger />
 
-                  {/* Profile Circle Placeholder - will be enhanced in Phase 4 */}
-                  <Button
-                     variant="ghost"
-                     size="icon"
-                     className="h-8 w-8 rounded-full"
-                     aria-label="Profile menu"
-                  >
-                     <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-medium">
-                        LN
-                     </div>
-                  </Button>
+                  {/* Profile Dropdown */}
+                  <ProfileDropdown />
                </>
             )}
          </div>

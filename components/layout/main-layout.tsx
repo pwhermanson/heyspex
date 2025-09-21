@@ -225,7 +225,6 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                   onDragEnd={handleBottomBarDragEnd}
                   isDragging={isDraggingBottomBar}
                   dragHandleRef={dragHandleRef}
-                  bottomBar={bottomBar}
                />
             </div>
          )}

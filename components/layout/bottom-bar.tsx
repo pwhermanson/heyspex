@@ -21,7 +21,6 @@ interface BottomBarProps {
   onDragEnd?: () => void;
   isDragging?: boolean;
   dragHandleRef?: React.RefObject<HTMLDivElement>;
-  bottomBar?: any; // For debugging
 }
 
 export function BottomBar({
@@ -36,8 +35,7 @@ export function BottomBar({
   onDragStart,
   onDragEnd,
   isDragging = false,
-  dragHandleRef,
-  bottomBar
+  dragHandleRef
 }: BottomBarProps) {
   const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
   const { bottomBar: layoutBottomBar, setBottomBarHeight, setBottomBarMode } = useResizableSidebar();
@@ -79,18 +77,26 @@ export function BottomBar({
             <div
               ref={dragHandleRef}
               className={cn(
-                "cursor-ns-resize p-1 rounded hover:bg-muted/50 transition-colors",
-                isDragging && "bg-muted/70"
+                "p-1 rounded hover:bg-muted/50 transition-colors select-none",
+                isDragging ? "cursor-grabbing bg-muted/70" : "cursor-grab"
               )}
               onMouseDown={(e) => {
                 console.log('Drag handle clicked', { isOverlay, onDragStart: !!onDragStart, mode });
                 onDragStart?.(e);
               }}
               onMouseUp={() => onDragEnd?.()}
-              onMouseLeave={() => onDragEnd?.()}
               title="Drag to resize panel"
             >
-              <GripHorizontal className="h-3 w-3 text-muted-foreground" />
+              <GripHorizontal
+                className="h-3 w-3 text-muted-foreground"
+                onMouseDown={(e) => {
+                  // Ensure the icon itself also initiates dragging
+                  e.preventDefault();
+                  onDragStart?.(e);
+                }}
+                onMouseUp={() => onDragEnd?.()}
+                draggable={false}
+              />
             </div>
           )}
           
