@@ -1,31 +1,65 @@
-# heyspex
-A lightweight spec-driven development layer for solo devs and indie makers. Built on top of GitHub’s SpecKit, Hey Spex keeps your specs, context, and guardrails in sync so AI builds what you mean, NOT what it guesses.
+# Hey Spex
 
+**A better way to code with AI**
 
-# Circle
+Stop vibe coding. Start building from specs.
 
-<br />
-<a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
-</a>
+Hey Spex is a lightweight spec-driven development layer for solo devs and indie makers. Built on top of GitHub's SpecKit, Hey Spex keeps your specs, context, and guardrails in sync so AI builds what you mean, NOT what it guesses.
 
-<br />
-<br />
+## The Problem
 
-Project management interface inspired by Linear. Built with Next.js and shadcn/ui, this application allows tracking of issues, projects and teams with a modern, responsive UI.
+AI is great at patterns, terrible at reading your mind. Vague prompts lead to fragile code, misaligned features, and endless debugging sessions. When you "vibe code" with AI, you're essentially asking it to guess what you want to build.
 
-## 🛠️ Technologies
+## The Solution
+
+**Spec-driven development** changes everything. Instead of hoping AI understands your intent, you define it clearly through living specifications that guide every decision.
+
+### Four Clear Phases
+
+1. **Specify** → Define intent, outcomes, and user journeys
+2. **Plan** → Set architecture, constraints, and technical requirements  
+3. **Tasks** → Break down into safe, testable units
+4. **Implement** → AI executes incrementally with validation at every step
+
+## Key Features
+
+### 🎯 Spec-First, Not Guess-First
+Write intent, outcomes, and flows before code. Hey Spex turns it into a living spec the AI can actually follow.
+
+### 🛡️ Guardrails, Not Chaos
+Catch fragile code, missing tests, and unsafe changes before they hit your repo.
+
+### 🧠 Context That Sticks
+Keep your specs, prompts, errors, and notes in sync. You'll never lose track of what the AI was supposed to build.
+
+### 🔄 Build Momentum with Loops
+Forget thrash. Loops keep you focused on steady progress with light weekly cycles around specs.
+
+### 🗺️ Direction Without Overhead
+Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
+
+## Built For
+
+- **Solo developers** who want clarity, not clutter
+- **Indie makers** who ship with AI but need control
+- **Teams** who want clean code, not guesses
+- **Anyone** tired of AI building the wrong thing
+
+## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
-- **Langage**: [TypeScript](https://www.typescriptlang.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Spec Engine**: Built on [GitHub's SpecKit](https://github.com/github/speckit)
 
-### 📦 Installation
+## Quick Start
+
+### Installation
 
 ```shell
-git clone https://github.com/ln-dev7/circle.git
-cd circle
+git clone https://github.com/pwhermanson/heyspex.git
+cd heyspex
 ```
 
 ### Install dependencies
@@ -40,13 +74,12 @@ pnpm install
 pnpm dev
 ```
 
-## Star History
+## Philosophy
 
-<a href="https://www.star-history.com/#ln-dev7/circle&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ln-dev7/circle&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ln-dev7/circle&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ln-dev7/circle&type=Date" />
- </picture>
-</a>
+**Build what you mean, not what the AI guessed.**
 
+Hey Spex treats AI coding agents like teammates with transparency and reproducibility. No more lost context, no more fragile code, no more surprises.
+
+---
+
+*Hey Spex. Spec-driven development for solo devs.*
