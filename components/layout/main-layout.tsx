@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { AppSidebar } from '@/components/layout/sidebar/app-sidebar';
@@ -19,6 +19,8 @@ interface MainLayoutProps {
    header?: React.ReactNode;
    headersNumber?: 1 | 2;
 }
+
+const PUSH_MAX_HEIGHT_RATIO = 0.5;
 
 const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
    if (!header) return true;
@@ -82,9 +84,10 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
     const proposedHeight = Math.max(40, dragStartHeightRef.current + deltaY);
 
     // Calculate max height based on mode (same logic as BottomBar full screen button)
+    const pushMaxHeight = Math.max(40, Math.round(windowHeight * PUSH_MAX_HEIGHT_RATIO));
     const maxHeight = bottomBar.mode === 'overlay'
       ? Math.max(40, windowHeight - getMainTop())
-      : 300;
+      : pushMaxHeight;
 
     setBottomBarHeight(Math.min(maxHeight, proposedHeight));
   }, [bottomBar.mode, windowHeight, setBottomBarHeight]);
@@ -134,9 +137,10 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          setWindowHeight(newWindowHeight);
 
          // Recalculate max height based on current window size and mode (same logic as full screen button)
-         const maxHeight = bottomBar.mode === 'overlay'
-           ? Math.max(40, newWindowHeight - getMainTop())
-           : 300;
+        const pushMaxHeight = Math.max(40, Math.round(newWindowHeight * PUSH_MAX_HEIGHT_RATIO));
+        const maxHeight = bottomBar.mode === 'overlay'
+          ? Math.max(40, newWindowHeight - getMainTop())
+          : pushMaxHeight;
          const currentHeight = bottomBar.height;
 
          // If current height exceeds new max height, clamp it
@@ -301,6 +305,4 @@ export default function MainLayout({ children, header, headersNumber = 2 }: Main
       </ResizableSidebarProvider>
    );
 }
-
-
 

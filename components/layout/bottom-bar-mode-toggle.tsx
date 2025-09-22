@@ -9,44 +9,30 @@ interface BottomBarModeToggleProps {
 }
 
 export function BottomBarModeToggle({ mode, onChange, className = '' }: BottomBarModeToggleProps) {
-  const handleSelect = (next: BottomBarMode) => {
-    if (next !== mode) onChange(next);
+  const isOverlay = mode === 'overlay';
+
+  const toggleOverlay = () => {
+    onChange(isOverlay ? 'push' : 'overlay');
   };
 
   return (
     <div
-      role="radiogroup"
-      aria-label="Bottom panel mode"
+      aria-label="Overlay mode toggle"
       className={`inline-flex items-center text-xs select-none ${className}`}
     >
       <button
         type="button"
-        role="radio"
-        aria-checked={mode === 'push'}
-        onClick={() => handleSelect('push')}
+        aria-pressed={isOverlay}
+        onClick={toggleOverlay}
         className={`px-1.5 py-0.5 rounded-sm transition-colors ${
-          mode === 'push'
-            ? 'text-foreground font-medium'
-            : 'text-muted-foreground hover:text-foreground'
+          isOverlay
+            ? 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80'
+            : 'text-muted-foreground hover:bg-muted/20 hover:text-foreground'
         }`}
-        title="Push mode: panel pushes content up"
+        title={isOverlay ? 'Disable overlay mode' : 'Enable overlay mode'}
+        aria-label={isOverlay ? 'Disable overlay mode' : 'Enable overlay mode'}
       >
-        Push
-      </button>
-      <span className="px-1 text-muted-foreground">|</span>
-      <button
-        type="button"
-        role="radio"
-        aria-checked={mode === 'overlay'}
-        onClick={() => handleSelect('overlay')}
-        className={`px-1.5 py-0.5 rounded-sm transition-colors ${
-          mode === 'overlay'
-            ? 'text-foreground font-medium'
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-        title="Overlay mode: panel floats over content"
-      >
-        Overlay
+        Overlay Mode
       </button>
     </div>
   );

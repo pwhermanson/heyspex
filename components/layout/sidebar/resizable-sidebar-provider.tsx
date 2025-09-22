@@ -69,9 +69,16 @@ const DEFAULT_LEFT_WIDTH = 244;
 const DEFAULT_RIGHT_WIDTH = 320;
 
 const MIN_BOTTOM_HEIGHT = 40; // Collapsed state height
-const MAX_BOTTOM_HEIGHT = 300;
+const MAX_BOTTOM_HEIGHT_RATIO = 0.5;
 const DEFAULT_BOTTOM_HEIGHT = 40; // Start collapsed by default
 const DEFAULT_OVERLAY_POSITION = 0; // Start at bottom
+
+const FALLBACK_VIEWPORT_HEIGHT = 800;
+const getPushModeMaxHeight = (viewportHeight?: number) => {
+  const viewport = viewportHeight ?? (typeof window !== 'undefined' ? window.innerHeight : FALLBACK_VIEWPORT_HEIGHT);
+  return Math.max(MIN_BOTTOM_HEIGHT, Math.round(viewport * MAX_BOTTOM_HEIGHT_RATIO));
+};
+
 
 export function useResizableSidebar() {
   const context = useContext(EnhancedSidebarContext);
@@ -192,7 +199,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
         const isVisible = savedBottomVisible !== null ? savedBottomVisible === 'true' : true;
         const overlayPosition = savedOverlayPosition ? parseInt(savedOverlayPosition, 10) : DEFAULT_OVERLAY_POSITION;
 
-        const validHeight = !isNaN(height) && height >= MIN_BOTTOM_HEIGHT && height <= MAX_BOTTOM_HEIGHT ? height : DEFAULT_BOTTOM_HEIGHT;
+        const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : FALLBACK_VIEWPORT_HEIGHT;
+        const getMainTop = () => {
+          if (typeof document === 'undefined') return 56;
+          const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+          return el ? Math.round(el.getBoundingClientRect().top) : 56;
+        };
+        const overlayMaxHeight = Math.max(MIN_BOTTOM_HEIGHT, viewportHeight - getMainTop());
+        const pushMaxHeight = getPushModeMaxHeight(viewportHeight);
+        const allowedMaxHeight = mode === 'overlay' ? overlayMaxHeight : pushMaxHeight;
+        const validHeight = !isNaN(height) && height >= MIN_BOTTOM_HEIGHT && height <= allowedMaxHeight ? height : DEFAULT_BOTTOM_HEIGHT;
         const validOverlayPosition = !isNaN(overlayPosition) && overlayPosition >= 0 ? overlayPosition : DEFAULT_OVERLAY_POSITION;
 
         setBottomBar({
@@ -367,7 +383,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     // For height changes, use same limits as BottomBar full screen button
     const maxHeight = bottomBar.mode === 'overlay'
       ? Math.max(MIN_BOTTOM_HEIGHT, window.innerHeight - getMainTop())
-      : MAX_BOTTOM_HEIGHT;
+      : getPushModeMaxHeight();
 
     const clampedHeight = Math.max(MIN_BOTTOM_HEIGHT, Math.min(maxHeight, height));
 
@@ -505,3 +521,4 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     </EnhancedSidebarContext.Provider>
   );
 }
+

@@ -21,7 +21,7 @@
   - Mirrors A's independence and persistence. Can be open/hidden (later may support 'collapsed' parity).
 
 - **Bottom Bar (Section D)**
-  - Full-width global bar. Above it is an adjustable split area (0–300px) controlled by a draggable handle and keyboard.
+  - Full-width global bar. Above it is an adjustable split area (0-50% viewport height) controlled by a draggable handle and keyboard.
   - Height persists and restores without jank.
 
 - **Fullscreen per-section**
@@ -111,7 +111,7 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Cursor changes on hover; hover/active states visible
   - No drag behavior yet
 - 3.4 State wiring
-  - `centerBottomSplit` state (0–300) with setter works
+  - `centerBottomSplit` state (0px up to ~50% viewport height) with setter works
   - Dev control can change the value and updates layout live
   - No transition during change (until 3.6)
 - 3.5 Drag behavior
@@ -130,6 +130,17 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Handle visual aligns with design (shadow, grip, etc.)
   - Works in touch environments (no hover-only affordances)
   - Reduced motion respected
+
+#### Bottom Bar Mode Toggle (Section D)
+- Simplified label: `Overlay Mode`
+- Behavior: Only "Overlay Mode" is interactive; acts as on/off toggle
+  - When Overlay Mode is bold, overlay is active
+  - Clicking bold Overlay Mode turns it off (returns to Push, the default)
+  - Push is implied default and non-interactive text
+ - Visual states:
+   - Default: `text-muted-foreground`
+   - Hover: `hover:bg-muted/20 hover:text-foreground`
+   - Active: `bg-blue-500 text-white font-medium` (matches drag handle blue-500)
 
 ### Phase 4: Cleanup and enhancements
 - 4.1 Remove duplicate left toggle from sidebar header
@@ -253,7 +264,7 @@ From the Spotify-inspired wireframe provided:
 **Tasks**:
 1. Create `components/layout/bottom-bar.tsx`
 2. Implement draggable split handle component
-3. Add state management for center-bottom-split (0-300px)
+3. Add state management for center-bottom-split (0-50% viewport height)
 4. Add keyboard accessibility for split adjustment
 
 ### Phase 4: Cleanup and Enhancement
@@ -343,7 +354,7 @@ const COLLAPSED_WIDTH = 64;
 **Features**:
 - Full-width bottom bar (56px height)
 - Draggable split handle above BottomBar
-- Adjustable space (0-300px) for future features (logs, timeline, etc.)
+- Adjustable space (0-50% viewport height) for future features (logs, timeline, etc.)
 - Keyboard accessible with arrow key controls
 
 **CSS Variables**:
@@ -550,7 +561,7 @@ MainArea (middle row of app-shell):
 
 ### 9. State Management Updates
 **ResizableSidebarProvider Enhancements**:
-- Add `centerBottomSplit` state (0-300px range)
+- Add `centerBottomSplit` state (0-50% viewport-derived range)
 - Add `setCenterBottomSplit` function
 - Add localStorage persistence for split height
 - Update left sidebar states to remove 'hidden', add 'collapsed'
@@ -663,7 +674,7 @@ All layout states will be persisted to localStorage:
 - ✅ Draggable split handle above BottomBar adjusts content area
 - ✅ Split height persists across browser sessions
 - ✅ Keyboard accessibility for split adjustment
-- ✅ Range: 0-300px adjustable space
+- ✅ Range: 0-50% viewport-height adjustable space
 
 ### Phase 4: Polish & Cleanup
 - ✅ Single left sidebar toggle (duplicate removed)
@@ -870,6 +881,10 @@ This layout system is designed from the ground up for Vercel deployment with com
 **Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
 **Risk Level**: Low - All potential conflicts identified and mitigated
 **Confidence Level**: High - Architecture designed specifically for Vercel deployment
+
+
+
+
 
 
 

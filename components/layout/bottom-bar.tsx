@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import * as React from 'react';
 import { BottomBarModeToggle, type BottomBarMode } from './bottom-bar-mode-toggle';
@@ -48,9 +48,10 @@ export function BottomBar({
     return el ? Math.round(el.getBoundingClientRect().top) : 56;
   };
   
+  const pushMaxHeight = Math.max(40, Math.round(windowHeight * 0.5));
   const maxHeight = layoutBottomBar.mode === 'overlay'
     ? (isClient ? Math.max(40, windowHeight - getMainTop()) : height)
-    : 300;
+    : pushMaxHeight;
   const isFull = height >= (maxHeight - 1);
 
   const handleToggleFull = () => {
@@ -181,6 +182,4 @@ export function BottomBar({
     </div>
   );
 }
-
-
 
