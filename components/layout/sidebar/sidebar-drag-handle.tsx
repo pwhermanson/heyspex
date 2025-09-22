@@ -66,8 +66,9 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       // Update CSS custom properties directly for immediate visual feedback
       const leftWidth = side === 'left' ? clampedWidth : leftSidebar.width;
       const rightWidth = side === 'right' ? clampedWidth : rightSidebar.width;
-      const effectiveLeftWidth = leftSidebar.isOpen ? leftWidth : 0;
-      const effectiveRightWidth = rightSidebar.isOpen ? rightWidth : 0;
+      const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
+      const effectiveLeftWidth = leftSidebar.isOpen ? leftWidth : COLLAPSED_SPACING;
+      const effectiveRightWidth = rightSidebar.isOpen ? rightWidth : COLLAPSED_SPACING;
 
       document.documentElement.style.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
       document.documentElement.style.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);
@@ -95,8 +96,9 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       const nextLeftWidth = !isNaN(finalLeftWidth) ? finalLeftWidth : leftSidebar.width;
       const nextRightWidth = !isNaN(finalRightWidth) ? finalRightWidth : rightSidebar.width;
 
-      const effectiveLeftWidth = leftSidebar.isOpen ? nextLeftWidth : 0;
-      const effectiveRightWidth = rightSidebar.isOpen ? nextRightWidth : 0;
+      const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
+      const effectiveLeftWidth = leftSidebar.isOpen ? nextLeftWidth : COLLAPSED_SPACING;
+      const effectiveRightWidth = rightSidebar.isOpen ? nextRightWidth : COLLAPSED_SPACING;
 
       document.documentElement.style.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
       document.documentElement.style.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);

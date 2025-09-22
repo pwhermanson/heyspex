@@ -103,8 +103,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
   // Update CSS Grid layout
   const updateGridLayout = useCallback(() => {
-    const leftWidth = leftSidebar.isOpen ? leftSidebar.width : 0;
-    const rightWidth = rightSidebar.isOpen ? rightSidebar.width : 0;
+    const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
+    const leftWidth = leftSidebar.isOpen ? leftSidebar.width : COLLAPSED_SPACING;
+    const rightWidth = rightSidebar.isOpen ? rightSidebar.width : COLLAPSED_SPACING;
     const bottomHeight = bottomBar.isVisible ? bottomBar.height : MIN_BOTTOM_HEIGHT;
 
     document.documentElement.style.setProperty('--sidebar-left-width', `${leftWidth}px`);

@@ -13,6 +13,7 @@ import { NavFeatures } from '@/components/layout/sidebar/nav-features';
 import { NavTeamsSettings } from '@/components/layout/sidebar/nav-teams-settings';
 import { Button } from '@/components/ui/button';
 import { ResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar';
+import { LeftSidebarTrigger } from '@/components/layout/sidebar/left-sidebar-trigger';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -24,6 +25,15 @@ export function AppSidebar() {
 
    return (
       <ResizableSidebar side="left">
+         {/* Section A Header with Toggle Icon */}
+         <div className="flex items-center justify-between p-4 border-b bg-background">
+            <div className="flex-1" />
+            <div className="flex items-center gap-2">
+               <div className="w-px h-4 bg-border" />
+               <LeftSidebarTrigger className="h-6 w-6" />
+            </div>
+         </div>
+         
          {/* Sidebar Content */}
          <div className="flex-1 overflow-y-auto pt-4">
             {isSettings ? (

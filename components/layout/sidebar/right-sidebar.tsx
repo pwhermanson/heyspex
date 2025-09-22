@@ -9,13 +9,18 @@ import {
    MessageCircle,
 } from 'lucide-react';
 import { ResizableSidebar } from './resizable-sidebar';
+import { RightSidebarTrigger } from './right-sidebar-trigger';
 
 export function RightSidebar() {
    return (
       <ResizableSidebar side="right">
-         {/* Sidebar Header */}
-         <div className="flex items-center justify-between p-4 border-b">
+         {/* Section C Header with Toggle Icon */}
+         <div className="flex items-center justify-between p-4 border-b bg-background">
             <h2 className="text-lg font-semibold">Right Sidebar</h2>
+            <div className="flex items-center gap-2">
+               <div className="w-px h-4 bg-border" />
+               <RightSidebarTrigger />
+            </div>
          </div>
 
          {/* Sidebar Content */}

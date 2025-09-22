@@ -45,6 +45,20 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - **Teams** who want clean code, not guesses
 - **Anyone** tired of AI building the wrong thing
 
+## Layout Areas
+
+Hey Spex features a flexible 5-section layout that can be customized to your workflow:
+
+- **Top Bar** - Fixed header with navigation and controls
+- **Section A** - Left sidebar area (typically for main navigation) - *Expandable/Collapsible*
+- **Section B** - Main content area (primary workspace) - *Expandable/Collapsible*
+- **Section C** - Right sidebar area (typically for secondary tools) - *Expandable/Collapsible*
+- **Section D** - Bottom content area (additional workspace) - *Two modes available:*
+  - **Section D - Push** - Pushes content up when expanded/collapsed
+  - **Section D - Overlay** - Overlays on top of existing content when expanded/collapsed
+
+Each section is fully configurable - you can load any screen or tool into any section, resize them, expand/collapse them, and create custom views. This gives you the flexibility to arrange your workspace exactly how you need it, similar to having multiple windows on your desktop.
+
 ## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
