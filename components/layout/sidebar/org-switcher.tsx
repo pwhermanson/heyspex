@@ -18,7 +18,8 @@ import {
    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { CreateNewIssue } from './create-new-issue';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export function OrgSwitcher() {
@@ -31,12 +32,17 @@ export function OrgSwitcher() {
                      <SidebarMenuButton
                         size="lg"
                         className="h-8 p-1 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                        tooltip="Organization menu"
                      >
                         <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Organization menu</span>
                      </SidebarMenuButton>
                   </DropdownMenuTrigger>
 
-                  <CreateNewIssue />
+                  <Button size="icon" variant="ghost" className="h-8 w-8 p-0">
+                     <Plus className="h-4 w-4" />
+                     <span className="sr-only">Create new issue</span>
+                  </Button>
                </div>
                <DropdownMenuContent
                   className="w-[--radix-dropdown-menu-trigger-width] min-w-60 rounded-lg"

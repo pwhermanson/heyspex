@@ -218,6 +218,16 @@ input[type='search'] {
   --grid-template-columns: var(--left-width) 1fr var(--right-width);
 }
 
+/* Left sidebar rail transitions */
+[data-resizable-sidebar="left"] {
+  transition: width var(--layout-motion-duration-medium) var(--layout-motion-easing);
+}
+
+/* Text fade transitions for sidebar content */
+.sidebar-content-text {
+  transition: opacity var(--layout-motion-duration-medium) var(--layout-motion-easing);
+}
+
 /* Smooth transitions for CSS Grid layout changes */
 .grid-layout {
   transition: grid-template-columns var(--layout-motion-duration-long) var(--layout-motion-easing);

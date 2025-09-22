@@ -136,9 +136,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
     const leftWidth = isMainFullscreen
       ? 0
-      : leftSidebar.isOpen
-        ? leftSidebar.width
-        : leftCollapsedWidth;
+      : enableLeftRail
+        ? (leftState === 'open' ? leftSidebar.width : LEFT_COLLAPSED_WIDTH)
+        : (leftSidebar.isOpen ? leftSidebar.width : leftCollapsedWidth);
 
     const rightWidth = isMainFullscreen
       ? 0
@@ -164,6 +164,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     rootStyle.setProperty('--bottombar-mode', bottomBar.mode);
   }, [
     enableLeftRail,
+    leftState,
     leftSidebar.isOpen,
     leftSidebar.width,
     rightSidebar.isOpen,
@@ -316,39 +317,68 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   }, []);
 
   const toggleLeftSidebar = useCallback(() => {
-    setLeftSidebar(prev => {
-      const isOpening = !prev.isOpen;
-      const width = isOpening ? prev.preferredWidth : prev.width;
-      const preferredWidth = isOpening ? prev.preferredWidth : prev.width;
+    if (enableLeftRail) {
+      // When left rail is enabled, toggle between 'open' and 'collapsed' states
+      // Keep isOpen: true in both cases for proper width calculations
+      setLeftState(prev => prev === 'open' ? 'collapsed' : 'open');
 
-      const newState = {
-        ...prev,
-        isOpen: isOpening,
-        width,
-        preferredWidth,
-      };
+      // Ensure sidebar remains "open" from the legacy perspective for width calculations
+      if (!leftSidebar.isOpen) {
+        setLeftSidebar(prev => ({
+          ...prev,
+          isOpen: true,
+        }));
+      }
+    } else {
+      // Legacy behavior: toggle isOpen state
+      setLeftSidebar(prev => {
+        const isOpening = !prev.isOpen;
+        const width = isOpening ? prev.preferredWidth : prev.width;
+        const preferredWidth = isOpening ? prev.preferredWidth : prev.width;
 
-      saveToLocalStorage('left', newState);
-      updateLeftRailState(isOpening ? 'open' : 'collapsed');
+        const newState = {
+          ...prev,
+          isOpen: isOpening,
+          width,
+          preferredWidth,
+        };
 
-      return newState;
-    });
-  }, [saveToLocalStorage, updateLeftRailState]);
+        saveToLocalStorage('left', newState);
+        updateLeftRailState(isOpening ? 'open' : 'collapsed');
+
+        return newState;
+      });
+    }
+  }, [enableLeftRail, leftSidebar.isOpen, saveToLocalStorage, updateLeftRailState]);
 
 
   const setLeftSidebarOpen = useCallback((open: boolean) => {
-    setLeftSidebar(prev => {
-      const newState = {
-        ...prev,
-        isOpen: open,
-        width: open ? prev.preferredWidth : prev.width,
-        preferredWidth: open ? prev.preferredWidth : prev.width,
-      };
-      saveToLocalStorage('left', newState);
-      updateLeftRailState(open ? 'open' : 'collapsed');
-      return newState;
-    });
-  }, [saveToLocalStorage, updateLeftRailState]);
+    if (enableLeftRail) {
+      // When left rail is enabled, set the leftState directly
+      setLeftState(open ? 'open' : 'collapsed');
+
+      // Ensure sidebar remains "open" from the legacy perspective for width calculations
+      if (!leftSidebar.isOpen) {
+        setLeftSidebar(prev => ({
+          ...prev,
+          isOpen: true,
+        }));
+      }
+    } else {
+      // Legacy behavior
+      setLeftSidebar(prev => {
+        const newState = {
+          ...prev,
+          isOpen: open,
+          width: open ? prev.preferredWidth : prev.width,
+          preferredWidth: open ? prev.preferredWidth : prev.width,
+        };
+        saveToLocalStorage('left', newState);
+        updateLeftRailState(open ? 'open' : 'collapsed');
+        return newState;
+      });
+    }
+  }, [enableLeftRail, leftSidebar.isOpen, saveToLocalStorage, updateLeftRailState]);
 
 
   const setLeftSidebarWidth = useCallback((width: number) => {

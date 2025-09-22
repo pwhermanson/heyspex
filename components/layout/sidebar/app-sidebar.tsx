@@ -17,11 +17,19 @@ import { LeftSidebarTrigger } from '@/components/layout/sidebar/left-sidebar-tri
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function AppSidebar() {
    const [open, setOpen] = React.useState(true);
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
+   const { leftState } = useResizableSidebar();
+   const enableLeftRail = useFeatureFlag('enableLeftRail');
+
+   // When left rail is enabled, show text only when state is 'open'
+   const showText = !enableLeftRail || leftState === 'open';
 
    return (
       <ResizableSidebar side="left">
@@ -54,8 +62,8 @@ export function AppSidebar() {
          {/* Sidebar Footer */}
          <div className="p-4 border-t">
             <div className="w-full flex flex-col gap-2">
-               {open && (
-                  <div className="group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full">
+               {open && showText && (
+                  <div className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full transition-opacity layout-transition ${showText ? 'opacity-100' : 'opacity-0'}`}>
                      <div
                         className="absolute top-2.5 right-2 z-10 cursor-pointer"
                         onClick={() => setOpen(!open)}
@@ -88,26 +96,51 @@ export function AppSidebar() {
                      </Button>
                   </div>
                )}
-               <a className="my-1.5" href="https://vercel.com/oss">
-                  <Image
-                    alt="Vercel OSS Program"
-                    src="https://vercel.com/oss/program-badge.svg"
-                    width={100}
-                    height={20}
-                    priority={false}
-                  />
-               </a>
-               <div className="w-full flex items-center justify-between">
+               {showText && (
+                  <a className={`my-1.5 transition-opacity layout-transition ${showText ? 'opacity-100' : 'opacity-0'}`} href="https://vercel.com/oss">
+                     <Image
+                       alt="Vercel OSS Program"
+                       src="https://vercel.com/oss/program-badge.svg"
+                       width={100}
+                       height={20}
+                       priority={false}
+                     />
+                  </a>
+               )}
+               <div className={`w-full flex items-center transition-opacity layout-transition ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}>
                   <HelpButton />
-                  <Button size="icon" variant="secondary" asChild>
-                     <Link
-                        href="https://github.com/pwhermanson/heyspex"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                     >
-                        <RiGithubLine className="size-4" />
-                     </Link>
-                  </Button>
+                  {showText ? (
+                     <Button size="icon" variant="secondary" asChild>
+                        <Link
+                           href="https://github.com/pwhermanson/heyspex"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                        >
+                           <RiGithubLine className="size-4" />
+                           <span className="sr-only">GitHub repository</span>
+                        </Link>
+                     </Button>
+                  ) : (
+                     enableLeftRail && leftState === 'collapsed' && (
+                        <Tooltip>
+                           <TooltipTrigger asChild>
+                              <Button size="icon" variant="secondary" asChild>
+                                 <Link
+                                    href="https://github.com/pwhermanson/heyspex"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                 >
+                                    <RiGithubLine className="size-4" />
+                                    <span className="sr-only">GitHub repository</span>
+                                 </Link>
+                              </Button>
+                           </TooltipTrigger>
+                           <TooltipContent side="right" align="center">
+                              GitHub repository
+                           </TooltipContent>
+                        </Tooltip>
+                     )
+                  )}
                </div>
             </div>
          </div>

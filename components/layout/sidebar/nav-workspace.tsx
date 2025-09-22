@@ -27,7 +27,7 @@ export function NavWorkspace() {
          <SidebarMenu>
             {workspaceItems.map((item) => (
                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.name}</span>
@@ -38,7 +38,7 @@ export function NavWorkspace() {
             <SidebarMenuItem>
                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <SidebarMenuButton asChild>
+                     <SidebarMenuButton asChild tooltip="More options">
                         <span>
                            <MoreHorizontal />
                            <span>More</span>

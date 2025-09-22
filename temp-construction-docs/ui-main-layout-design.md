@@ -71,7 +71,7 @@ A Spotify-inspired, modern workspace where navigation and global context live in
    - next build succeeds with enableTopBar; dev shell start logs clean.
    - Manual shell load (enableTopBar) returns HTTP 200, no boundary errors surfaced in server output.
 ### Phase 2: Left Sidebar icon-rail
-**Status**: 2.1-2.3 complete; toggle wiring next
+**Status**: 2.1-2.4 complete; tooltips and accessibility next
 - [x] 2.1 State model refactor (non-visual) (completed)
   - `leftState: 'open' | 'collapsed'` added with safe defaults
   - Persistence keys added without breaking current state
@@ -84,10 +84,12 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - 64px rail renders behind `enableLeftRail`
   - Icons align vertically; no text visible
   - Rail z-index prevents overlap from content
-- 2.4 Toggle wiring
-  - Toggle switches `open` <-> `collapsed` smoothly
-  - Text fades out on collapse; returns on open
-  - No content reflow beyond intended width change
+- [x] 2.4 Toggle wiring (completed)
+  - Toggle switches `open` <-> `collapsed` smoothly via updated `toggleLeftSidebar()`
+  - Text fades out on collapse; returns on open with `layout-transition` CSS classes
+  - No content reflow beyond intended width change (CSS Grid handles width transitions)
+  - Updated `LeftSidebarTrigger` to show correct icon state based on `leftState`
+  - Modified `ResizableSidebar` to use `leftState` for rendering decisions when `enableLeftRail` is active
 - 2.5 Tooltips and focus
   - Icons have `aria-label`; tooltips on hover/focus
   - Keyboard navigation reaches all icons in collapsed state

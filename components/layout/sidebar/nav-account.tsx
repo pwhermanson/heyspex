@@ -18,7 +18,7 @@ export function NavAccount() {
          <SidebarMenu>
             {accountItems.map((item) => (
                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon className="size-4" />
                         <span>{item.name}</span>

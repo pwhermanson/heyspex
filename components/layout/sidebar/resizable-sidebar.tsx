@@ -23,6 +23,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
   const {
     leftSidebar,
     rightSidebar,
+    leftState,
   } = useResizableSidebar();
 
   const enableLeftRail = useFeatureFlag('enableLeftRail');
@@ -48,7 +49,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
         className
       )}
     >
-      {sidebarState.isOpen ? (
+      {(side === 'left' && enableLeftRail && leftState === 'open') || (side === 'right' && sidebarState.isOpen) || (side === 'left' && !enableLeftRail && sidebarState.isOpen) ? (
         <div
           className={cn(
             'bg-container flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-hidden',

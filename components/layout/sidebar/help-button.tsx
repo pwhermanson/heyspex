@@ -13,16 +13,37 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import Link from 'next/link';
 import { RiBox3Fill, RiLinkedinFill, RiThreadsFill, RiTwitterXFill } from '@remixicon/react';
+import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 
 export function HelpButton() {
+   const { leftState } = useResizableSidebar();
+   const enableLeftRail = useFeatureFlag('enableLeftRail');
+   const isCollapsed = enableLeftRail && leftState === 'collapsed';
+
+   const helpButton = (
+      <Button size="icon" variant="outline">
+         <HelpCircle className="size-4" />
+         <span className="sr-only">Help and support</span>
+      </Button>
+   );
+
    return (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="outline">
-               <HelpCircle className="size-4" />
-            </Button>
+            {isCollapsed ? (
+               <Tooltip>
+                  <TooltipTrigger asChild>{helpButton}</TooltipTrigger>
+                  <TooltipContent side="right" align="center">
+                     Help and support
+                  </TooltipContent>
+               </Tooltip>
+            ) : (
+               helpButton
+            )}
          </DropdownMenuTrigger>
          <DropdownMenuContent align="end" className="w-60">
             <div className="p-2">

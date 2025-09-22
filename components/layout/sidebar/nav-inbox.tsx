@@ -15,7 +15,7 @@ export function NavInbox() {
          <SidebarMenu>
             {inboxItems.map((item) => (
                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.name}</span>
