@@ -56,44 +56,19 @@ A Spotify-inspired, modern workspace where navigation and global context live in
 ### Iterative micro-iterations and acceptance checklists
 
 ### Phase 1: TopBar
-- 1.1 TopBar shell behind a flag
-  - TopBar renders with `role="banner"` when `enableTopBar` is true
-  - Default `--topbar-height` is defined; off state causes no visual change
-  - No layout shift when flag is off
-- 1.2 Layout grid integration
-  - `main-layout` includes TopBar row using CSS vars
-  - No CLS on route change; content height remains 100% with/without flag
-  - Dark/light theming works for the bar background
-- 1.3 Move OrgSwitcher/BackToApp
-  - OrgSwitcher/BackToApp visible in TopBar left area
-  - Original instance remains until 1.7 (intentional duplication)
-  - Tab order: focuses TopBar first, then content
-- 1.4 Global search (read-only)
-  - Global search renders in TopBar; original remains until 1.7
-  - Works with keyboard focus; no console errors/hydration mismatches
-  - Layout responsive at md/lg breakpoints
-- 1.5 Notifications bell
-  - Bell visible in TopBar right; original remains until 1.7
-  - Badge state matches existing logic
-  - No overlap with profile placeholder
-- 1.6 Profile circle placeholder
-  - Avatar button present; opens a basic menu stub
-  - Menu is keyboard navigable and dismissible (Esc/click outside)
-  - No routes or state changes yet
-- 1.7 Remove duplicates (switch-over)
-  - Old search/bell removed from section headers
-  - Verify contract: no global controls in Section bars
-  - No visual regressions in headers across routes
-- 1.8 Visual polish and reduced motion
-  - Spacing and tokens consistent with design
-  - `prefers-reduced-motion` disables non-essential animations
-  - TopBar meets AA contrast in light/dark themes
-  - **Vercel Check**: Reduced motion preferences respected in production
-  - **Vercel Check**: No hydration mismatches in production deployment
-  - **Vercel Check**: CSS variables render correctly across different browsers
-
+- [x] TopBar renders above all content and spans full width.
+- [x] Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
+- [x] Integrates existing header-nav functionality (search, notifications).
+- [x] Profile circle placeholder is present on the right side.
+- [ ] Main layout structure updated to accommodate TopBar (pending feature flag + CSS variable pass).
+#### Updated Phase 1 Completion Plan
+1. Implement the `enableTopBar` feature flag gate, leveraging the "Feature Flags" mitigation in Safe Deployment Strategy to allow instant rollback if regressions surface.
+2. Introduce shared layout CSS variables for heights and rails, aligning with the "Graceful Degradation" mitigation so the layout falls back cleanly when variables are unsupported.
+3. Expand reduced-motion handling and token polish, guided by the "Reduced Motion Conflicts" mitigation and ensuring accessibility checks pass before deployment.
+4. Run the acceptance testing checklist with logging through existing error boundaries, echoing the "Error Boundaries" mitigation to capture regressions before release.
 ### Phase 2: Left Sidebar icon-rail
-- 2.1 State model refactor (non-visual)
+**Status**: 2.1 complete; 2.2+ pending CSS variable work
+- [x] 2.1 State model refactor (non-visual) (completed)
   - `leftState: 'open' | 'collapsed'` added with safe defaults
   - Persistence keys added without breaking current state
   - No user-facing changes yet
@@ -248,16 +223,21 @@ From the Spotify-inspired wireframe provided:
 
 ## Implementation Phases
 
-### Phase 1: Create TopBar Component and Move Header Functionality ⏳
+### Phase 1: Create TopBar Component and Move Header Functionality
+**Status**: In progress - TopBar live, feature flag and CSS variable integration outstanding
+
 **Objective**: Create a full-width TopBar that spans above the three-panel layout and consolidate existing header functionality.
 
-**Tasks**:
-1. Create `components/layout/top-bar.tsx`
-2. Move `OrgSwitcher`/`BackToApp` from left sidebar header to TopBar
-3. Integrate existing header-nav functionality (search, notifications)
-4. Add profile circle menu placeholder
-5. Update main layout to include TopBar in grid structure
+**Completed**:
+1. Created `components/layout/top-bar.tsx`.
+2. Moved `OrgSwitcher`/`BackToApp` from left sidebar header to TopBar.
+3. Integrated existing header-nav functionality (search, notifications, profile stub) into the TopBar.
+4. Removed legacy duplicates from section headers.
 
+**Still Needed**:
+1. Add `enableTopBar` feature flag and update layout gating.
+2. Convert layout heights to shared CSS variables and update grid helpers.
+3. Finish reduced-motion coverage and visual polish before enabling flag by default.
 ### Phase 2: Icon-Only Left Sidebar Collapse
 **Objective**: Change left sidebar collapse behavior to ChatGPT-style icon rail instead of complete hiding.
 
@@ -317,7 +297,7 @@ TopBar Layout:
 - `components/layout/top-bar.tsx` - Main TopBar component
 - Move demo user dropdown into profile circle menu (Phase 4)
 
-#### 2.1 Terminology and Contracts: Section vs Screen Control Bars
+#### 2.1 Terminology and Contracts: Section vs Screen Control Bars (completed)
 **Goal**: Prevent feature drift and keep controls consistent across Sections A/B/C and any loaded screen.
 
 - **Section control bar (A/B/C)**: The top-most bar inside each section. Owns section-level controls only.
@@ -665,14 +645,14 @@ All layout states will be persisted to localStorage:
 ## Acceptance Criteria
 
 ### Phase 1: TopBar
-- ✅ TopBar renders above all content and spans full width
-- ✅ Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp)
-- ✅ Integrates existing header-nav functionality (search, notifications)
-- ✅ Profile circle placeholder is present on the right side
-- ✅ Main layout structure updated to accommodate TopBar
+- [x] TopBar renders above all content and spans full width.
+- [x] Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
+- [x] Integrates existing header-nav functionality (search, notifications).
+- [x] Profile circle placeholder is present on the right side.
+- [ ] Main layout structure updated to accommodate TopBar (pending feature flag + CSS variable pass).
 
 ### Phase 2: Icon-Only Sidebar
-- ✅ Left sidebar collapses to 64px icon-only rail
+- [ ] Left sidebar collapses to 64px icon-only rail
 - ✅ Icons remain visible with text labels hidden when collapsed
 - ✅ Smooth transitions and animations
 - ✅ Tooltips show on hover for collapsed icons
@@ -702,7 +682,7 @@ All layout states will be persisted to localStorage:
 
 ---
 
-**Current Phase**: Phase 1 - TopBar Implementation
+**Current Phase**: Phase 1 - TopBar Implementation (feature flag + CSS variables outstanding)
 **Next Review**: After TopBar component creation and basic integration
 
 ---
@@ -890,3 +870,12 @@ This layout system is designed from the ground up for Vercel deployment with com
 **Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
 **Risk Level**: Low - All potential conflicts identified and mitigated
 **Confidence Level**: High - Architecture designed specifically for Vercel deployment
+
+
+
+
+
+
+
+
+
