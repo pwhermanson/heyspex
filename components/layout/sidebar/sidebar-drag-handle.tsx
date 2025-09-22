@@ -143,7 +143,7 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       className={cn(
         'absolute top-0 bottom-0 w-1 cursor-col-resize group z-50 sidebar-drag-handle',
         side === 'left' ? 'right-0' : 'left-0',
-        'hover:bg-blue-500/30 transition-all duration-200',
+        'hover:bg-blue-500/30 transition-all layout-transition-short motion-reduce:transition-none',
         isActive && 'bg-blue-500/50',
         isDragging && dragSide !== side && 'pointer-events-none',
         className
@@ -153,7 +153,7 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       {/* Visual indicator line - more prominent on hover */}
       <div
         className={cn(
-          'absolute top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-blue-500 transition-all duration-200',
+          'absolute top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-blue-500 transition-all layout-transition-short motion-reduce:transition-none',
           side === 'left' ? 'right-0' : 'left-0',
           isActive && 'bg-blue-500'
         )}
@@ -170,10 +170,11 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       {/* Hover indicator - subtle background highlight */}
       <div
         className={cn(
-          'absolute top-0 bottom-0 w-1 bg-transparent group-hover:bg-blue-500/10 transition-colors duration-200',
+          'absolute top-0 bottom-0 w-1 bg-transparent group-hover:bg-blue-500/10 transition-colors layout-transition-short motion-reduce:transition-none',
           side === 'left' ? 'right-0' : 'left-0'
         )}
       />
     </div>
   );
 }
+

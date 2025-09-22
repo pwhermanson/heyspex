@@ -92,7 +92,7 @@ export function SplitHandle({
   return (
     <div
       className={cn(
-        'h-2 cursor-row-resize flex items-center justify-center bg-border hover:bg-border/80 transition-colors',
+        'h-2 cursor-row-resize flex items-center justify-center bg-border hover:bg-border/80 transition-colors layout-transition-short motion-reduce:transition-none',
         'border-t border-b border-border/50',
         'group relative',
         className
@@ -108,7 +108,7 @@ export function SplitHandle({
       onKeyDown={handleKeyDown}
     >
       {/* Visual drag indicator */}
-      <div className="w-12 h-1 bg-border rounded-full group-hover:bg-foreground/40 transition-colors" />
+      <div className="w-12 h-1 bg-border rounded-full group-hover:bg-foreground/40 transition-colors layout-transition-short motion-reduce:transition-none" />
 
       {/* Expanded hover area for easier grabbing */}
       <div className="absolute inset-x-0 -inset-y-2" />

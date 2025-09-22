@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import * as React from 'react';
 import { cn } from '@/lib/utils';
@@ -25,7 +25,7 @@ export function BottomDragHandle({
     <div
       className={cn(
         'absolute inset-x-0 top-0 h-2 cursor-row-resize group z-50 select-none touch-none pointer-events-auto',
-        'transition-all duration-200 ease-in-out hover:bg-blue-500/30',
+        'transition-all layout-transition-short motion-reduce:transition-none hover:bg-blue-500/30',
         isDragging && 'bg-blue-500/30',
         className
       )}
@@ -36,7 +36,7 @@ export function BottomDragHandle({
     >
       <div
         className={cn(
-          'absolute inset-x-0 top-0 h-0.5 bg-transparent transition-colors duration-200 ease-in-out',
+          'absolute inset-x-0 top-0 h-0.5 bg-transparent transition-colors layout-transition-short motion-reduce:transition-none',
           'group-hover:bg-blue-500',
           isDragging && 'bg-blue-500'
         )}
@@ -45,8 +45,9 @@ export function BottomDragHandle({
       <div className="absolute inset-x-0 -top-2 h-4 cursor-row-resize" />
 
       <div
-        className="absolute inset-x-0 top-0 h-full bg-transparent transition-colors duration-200 ease-in-out group-hover:bg-blue-500/10"
+        className="absolute inset-x-0 top-0 h-full bg-transparent transition-colors layout-transition-short motion-reduce:transition-none group-hover:bg-blue-500/10"
       />
     </div>
   );
 }
+

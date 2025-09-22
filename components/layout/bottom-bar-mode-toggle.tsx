@@ -24,7 +24,7 @@ export function BottomBarModeToggle({ mode, onChange, className = '' }: BottomBa
         type="button"
         aria-pressed={isOverlay}
         onClick={toggleOverlay}
-        className={`px-1.5 py-0.5 rounded-sm transition-colors ${
+        className={`px-1.5 py-0.5 rounded-sm transition-colors layout-transition-short motion-reduce:transition-none ${
           isOverlay
             ? 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80'
             : 'text-muted-foreground hover:bg-muted/20 hover:text-foreground'

@@ -64,8 +64,12 @@ A Spotify-inspired, modern workspace where navigation and global context live in
 #### Sub-phase 1.5 Completion Plan
 1.5.1 (Done) Implement the `enableTopBar` feature flag gate, leveraging the "Feature Flags" mitigation in Safe Deployment Strategy to allow instant rollback if regressions surface.
 1.5.2 (Done) Introduce shared layout CSS variables for heights and rails, aligning with the "Graceful Degradation" mitigation so the layout falls back cleanly when variables are unsupported.
-1.5.3 Expand reduced-motion handling and token polish, guided by the "Reduced Motion Conflicts" mitigation and ensuring accessibility checks pass before deployment.
-1.5.4 Run the acceptance testing checklist with logging through existing error boundaries, echoing the "Error Boundaries" mitigation to capture regressions before release.
+1.5.3 (Done) Expand reduced-motion handling and token polish, guided by the "Reduced Motion Conflicts" mitigation and ensuring accessibility checks pass before deployment.
+   - Introduced layout motion CSS tokens (--layout-motion-*) and helper classes to centralize transition timing.
+   - Applied motion helpers to shell transitions so prefers-reduced-motion disables animations on load and during interaction.
+1.5.4 (Done) Run the acceptance testing checklist with logging through existing error boundaries, echoing the "Error Boundaries" mitigation to capture regressions before release.
+   - next build succeeds with enableTopBar; dev shell start logs clean.
+   - Manual shell load (enableTopBar) returns HTTP 200, no boundary errors surfaced in server output.
 ### Phase 2: Left Sidebar icon-rail
 **Status**: 2.1 complete; 2.2+ pending CSS variable work
 - [x] 2.1 State model refactor (non-visual) (completed)
@@ -186,15 +190,21 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Expand icon only in Section control bars (A/B/C)
   - Screen bars (e.g., Projects) keep Filter/Display only
   - No global bell/search in Section or Screen bars
-- 4.4 Accessibility audit pass
+- 4.4 Section Control Bar Visual Consistency
+  - Apply Section B's control bar styling to Sections A and C
+  - Ensure consistent background color, text color, and overall appearance
+  - Maintain accessibility standards (contrast ratios, focus states)
+  - Preserve existing functionality while updating visual appearance
+  - Test in both light and dark themes
+- 4.5 Accessibility audit pass
   - All interactive elements have roles/names; tooltip timing OK
   - Focus return after closing menus and fullscreen behaves correctly
   - No keyboard traps
-- 4.5 Animations polish
+- 4.6 Animations polish
   - Consistent easing/duration across layout changes
   - Drag disables transitions globally; restored after
   - No flicker in dark/light transitions
-- 4.6 Final QA checklist
+- 4.7 Final QA checklist
   - Expand B restores A/C rails and BottomBar height precisely
   - Tabs (if present) donâ€™t shift Section control bar layout
   - No layout jank or scroll glitches across routes
@@ -912,5 +922,4 @@ This layout system is designed from the ground up for Vercel deployment with com
 **Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
 **Risk Level**: Low - All potential conflicts identified and mitigated
 **Confidence Level**: High - Architecture designed specifically for Vercel deployment
-
 

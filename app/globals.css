@@ -152,7 +152,7 @@ input[type='search'] {
 
 /* Sidebar drag handle styles */
 .sidebar-drag-handle {
-   transition: all 0.2s ease-in-out;
+   transition: all var(--layout-motion-duration-short) var(--layout-motion-easing);
 }
 
 .sidebar-drag-handle:hover {
@@ -174,7 +174,7 @@ input[type='search'] {
 
 /* Smooth transitions for sidebar width changes */
 .sidebar-width-transition {
-   transition: width 0.2s ease-in-out, transform 0.2s ease-in-out;
+   transition: width var(--layout-motion-duration-medium) var(--layout-motion-easing), transform var(--layout-motion-duration-medium) var(--layout-motion-easing);
 }
 
 /* Disable transitions during drag for better performance */
@@ -206,6 +206,11 @@ input[type='search'] {
   --topbar-height: 56px;
   --bottombar-height: 40px;
   --center-bottom-split: 0px;
+  --layout-motion-duration-short: 160ms;
+  --layout-motion-duration-medium: 240ms;
+  --layout-motion-duration-long: 320ms;
+  --layout-motion-easing: cubic-bezier(0.32, 0.72, 0, 1);
+
 
   /* Legacy aliases for in-flight migrations */
   --sidebar-left-width: var(--left-width);
@@ -215,10 +220,42 @@ input[type='search'] {
 
 /* Smooth transitions for CSS Grid layout changes */
 .grid-layout {
-  transition: grid-template-columns 0.3s ease-in-out;
+  transition: grid-template-columns var(--layout-motion-duration-long) var(--layout-motion-easing);
 }
 
 /* Disable grid transitions during drag for better performance */
 .sidebar-dragging .grid-layout {
   transition: none !important;
 }
+
+/* Layout transition helpers respect reduced motion preferences */
+.layout-transition {
+  transition-duration: var(--layout-motion-duration-medium);
+  transition-timing-function: var(--layout-motion-easing);
+}
+
+.layout-transition-short {
+  transition-duration: var(--layout-motion-duration-short);
+  transition-timing-function: var(--layout-motion-easing);
+}
+
+.layout-transition-long {
+  transition-duration: var(--layout-motion-duration-long);
+  transition-timing-function: var(--layout-motion-easing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --layout-motion-duration-short: 0ms;
+    --layout-motion-duration-medium: 0ms;
+    --layout-motion-duration-long: 0ms;
+  }
+
+  .layout-transition,
+  .layout-transition-short,
+  .layout-transition-long {
+    transition-duration: 0ms !important;
+  }
+}
+
+

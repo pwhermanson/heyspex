@@ -70,7 +70,7 @@ export function TopBar() {
                {isSearchOpen ? (
                   <div
                      ref={searchContainerRef}
-                     className="relative flex items-center justify-center w-full transition-all duration-200 ease-in-out motion-reduce:transition-none"
+                     className="relative flex items-center justify-center w-full transition-all layout-transition-short motion-reduce:transition-none"
                   >
                      <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                      <Input

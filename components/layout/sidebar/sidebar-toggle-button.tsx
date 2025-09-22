@@ -70,7 +70,7 @@ export function SidebarToggleButton({
       size={size}
       onClick={toggle}
       className={cn(
-        'transition-all duration-200',
+        'transition-all layout-transition-short motion-reduce:transition-none',
         className
       )}
       title={label}

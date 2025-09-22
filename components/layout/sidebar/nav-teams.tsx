@@ -56,7 +56,7 @@ export function NavTeams() {
                            </div>
                            <span className="text-sm">{item.name}</span>
                            <span className="w-3 shrink-0">
-                              <ChevronRight className="w-full transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                              <ChevronRight className="w-full transition-transform layout-transition-short motion-reduce:transition-none group-data-[state=open]/collapsible:rotate-90" />
                            </span>
                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -140,3 +140,4 @@ export function NavTeams() {
       </SidebarGroup>
    );
 }
+
