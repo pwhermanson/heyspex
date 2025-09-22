@@ -12,6 +12,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/components/common/issues/create-issue-modal-provider';
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomBar } from '@/components/layout/bottom-bar';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -47,6 +48,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       isHydrated,
       isMainFullscreen
    } = useResizableSidebar();
+
+   const isTopBarEnabled = useFeatureFlag('enableTopBar');
 
   // Drag state for bottom bar overlay positioning
   const [isDraggingBottomBar, setIsDraggingBottomBar] = React.useState(false);
@@ -173,16 +176,17 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
     if (isMainFullscreen) {
       return '1fr';
     }
-    // Always show bottom bar space for consistent initial load
+    const hasTopBar = isTopBarEnabled && !isMainFullscreen;
+
     if (!bottomBar.isVisible) {
-      return '56px 1fr'; // Just TopBar and MainArea
+      return hasTopBar ? '56px 1fr' : '1fr';
     }
 
     if (bottomBar.mode === 'push') {
-      return `56px 1fr ${bottomBar.height}px`; // TopBar, MainArea, BottomBar
+      return hasTopBar ? `56px 1fr ${bottomBar.height}px` : `1fr ${bottomBar.height}px`;
     }
 
-    return '56px 1fr'; // Overlay mode: TopBar and MainArea (bottom bar floats)
+    return hasTopBar ? '56px 1fr' : '1fr';
   };
 
    return (
@@ -192,7 +196,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          data-bottom-mode={bottomBar.mode}
       >
          {/* TopBar - spans full width */}
-         {!isMainFullscreen && <TopBar />}
+         {!isMainFullscreen && isTopBarEnabled && <TopBar />}
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden">
