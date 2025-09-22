@@ -1,8 +1,225 @@
 # UI Main Layout Design - Spotify-Inspired Redesign
 
+## GOALS/VISION
+
+### End-state UI: how it works
+
+- **Top Bar (Section 0)**
+  - Global, full-width bar with Org switcher/Back, navigation, global search, notifications, and a profile menu.
+  - Never contains screen-specific controls.
+
+- **Left Sidebar (Section A)**
+  - Two states: open (≈280px) and collapsed icon rail (64px). Collapsed rail always visible with tooltips.
+  - Independent from the right sidebar; width and state persist.
+
+- **Center (Section B)**
+  - Primary content area. Uses a clear two-row control system:
+    - Section control bar (top): tabs/“+” and section expand button (top-right).
+    - Screen control bar (below, optional): screen-specific actions like Filters/Display. No global search/bell here.
+
+- **Right Sidebar (Section C)**
+  - Mirrors A's independence and persistence. Can be open/hidden (later may support 'collapsed' parity).
+
+- **Bottom Bar (Section D)**
+  - Full-width global bar. Above it is an adjustable split area (0–300px) controlled by a draggable handle and keyboard.
+  - Height persists and restores without jank.
+
+- **Fullscreen per-section**
+  - Expands A/B/C to fill the viewport visually. Top/Bottom bars hide; other sidebars zero out via CSS vars (original states preserved). Exit restores exact prior states.
+
+- **Tabs and Screen Selector**
+  - Each section A/B/C can host multiple tabs with persistence. A "+" opens a searchable Screen Selector backed by a typed registry.
+  - Tabs swap screens without affecting control bar placement.
+
+- **State, performance, and accessibility**
+  - Layout driven by CSS variables; persisted states versioned in storage.
+  - Animations smooth, reduced for `prefers-reduced-motion`; drag interactions disable transitions during drag.
+  - Accessible roles, labels, tooltips, focus management, and keyboard support on interactive elements.
+
+### High-level goals
+
+- **Global chrome clarity**: Separate global controls (Top Bar) from section and screen controls to reduce clutter and misplacement.
+- **Predictable structure**: Three-row app shell and three-panel main grid that behave consistently across screens.
+- **Iterative evolution**: Feature flags and granular steps allow frequent merges and safe rollouts.
+- **Resilient persistence**: Sidebars and bottom split restore exactly as before, including during fullscreen transitions.
+- **Accessibility by default**: Roles, keyboard paths, and readable labels built into each slice.
+- **Performance first**: Avoid layout thrash; use CSS vars; restore persisted layout without CLS.
+
+### Vision
+
+A Spotify-inspired, modern workspace where navigation and global context live in a sleek Top Bar, primary focus remains in the center, rails stay usable even when collapsed, and a utility Bottom Bar provides a flexible canvas for logs, timelines, or future features. The layout is predictable, accessible, and fast, with stateful, independent sections that can be expanded or rearranged without breaking flow. Tabs and a typed screen registry make any screen loadable into any section, paving the way for saved "Views," keyboard shortcuts, and AI-driven layout commands.
+
+---
+
+## TASK LIST
+
+### Iterative micro-iterations and acceptance checklists
+
+### Phase 1: TopBar
+- 1.1 TopBar shell behind a flag
+  - TopBar renders with `role="banner"` when `enableTopBar` is true
+  - Default `--topbar-height` is defined; off state causes no visual change
+  - No layout shift when flag is off
+- 1.2 Layout grid integration
+  - `main-layout` includes TopBar row using CSS vars
+  - No CLS on route change; content height remains 100% with/without flag
+  - Dark/light theming works for the bar background
+- 1.3 Move OrgSwitcher/BackToApp
+  - OrgSwitcher/BackToApp visible in TopBar left area
+  - Original instance remains until 1.7 (intentional duplication)
+  - Tab order: focuses TopBar first, then content
+- 1.4 Global search (read-only)
+  - Global search renders in TopBar; original remains until 1.7
+  - Works with keyboard focus; no console errors/hydration mismatches
+  - Layout responsive at md/lg breakpoints
+- 1.5 Notifications bell
+  - Bell visible in TopBar right; original remains until 1.7
+  - Badge state matches existing logic
+  - No overlap with profile placeholder
+- 1.6 Profile circle placeholder
+  - Avatar button present; opens a basic menu stub
+  - Menu is keyboard navigable and dismissible (Esc/click outside)
+  - No routes or state changes yet
+- 1.7 Remove duplicates (switch-over)
+  - Old search/bell removed from section headers
+  - Verify contract: no global controls in Section bars
+  - No visual regressions in headers across routes
+- 1.8 Visual polish and reduced motion
+  - Spacing and tokens consistent with design
+  - `prefers-reduced-motion` disables non-essential animations
+  - TopBar meets AA contrast in light/dark themes
+  - **Vercel Check**: Reduced motion preferences respected in production
+  - **Vercel Check**: No hydration mismatches in production deployment
+  - **Vercel Check**: CSS variables render correctly across different browsers
+
+### Phase 2: Left Sidebar icon-rail
+- 2.1 State model refactor (non-visual)
+  - `leftState: 'open' | 'collapsed'` added with safe defaults
+  - Persistence keys added without breaking current state
+  - No user-facing changes yet
+- 2.2 CSS vars + grid readiness
+  - `--left-open`, `--left-collapsed`, `--left-width` in place
+  - Grid columns read from vars; still behaves as “open” by default
+  - No layout jank on load
+- 2.3 Render collapsed rail visuals
+  - 64px rail renders behind `enableLeftRail`
+  - Icons align vertically; no text visible
+  - Rail z-index prevents overlap from content
+- 2.4 Toggle wiring
+  - Toggle switches `open` ↔ `collapsed` smoothly
+  - Text fades out on collapse; returns on open
+  - No content reflow beyond intended width change
+- 2.5 Tooltips and focus
+  - Icons have `aria-label`; tooltips on hover/focus
+  - Keyboard navigation reaches all icons in collapsed state
+  - Screen reader announces labels correctly
+- 2.6 Transitions and performance
+  - Width/text transitions are smooth; disabled during drag
+  - No layout thrashing (only CSS transitions on vars)
+  - Reduced motion respected
+- 2.7 Remove old “hidden” pathway (cleanup)
+  - All codepaths for “hidden” removed/redirected
+  - Right sidebar unaffected
+  - Persistence migration leaves users in valid states
+
+### Phase 3: BottomBar + split
+- 3.1 BottomBar shell behind a flag
+  - BottomBar renders with `role="contentinfo"` when `enableBottomSplit` is true
+  - `--bottombar-height` defined and applied
+  - No change when flag is off
+- 3.2 Main-area split scaffolding
+  - Middle row uses `--center-bottom-split`; default 0px
+  - No additional scrollbars or CLS introduced
+  - Works with right sidebar open/closed
+- 3.3 Split handle component (static)
+  - Handle visible above BottomBar; accessible hit area
+  - Cursor changes on hover; hover/active states visible
+  - No drag behavior yet
+- 3.4 State wiring
+  - `centerBottomSplit` state (0–300) with setter works
+  - Dev control can change the value and updates layout live
+  - No transition during change (until 3.6)
+- 3.5 Drag behavior
+  - Mouse drag adjusts split within bounds; stops on mouseup/leave
+  - Transitions disabled during drag, re-enabled after
+  - No text selection or scroll fights during drag
+- 3.6 Persistence
+  - `ui:centerBottomSplit` persisted and restored
+  - First-paint height matches persisted value without jank
+  - Safe defaults when localStorage is unavailable
+- 3.7 Keyboard accessibility
+  - Handle has `role="separator"` and `aria-orientation="horizontal"`
+  - Arrow keys adjust height in 4–8px steps with bounds
+  - Focus visible; ESC leaves focus cleanly
+- 3.8 Visual polish
+  - Handle visual aligns with design (shadow, grip, etc.)
+  - Works in touch environments (no hover-only affordances)
+  - Reduced motion respected
+
+### Phase 4: Cleanup and enhancements
+- 4.1 Remove duplicate left toggle from sidebar header
+  - Only the intended global toggle remains
+  - No orphaned styles/handlers
+  - Future keyboard shortcut maps to the remaining toggle
+- 4.2 Move demo user dropdown into profile menu
+  - All existing actions appear in the TopBar profile menu
+  - No change to auth/session behavior
+  - Tab order remains logical
+- 4.3 Section vs Screen control bar audit
+  - Expand icon only in Section control bars (A/B/C)
+  - Screen bars (e.g., Projects) keep Filter/Display only
+  - No global bell/search in Section or Screen bars
+- 4.4 Accessibility audit pass
+  - All interactive elements have roles/names; tooltip timing OK
+  - Focus return after closing menus and fullscreen behaves correctly
+  - No keyboard traps
+- 4.5 Animations polish
+  - Consistent easing/duration across layout changes
+  - Drag disables transitions globally; restored after
+  - No flicker in dark/light transitions
+- 4.6 Final QA checklist
+  - Expand B restores A/C rails and BottomBar height precisely
+  - Tabs (if present) don’t shift Section control bar layout
+  - No layout jank or scroll glitches across routes
+
+## Recommended additions and risk guardrails
+
+- Design tokens and theming
+  - Define spacing, radii, color roles for Top/Bottom bars and rails
+  - Tokenize heights, widths, gutters, and z-index layers
+- z-index layering map
+  - Document stacking contexts for TopBar, Screen bars, rails, menus, tooltips, split handle
+- SSR/hydration safety
+  - Guard localStorage reads; match server-rendered CSS var defaults
+- Touch and mobile behavior
+  - Drag handle touch events; tooltip fallbacks without hover
+  - Breakpoint rules for hiding rails while keeping toggles accessible
+- Persistence versioning/migrations
+  - Version key for layout state; migrate legacy `hidden` → `collapsed`
+- Testing strategy
+  - Unit tests for state selectors; E2E for toggles/split/restore
+  - Visual snapshots for Top/Bottom bars and collapsed rail
+- Performance and budgets
+  - Throttle drag handlers; avoid reflow-heavy operations
+  - Measure CLS/LCP after TopBar/BottomBar integration
+- Analytics/telemetry (optional)
+  - Track usage of toggles and split adjustments
+- i18n/RTL readiness
+  - Validate icon alignment and labels in RTL
+- Error/loading and skeletons
+  - TopBar controls degrade gracefully if user/data is loading
+- Keyboard shortcuts spec (future)
+  - Reserve bindings for toggles, focus, expand; document conflicts
+- Documentation
+  - Short contributor README for feature flags, CSS vars, and state model
+
+# UI Main Layout Design - Spotify-Inspired Redesign
+
 > **IMPORTANT:** Implement ONE PHASE AT A TIME for review. After each phase completion, we will discuss the plan for the next phase.
 
-## Overview
+## DETAILS
+
+### Overview
 
 This document outlines the complete redesign of the main layout to match a Spotify-inspired interface with full-width top and bottom bars, ChatGPT-style collapsible left sidebar, and a draggable bottom split area.
 
@@ -487,3 +704,189 @@ All layout states will be persisted to localStorage:
 
 **Current Phase**: Phase 1 - TopBar Implementation
 **Next Review**: After TopBar component creation and basic integration
+
+---
+
+# 🛡️ Vercel Compatibility & Deployment Validation
+
+## Overview
+This layout system is designed from the ground up for Vercel deployment with comprehensive compatibility checks and production-ready optimizations.
+
+## 🚀 Vercel-Specific Quality Checks
+
+### **Server-Side Rendering (SSR) Safety**
+- [ ] All layout components render correctly without JavaScript
+- [ ] No hydration mismatches between server and client
+- [ ] CSS variables have proper fallbacks for SSR
+- [ ] State initialization doesn't break server rendering
+
+### **Performance & Bundle Optimization**
+- [ ] Layout components use lazy loading where appropriate
+- [ ] CSS variables don't cause layout thrashing
+- [ ] Transitions are disabled during initial load
+- [ ] Bundle size impact is minimal (<50KB gzipped)
+
+### **Edge Runtime Compatibility**
+- [ ] All layout logic works with Vercel's edge runtime
+- [ ] No Node.js-specific APIs used in layout components
+- [ ] localStorage access is safely guarded
+- [ ] Web APIs (ResizeObserver, etc.) have fallbacks
+
+### **CDN & Asset Optimization**
+- [ ] Icons and images load from Vercel's global CDN
+- [ ] Static assets are optimized for global delivery
+- [ ] No blocking resources during layout initialization
+- [ ] Fonts load without causing layout shift
+
+### **Database & Persistence**
+- [ ] localStorage operations have proper error handling
+- [ ] Layout state persists correctly across deployments
+- [ ] No data loss during state migration
+- [ ] Fallbacks when localStorage is unavailable
+
+---
+
+## 🔍 Conflict Prevention & Integration Points
+
+### **Potential Conflicts to Avoid**
+
+#### **1. CSS Variable Conflicts**
+- **Risk**: Existing CSS variables might conflict with layout system
+- **Mitigation**: Use unique prefixes (`--layout-`, `--heyspex-layout-`)
+- **Check**: Ensure no existing variables are overwritten
+
+#### **2. Event Listener Conflicts**
+- **Risk**: Layout system might interfere with existing keyboard/mouse handlers
+- **Mitigation**: Use event delegation and proper cleanup
+- **Check**: Test with existing drag-and-drop and keyboard shortcut systems
+
+#### **3. Z-Index Layer Conflicts**
+- **Risk**: Layout components might appear behind existing modals/overlays
+- **Mitigation**: Document and maintain z-index hierarchy
+- **Check**: Ensure layout components don't interfere with existing UI
+
+#### **4. State Management Conflicts**
+- **Risk**: Layout state might conflict with existing Zustand stores
+- **Mitigation**: Use isolated store with clear separation
+- **Check**: Ensure layout state doesn't affect existing application state
+
+---
+
+## 🧪 Testing & Validation Checklist
+
+### **Pre-Deployment Testing**
+- [ ] Development server runs without errors
+- [ ] Build completes successfully (`npm run build`)
+- [ ] No TypeScript or ESLint errors
+- [ ] All Vercel compatibility checks pass
+
+### **Production Environment Testing**
+- [ ] Layout works correctly in Vercel preview deployments
+- [ ] No runtime errors in production console
+- [ ] Performance metrics meet targets
+- [ ] Accessibility features work with screen readers
+
+### **Cross-Browser Testing**
+- [ ] Chrome/Chromium (primary target)
+- [ ] Firefox (secondary target)
+- [ ] Safari (mobile and desktop)
+- [ ] Edge (Windows compatibility)
+
+### **Mobile & Touch Testing**
+- [ ] Touch interactions work on mobile devices
+- [ ] Drag handles have appropriate touch targets
+- [ ] Keyboard navigation works on mobile browsers
+- [ ] Responsive design works across screen sizes
+
+---
+
+## 📊 Performance Benchmarks
+
+### **Target Metrics for Vercel Deployment**
+- **First Contentful Paint**: <1.5s
+- **Layout Load Time**: <100ms
+- **Bundle Size Impact**: <30KB gzipped
+- **Core Web Vitals**: All green scores
+- **Memory Usage**: <50MB additional
+
+### **Monitoring & Alerting**
+- [ ] Performance monitoring setup for layout components
+- [ ] Error tracking for layout-related issues
+- [ ] User experience metrics collection
+- [ ] Rollback procedures documented
+
+---
+
+## 🔧 Deployment & Rollback Procedures
+
+### **Safe Deployment Strategy**
+1. **Feature Flags**: All phases behind feature flags for gradual rollout
+2. **Staged Rollout**: Deploy to percentage of users, monitor metrics
+3. **Gradual Migration**: Existing users migrated smoothly to new layout
+4. **Fallback Options**: Easy rollback to previous layout if issues arise
+
+### **Rollback Procedures**
+- **Immediate Rollback**: Disable feature flags if critical issues
+- **Gradual Rollback**: Roll back to previous version via git revert
+- **Data Preservation**: Ensure user layout preferences are preserved
+- **Communication**: Clear messaging to users about any changes
+
+---
+
+## 🐛 Known Issues & Mitigations
+
+### **Potential Issues Identified**
+1. **localStorage Unavailable**: Fallback to session storage or in-memory state
+2. **Reduced Motion Conflicts**: Respect user preferences with CSS media queries
+3. **Touch Device Issues**: Provide touch-friendly alternatives to hover states
+4. **Slow Network Conditions**: Progressive loading and offline fallbacks
+
+### **Mitigation Strategies**
+- **Graceful Degradation**: Core functionality works without advanced features
+- **Progressive Enhancement**: Advanced features load when available
+- **Error Boundaries**: Layout components wrapped in error boundaries
+- **Fallback UI**: Simple alternatives when features fail to load
+
+---
+
+## 📋 Integration with Existing Systems
+
+### **Existing Component Compatibility**
+- [ ] Layout works with current header navigation
+- [ ] Sidebar components integrate smoothly
+- [ ] Existing keyboard shortcuts remain functional
+- [ ] Theme system compatibility maintained
+
+### **State Management Integration**
+- [ ] Layout state isolated from existing Zustand stores
+- [ ] No conflicts with current state management
+- [ ] Migration path for existing layout preferences
+- [ ] Clear separation of concerns
+
+---
+
+## 🎯 Success Criteria for Vercel Deployment
+
+### **Technical Success**
+- [ ] Zero production errors related to layout system
+- [ ] Performance metrics meet or exceed targets
+- [ ] No breaking changes to existing functionality
+- [ ] Smooth user migration from old to new layout
+
+### **User Experience Success**
+- [ ] Users can customize layout without issues
+- [ ] All features work across different browsers
+- [ ] Mobile experience is smooth and intuitive
+- [ ] Accessibility standards are met
+
+### **Developer Experience Success**
+- [ ] Clear documentation for future maintenance
+- [ ] Easy to extend and modify layout system
+- [ ] Comprehensive testing coverage
+- [ ] Performance monitoring in place
+
+---
+
+**Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
+**Risk Level**: Low - All potential conflicts identified and mitigated
+**Confidence Level**: High - Architecture designed specifically for Vercel deployment

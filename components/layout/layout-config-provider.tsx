@@ -1,11 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
-import { useLayoutConfigStore, LayoutSection } from '@/store/layout-config-store';
+import { useLayoutConfigStore, LayoutSection, LayoutView, ScreenTab, LayoutConfigState } from '@/store/layout-config-store';
 import { useResizableSidebar } from './sidebar/resizable-sidebar-provider';
 import { useLayoutCompatibility, useVercelPerformance } from '@/hooks/use-vercel-compatibility';
 
-import { LayoutView, LayoutSection, ScreenTab, LayoutConfigState } from '@/store/layout-config-store';
 
 // Extended layout context that combines existing sidebar state with new layout config
 interface LayoutConfigContextType {
@@ -92,7 +91,26 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
     isHydrated: sidebarHydrated,
   } = useResizableSidebar();
 
-  const compatibility = useLayoutCompatibility();
+  const layoutCompatibility = useLayoutCompatibility();
+  const compatibility = useMemo<LayoutConfigContextType['compatibility']>(() => ({
+    canUseResizablePanels: layoutCompatibility.canUseResizablePanels,
+    canPersistLayout: layoutCompatibility.canPersistLayout,
+    canUseDragAndDrop: layoutCompatibility.canUseDragAndDrop,
+    canUseKeyboardShortcuts: layoutCompatibility.canUseKeyboardShortcuts,
+    canUseAnimations: layoutCompatibility.canUseAnimations,
+    shouldUseReducedMotion: layoutCompatibility.shouldUseReducedMotion,
+    compatibilityLevel: layoutCompatibility.compatibilityLevel,
+    isReady: layoutCompatibility.isReady,
+  }), [
+    layoutCompatibility.canUseResizablePanels,
+    layoutCompatibility.canPersistLayout,
+    layoutCompatibility.canUseDragAndDrop,
+    layoutCompatibility.canUseKeyboardShortcuts,
+    layoutCompatibility.canUseAnimations,
+    layoutCompatibility.shouldUseReducedMotion,
+    layoutCompatibility.compatibilityLevel,
+    layoutCompatibility.isReady,
+  ]);
   const performance = useVercelPerformance();
 
   // Memoized current view
@@ -221,13 +239,15 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
   }, [currentView]);
 
   const setActiveTab = useCallback((section: LayoutSection, tabId: string) => {
-    if (!isHydrated || !currentViewId) return;
+    if (!isHydrated || !currentViewId || !currentView) return;
+
+    const view = currentView;
 
     updateView(currentViewId, {
       sections: {
-        ...currentView.sections,
+        ...view.sections,
         [section]: {
-          ...currentView.sections[section],
+          ...view.sections[section],
           activeTabId: tabId,
         },
       },
@@ -320,3 +340,7 @@ export function useLayoutReady() {
   const { isReady } = useLayoutConfig();
   return isReady;
 }
+
+
+
+

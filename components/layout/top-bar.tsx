@@ -55,7 +55,7 @@ export function TopBar() {
          role="banner"
       >
          {/* Left Section - Sidebar Toggle + Org/Back */}
-         <div className="flex items-center gap-3">
+         <div className="flex items-center gap-2 sm:gap-3">
             <LeftSidebarTrigger className="" />
 
             {/* Org Switcher or Back to App */}
@@ -66,11 +66,11 @@ export function TopBar() {
 
          {/* Center Section - Search */}
          <div className="flex-1 flex justify-center max-w-2xl">
-            <div className="flex items-center gap-2 w-full max-w-md">
+            <div className="flex items-center gap-2 w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
                {isSearchOpen ? (
                   <div
                      ref={searchContainerRef}
-                     className="relative flex items-center justify-center w-full transition-all duration-200 ease-in-out"
+                     className="relative flex items-center justify-center w-full transition-all duration-200 ease-in-out motion-reduce:transition-none"
                   >
                      <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                      <Input
@@ -121,7 +121,7 @@ export function TopBar() {
          </div>
 
          {/* Right Section - Notifications + Profile */}
-         <div className="flex items-center gap-2">
+         <div className="flex items-center gap-1 sm:gap-2">
             {!isSearchOpen && (
                <>
                   <Notifications />

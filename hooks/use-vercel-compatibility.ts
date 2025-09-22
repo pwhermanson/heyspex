@@ -35,7 +35,7 @@ export function useVercelCompatibility() {
 
         // Log compatibility info for debugging
         if (process.env.NODE_ENV === 'development') {
-          console.log('🟢 Vercel Compatibility Check:', {
+          console.log('Vercel Compatibility Check:', {
             isVercel,
             hasLocalStorage,
             hasSessionStorage,
@@ -45,7 +45,7 @@ export function useVercelCompatibility() {
           });
         }
       } catch (error) {
-        console.warn('⚠️ Vercel compatibility check failed:', error);
+        console.warn('Vercel compatibility check failed:', error);
         setIsVercelReady(false);
       }
     };
@@ -64,6 +64,11 @@ export function useVercelCompatibility() {
 export function useLayoutCompatibility() {
   const { isCompatible, isVercelReady, isClient } = useVercelCompatibility();
 
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const layoutFeatures = {
     // Core layout features
     canUseResizablePanels: isCompatible,
@@ -75,14 +80,17 @@ export function useLayoutCompatibility() {
     canUseAnimations: isCompatible,
 
     // Vercel-specific optimizations
-    shouldUseReducedMotion: !isVercelReady || window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    shouldUseReducedMotion: !isVercelReady || prefersReducedMotion,
     shouldLazyLoadFeatures: !isClient, // Enable lazy loading during SSR
   };
+
+  const compatibilityLevel: 'full' | 'basic' | 'none' =
+    isVercelReady ? 'full' : isCompatible ? 'basic' : 'none';
 
   return {
     ...layoutFeatures,
     isReady: isCompatible,
-    compatibilityLevel: isVercelReady ? 'full' : isCompatible ? 'basic' : 'none',
+    compatibilityLevel,
   };
 }
 
@@ -102,16 +110,16 @@ export function withLayoutFeature<T extends Record<string, any>>(
 
     // Log feature usage for debugging
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔧 Layout Feature "${featureName}" loaded with compatibility: ${compatibilityLevel}`);
+      console.log(`Layout Feature "${featureName}" loaded with compatibility: ${compatibilityLevel}`);
     }
 
-    return <Component {...props} />;
+    return React.createElement(Component, props);
   };
 }
 
 // Performance monitoring for Vercel
 export function useVercelPerformance() {
-  const [performance, setPerformance] = useState({
+  const [metrics, setMetrics] = useState({
     layoutLoadTime: 0,
     hydrationComplete: false,
     firstContentfulPaint: 0,
@@ -121,13 +129,13 @@ export function useVercelPerformance() {
     if (typeof window === 'undefined' || !window.performance) return;
 
     // Measure layout load time
-    const layoutStart = performance.now();
+    const layoutStart = window.performance.now();
 
     const observer = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach((entry) => {
         if (entry.name === 'first-contentful-paint') {
-          setPerformance(prev => ({
+          setMetrics(prev => ({
             ...prev,
             firstContentfulPaint: entry.startTime,
           }));
@@ -139,9 +147,9 @@ export function useVercelPerformance() {
 
     // Mark hydration complete
     const timer = setTimeout(() => {
-      setPerformance(prev => ({
+      setMetrics(prev => ({
         ...prev,
-        layoutLoadTime: performance.now() - layoutStart,
+        layoutLoadTime: window.performance.now() - layoutStart,
         hydrationComplete: true,
       }));
     }, 100);
@@ -152,5 +160,12 @@ export function useVercelPerformance() {
     };
   }, []);
 
-  return performance;
+  return metrics;
 }
+
+
+
+
+
+
+

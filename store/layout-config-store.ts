@@ -1,6 +1,6 @@
 'use client';
 
-import { create } from 'zustand';
+import { create, type StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDefaultLayoutView, createPredefinedViews, createDefaultShortcuts } from '@/lib/layout-utils';
 
@@ -160,7 +160,7 @@ function initializeDefaultData() {
 
 // Create the store with persistence
 export const useLayoutConfigStore = create<LayoutConfigState>()(
-  persist(
+  persist<LayoutConfigState>(
     (set, get) => {
       // Initialize with default data
       const defaultData = initializeDefaultData();
@@ -317,8 +317,10 @@ export const useLayoutConfigStore = create<LayoutConfigState>()(
             ...newSettings,
           },
         }));
-      }),
-    {
+      },
+    };
+  },
+  {
       name: 'heyspex-layout-config',
       storage: createJSONStorage(() => localStorage),
 
@@ -330,7 +332,7 @@ export const useLayoutConfigStore = create<LayoutConfigState>()(
         sectionWidths: state.sectionWidths,
         settings: state.settings,
         currentViewId: state.currentViewId,
-      }),
+      }) as LayoutConfigState,
 
       // Handle hydration safely for SSR compatibility
       onRehydrateStorage: () => (state) => {
@@ -344,5 +346,16 @@ export const useLayoutConfigStore = create<LayoutConfigState>()(
         }
       },
     }
-  )
+  ) as StateCreator<LayoutConfigState, [], []>
 );
+
+
+
+
+
+
+
+
+
+
+

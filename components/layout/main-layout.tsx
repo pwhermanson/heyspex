@@ -196,7 +196,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             <div
                className={cn(
                   'grid w-full h-full overflow-hidden',
-                  !isDragging && 'transition-[grid-template-columns] duration-300 ease-in-out'
+                  !isDragging && 'transition-[grid-template-columns] duration-300 ease-in-out motion-reduce:transition-none'
                )}
                style={{
                   gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
