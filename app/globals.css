@@ -163,6 +163,7 @@ input[type='search'] {
    background-color: rgba(59, 130, 246, 0.2);
 }
 
+
 /* Prevent text selection during drag */
 .sidebar-dragging {
    user-select: none;

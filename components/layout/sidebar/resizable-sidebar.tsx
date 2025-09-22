@@ -15,7 +15,6 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
   const {
     leftSidebar,
     rightSidebar,
-    isDragging,
   } = useResizableSidebar();
 
   const sidebarState = side === 'left' ? leftSidebar : rightSidebar;

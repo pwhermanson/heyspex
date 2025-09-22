@@ -323,9 +323,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   }, []);
 
   const setBottomBarHeight = useCallback((height: number) => {
-    // For height changes, use reasonable limits
+    // Helper function to get main container top position (same logic as BottomBar component)
+    const getMainTop = () => {
+      if (typeof window === 'undefined') return 56;
+      const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+      return el ? Math.round(el.getBoundingClientRect().top) : 56;
+    };
+
+    // For height changes, use same limits as BottomBar full screen button
     const maxHeight = bottomBar.mode === 'overlay'
-      ? window.innerHeight // Full viewport height
+      ? Math.max(MIN_BOTTOM_HEIGHT, window.innerHeight - getMainTop())
       : MAX_BOTTOM_HEIGHT;
 
     const clampedHeight = Math.max(MIN_BOTTOM_HEIGHT, Math.min(maxHeight, height));

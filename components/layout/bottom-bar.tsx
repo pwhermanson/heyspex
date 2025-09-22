@@ -1,11 +1,12 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import { BottomBarModeToggle, type BottomBarMode } from './bottom-bar-mode-toggle';
 import { Button } from '@/components/ui/button';
-import { X, Minus, GripHorizontal, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Minus, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
+import { BottomDragHandle } from '@/components/layout/bottom-drag-handle';
 
 interface BottomBarProps {
   mode: BottomBarMode;
@@ -18,9 +19,7 @@ interface BottomBarProps {
   children?: React.ReactNode;
   // Drag functionality props
   onDragStart?: (e: React.MouseEvent) => void;
-  onDragEnd?: () => void;
   isDragging?: boolean;
-  dragHandleRef?: React.RefObject<HTMLDivElement>;
 }
 
 export function BottomBar({
@@ -33,37 +32,57 @@ export function BottomBar({
   className,
   children,
   onDragStart,
-  onDragEnd,
-  isDragging = false,
-  dragHandleRef
+  isDragging = false
 }: BottomBarProps) {
   const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
   const { bottomBar: layoutBottomBar, setBottomBarHeight, setBottomBarMode } = useResizableSidebar();
 
   const isClient = typeof window !== 'undefined';
+  const [windowHeight, setWindowHeight] = React.useState(
+    isClient ? window.innerHeight : 1000
+  );
+  
   const getMainTop = () => {
     if (!isClient) return 56;
     const el = document.querySelector('[data-main-container]') as HTMLElement | null;
     return el ? Math.round(el.getBoundingClientRect().top) : 56;
   };
+  
   const maxHeight = layoutBottomBar.mode === 'overlay'
-    ? (isClient ? Math.max(40, window.innerHeight - getMainTop()) : height)
+    ? (isClient ? Math.max(40, windowHeight - getMainTop()) : height)
     : 300;
   const isFull = height >= (maxHeight - 1);
 
   const handleToggleFull = () => {
     const target = isFull ? 40 : maxHeight;
+    // For push mode, stay in push mode when toggling full screen
+    // For overlay mode, switch to push mode when expanding to full screen for consistency
     if (!isFull && layoutBottomBar.mode === 'push') {
-      setBottomBarMode('overlay');
+      // Stay in push mode - no mode change needed
+    } else if (!isFull && layoutBottomBar.mode === 'overlay') {
+      setBottomBarMode('push');
     }
     setBottomBarHeight(target);
   };
 
+  // Handle window resize to keep maxHeight responsive
+  React.useEffect(() => {
+    if (!isClient) return;
+    
+    const handleWindowResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [isClient]);
+
   return (
     <div
       className={cn(
-        'bg-background border-t flex flex-col w-full',
-        isOverlay && 'shadow-lg border-x rounded-t-lg',
+        'relative overflow-hidden bg-background border-t flex flex-col w-full',
+        isOverlay ? 'shadow-lg border-x rounded-t-lg' : 'border-x', // Different styling for overlay vs push mode
+        'pointer-events-auto', // Ensure mouse events work
         className
       )}
       style={{ height: `${height}px` }}
@@ -72,34 +91,6 @@ export function BottomBar({
       {/* Bottom Bar Header with Controls */}
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30 min-h-[40px]">
         <div className="flex items-center gap-3">
-          {/* Drag Handle - only show in overlay mode */}
-          {isOverlay && (
-            <div
-              ref={dragHandleRef}
-              className={cn(
-                "p-1 rounded hover:bg-muted/50 transition-colors select-none",
-                isDragging ? "cursor-grabbing bg-muted/70" : "cursor-grab"
-              )}
-              onMouseDown={(e) => {
-                console.log('Drag handle clicked', { isOverlay, onDragStart: !!onDragStart, mode });
-                onDragStart?.(e);
-              }}
-              onMouseUp={() => onDragEnd?.()}
-              title="Drag to resize panel"
-            >
-              <GripHorizontal
-                className="h-3 w-3 text-muted-foreground"
-                onMouseDown={(e) => {
-                  // Ensure the icon itself also initiates dragging
-                  e.preventDefault();
-                  onDragStart?.(e);
-                }}
-                onMouseUp={() => onDragEnd?.()}
-                draggable={false}
-              />
-            </div>
-          )}
-          
           <span className="text-sm font-medium text-foreground">
             Output Panel {isOverlay && '(OVERLAY MODE)'}
           </span>
@@ -108,15 +99,16 @@ export function BottomBar({
               Pos: {layoutBottomBar?.overlayPosition || 0}px
             </span>
           )}
+        </div>
 
+        <div className="flex items-center gap-2">
+          {/* Mode Toggle - moved to the right side */}
           <BottomBarModeToggle
             mode={mode}
             onChange={onModeChange}
-            className="scale-75"
+            className="h-6"
           />
-        </div>
 
-        <div className="flex items-center gap-1">
           {/* Fullscreen / Collapse Toggle */}
           <Button
             variant="ghost"
@@ -161,22 +153,34 @@ export function BottomBar({
         </div>
       </div>
 
+      {/* Bottom Drag Handle - available in both overlay and push modes */}
+      <BottomDragHandle
+        onMouseDown={onDragStart}
+        isDragging={isDragging}
+      />
+
       {/* Bottom Bar Content - only show if not collapsed */}
       {!isCollapsed && (
-        <div className="flex-1 overflow-auto p-4">
-          {children || (
-            <div className="text-sm text-muted-foreground">
-              <p>Output panel content area</p>
-              <p className="mt-2">
-                Mode: <strong className="capitalize">{mode}</strong> | Height: <strong>{height}px</strong>
-              </p>
-              <p className="mt-1 text-xs">
-                This area can be used for logs, terminal output, debugging info, or other developer tools.
-              </p>
-            </div>
-          )}
+        <div className="flex-1 overflow-auto">
+
+          <div className="p-4">
+            {children || (
+              <div className="text-sm text-muted-foreground">
+                <p>Output panel content area</p>
+                <p className="mt-2">
+                  Mode: <strong className="capitalize">{mode}</strong> | Height: <strong>{height}px</strong>
+                </p>
+                <p className="mt-1 text-xs">
+                  This area can be used for logs, terminal output, debugging info, or other developer tools.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 }
+
+
+

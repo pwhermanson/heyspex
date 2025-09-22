@@ -2,6 +2,7 @@
 
 import { RiGithubLine } from '@remixicon/react';
 import * as React from 'react';
+import Image from 'next/image';
 
 import { HelpButton } from '@/components/layout/sidebar/help-button';
 import { NavInbox } from '@/components/layout/sidebar/nav-inbox';
@@ -56,7 +57,7 @@ export function AppSidebar() {
                         Welcome to HeySpex!
                      </div>
                      <div>
-                        It's free forever! Or upgrade to Pro for unlimited projects, advanced analytics, and priority support.
+                        It&apos;s free forever! Or upgrade to Pro for unlimited projects, advanced analytics, and priority support.
                      </div>
                      <Link
                         target="_blank"
@@ -78,7 +79,13 @@ export function AppSidebar() {
                   </div>
                )}
                <a className="my-1.5" href="https://vercel.com/oss">
-                  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+                  <Image
+                    alt="Vercel OSS Program"
+                    src="https://vercel.com/oss/program-badge.svg"
+                    width={100}
+                    height={20}
+                    priority={false}
+                  />
                </a>
                <div className="w-full flex items-center justify-between">
                   <HelpButton />

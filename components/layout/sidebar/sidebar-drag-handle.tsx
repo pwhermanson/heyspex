@@ -19,7 +19,6 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
     setIsDragging,
     dragSide,
     setDragSide,
-    updateGridLayout
   } = useResizableSidebar();
 
   // Cleanup on unmount
@@ -45,7 +44,6 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
 
     const startX = e.clientX;
     const startWidth = currentSidebar.width;
-    const otherSidebar = side === 'left' ? rightSidebar : leftSidebar;
 
     // Use throttled updates for better performance
     let lastUpdateTime = 0;
@@ -94,15 +92,24 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
         10
       );
 
-      // Update the actual state with final width
-      if (side === 'left' && !isNaN(finalLeftWidth) && leftSidebar.isOpen) {
-        setLeftSidebarWidth(finalLeftWidth);
-      } else if (side === 'right' && !isNaN(finalRightWidth) && rightSidebar.isOpen) {
-        setRightSidebarWidth(finalRightWidth);
-      }
+      const nextLeftWidth = !isNaN(finalLeftWidth) ? finalLeftWidth : leftSidebar.width;
+      const nextRightWidth = !isNaN(finalRightWidth) ? finalRightWidth : rightSidebar.width;
 
-      // Ensure grid layout is synced
-      updateGridLayout();
+      const effectiveLeftWidth = leftSidebar.isOpen ? nextLeftWidth : 0;
+      const effectiveRightWidth = rightSidebar.isOpen ? nextRightWidth : 0;
+
+      document.documentElement.style.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
+      document.documentElement.style.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);
+      document.documentElement.style.setProperty(
+        '--grid-template-columns',
+        `${effectiveLeftWidth}px 1fr ${effectiveRightWidth}px`
+      );
+
+      if (side === 'left' && leftSidebar.isOpen) {
+        setLeftSidebarWidth(nextLeftWidth);
+      } else if (side === 'right' && rightSidebar.isOpen) {
+        setRightSidebarWidth(nextRightWidth);
+      }
 
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
@@ -118,7 +125,6 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
     setRightSidebarWidth,
     setIsDragging,
     setDragSide,
-    updateGridLayout
   ]);
 
   const isActive = isDragging && dragSide === side;

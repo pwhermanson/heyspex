@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { LeftSidebarTrigger } from '@/components/layout/sidebar/left-sidebar-trigger';
 import { RightSidebarTrigger } from '@/components/layout/sidebar/right-sidebar-trigger';
 import { useSearchStore } from '@/store/search-store';
-import { SearchIcon, User } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import Notifications from '@/components/layout/headers/issues/notifications';
 import { OrgSwitcher } from '@/components/layout/sidebar/org-switcher';

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { AppSidebar } from '@/components/layout/sidebar/app-sidebar';
@@ -8,12 +8,10 @@ import {
 } from '@/components/layout/sidebar/right-sidebar-provider';
 import { ResizableSidebarProvider, useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 
-const DEFAULT_BOTTOM_HEIGHT = 40; // Collapsed state height
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/components/common/issues/create-issue-modal-provider';
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomBar } from '@/components/layout/bottom-bar';
-import { SplitHandle } from '@/components/layout/split-handle';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -44,67 +42,125 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       bottomBar,
       setBottomBarMode,
       setBottomBarHeight,
-      setBottomBarVisible,
-      setBottomBarOverlayPosition,
       isHydrated
    } = useResizableSidebar();
 
-   // Drag state for bottom bar overlay positioning
-   const [isDraggingBottomBar, setIsDraggingBottomBar] = React.useState(false);
-   const [dragStartY, setDragStartY] = React.useState(0);
-   const [dragStartPosition, setDragStartPosition] = React.useState(0);
-   const dragHandleRef = React.useRef<HTMLDivElement>(null);
+  // Drag state for bottom bar overlay positioning
+  const [isDraggingBottomBar, setIsDraggingBottomBar] = React.useState(false);
+  const dragStartYRef = React.useRef(0);
+  const dragStartHeightRef = React.useRef(0);
+  const isDraggingRef = React.useRef(false);
+
+  // Window height state for responsive calculations
+  const [windowHeight, setWindowHeight] = React.useState(
+    typeof window !== 'undefined' ? window.innerHeight : 1000
+  );
+
+  // Use refs to maintain consistent function references for event listener cleanup
+  const dragMoveRef = React.useRef<((e: MouseEvent) => void) | null>(null);
+  const dragEndRef = React.useRef<(() => void) | null>(null);
 
    const height = {
       1: 'h-[calc(100svh-40px)] lg:h-[calc(100svh-56px)]',
       2: 'h-[calc(100svh-80px)] lg:h-[calc(100svh-96px)]',
    };
 
-   // Drag handlers for bottom bar overlay resizing (expand upward / contract downward)
-   const handleBottomBarDragStart = React.useCallback((e: React.MouseEvent) => {
-      console.log('Drag start triggered', { mode: bottomBar.mode, isOverlay: bottomBar.mode === 'overlay' });
-      if (bottomBar.mode !== 'overlay') return;
+  // Helper function to get main container top position (same logic as BottomBar component)
+  const getMainTop = () => {
+    if (typeof window === 'undefined') return 56;
+    const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+    return el ? Math.round(el.getBoundingClientRect().top) : 56;
+  };
 
-      e.preventDefault();
-      setIsDraggingBottomBar(true);
-      setDragStartY(e.clientY);
-      setDragStartPosition(bottomBar.height); // Start from current height
+  // Drag handlers for bottom bar resizing (works for both push and overlay modes)
+  const handleBottomBarDragMove = React.useCallback((event: MouseEvent) => {
+    if (!isDraggingRef.current) return;
 
-      console.log('Starting drag', { startY: e.clientY, startHeight: bottomBar.height });
+    // Dragging up (smaller clientY) increases height; dragging down (larger clientY) decreases height
+    const deltaY = dragStartYRef.current - event.clientY; // Positive when dragging up
+    const proposedHeight = Math.max(40, dragStartHeightRef.current + deltaY);
 
-      // Add global mouse event listeners
-      document.addEventListener('mousemove', handleBottomBarDragMove);
-      document.addEventListener('mouseup', handleBottomBarDragEnd);
-   }, [bottomBar.mode, bottomBar.height]);
+    // Calculate max height based on mode (same logic as BottomBar full screen button)
+    const maxHeight = bottomBar.mode === 'overlay'
+      ? Math.max(40, windowHeight - getMainTop())
+      : 300;
 
-   const handleBottomBarDragMove = React.useCallback((e: MouseEvent) => {
-      if (!isDraggingBottomBar) return;
+    setBottomBarHeight(Math.min(maxHeight, proposedHeight));
+  }, [bottomBar.mode, windowHeight, setBottomBarHeight]);
 
-      // Dragging up increases height; dragging down decreases height
-      const deltaY = dragStartY - e.clientY;
-      const newHeight = Math.max(40, dragStartPosition + deltaY);
-      const maxHeight = window.innerHeight - 56; // Leave space for TopBar
-      const clampedHeight = Math.min(maxHeight, newHeight);
+  const handleBottomBarDragEnd = React.useCallback(() => {
+    if (!isDraggingRef.current) return;
 
-      console.log('Dragging', { deltaY, newHeight, clampedHeight, windowHeight: window.innerHeight });
-      setBottomBarHeight(clampedHeight);
-   }, [isDraggingBottomBar, dragStartY, dragStartPosition, setBottomBarHeight]);
+    isDraggingRef.current = false;
+    setIsDraggingBottomBar(false);
+    document.body.classList.remove('sidebar-dragging');
 
-   const handleBottomBarDragEnd = React.useCallback(() => {
-      setIsDraggingBottomBar(false);
-      
-      // Remove global mouse event listeners
-      document.removeEventListener('mousemove', handleBottomBarDragMove);
-      document.removeEventListener('mouseup', handleBottomBarDragEnd);
-   }, [handleBottomBarDragMove]);
+    // Remove global mouse event listeners using refs
+    if (dragMoveRef.current) {
+      document.removeEventListener('mousemove', dragMoveRef.current);
+      dragMoveRef.current = null;
+    }
+    if (dragEndRef.current) {
+      document.removeEventListener('mouseup', dragEndRef.current);
+      dragEndRef.current = null;
+    }
+  }, []);
 
-   // Cleanup on unmount
+  const handleBottomBarDragStart = React.useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation(); // Prevent event bubbling
+
+    isDraggingRef.current = true;
+    setIsDraggingBottomBar(true);
+    dragStartYRef.current = event.clientY;
+    dragStartHeightRef.current = bottomBar.height; // Start from current height
+
+    document.body.classList.add('sidebar-dragging');
+
+    // Store function references for cleanup
+    dragMoveRef.current = handleBottomBarDragMove;
+    dragEndRef.current = handleBottomBarDragEnd;
+
+    // Add global mouse event listeners
+    document.addEventListener('mousemove', handleBottomBarDragMove);
+    document.addEventListener('mouseup', handleBottomBarDragEnd);
+  }, [bottomBar.height, handleBottomBarDragMove, handleBottomBarDragEnd]);
+
+   // Handle window resize to keep bottom bar responsive
    React.useEffect(() => {
-      return () => {
-         document.removeEventListener('mousemove', handleBottomBarDragMove);
-         document.removeEventListener('mouseup', handleBottomBarDragEnd);
+      const handleWindowResize = () => {
+         const newWindowHeight = window.innerHeight;
+         setWindowHeight(newWindowHeight);
+
+         // Recalculate max height based on current window size and mode (same logic as full screen button)
+         const maxHeight = bottomBar.mode === 'overlay'
+           ? Math.max(40, newWindowHeight - getMainTop())
+           : 300;
+         const currentHeight = bottomBar.height;
+
+         // If current height exceeds new max height, clamp it
+         if (currentHeight > maxHeight) {
+            setBottomBarHeight(Math.max(40, maxHeight));
+         }
       };
-   }, [handleBottomBarDragMove, handleBottomBarDragEnd]);
+
+      window.addEventListener('resize', handleWindowResize);
+      return () => window.removeEventListener('resize', handleWindowResize);
+   }, [bottomBar.mode, bottomBar.height, setBottomBarHeight]);
+
+  // Cleanup on unmount - only need to clean up if drag is in progress
+  React.useEffect(() => {
+    return () => {
+      if (dragMoveRef.current) {
+        document.removeEventListener('mousemove', dragMoveRef.current);
+      }
+      if (dragEndRef.current) {
+        document.removeEventListener('mouseup', dragEndRef.current);
+      }
+      document.body.classList.remove('sidebar-dragging');
+      isDraggingRef.current = false;
+    };
+  }, []);
 
   // Calculate grid rows based on bottom bar mode and visibility
   // Always render with bottom bar space to ensure consistent initial load experience
@@ -123,7 +179,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
    return (
       <div
-         className="h-svh w-full grid overflow-hidden"
+         className="h-svh w-full grid"
          style={{ gridTemplateRows: getGridRows() }}
          data-bottom-mode={bottomBar.mode}
       >
@@ -186,34 +242,13 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
          {/* Overlay Bottom Bar - positioned outside main area for true overlay */}
          {isHydrated && bottomBar.isVisible && bottomBar.mode === 'overlay' && (
-            console.log('Rendering overlay bottom bar', {
-               isHydrated,
-               isVisible: bottomBar.isVisible,
-               mode: bottomBar.mode,
-               overlayPosition: bottomBar.overlayPosition,
-               height: bottomBar.height
-            }) || true
-         ) && (
             <div
-               className="fixed left-0 right-0 z-50"
+               className="fixed left-2 right-2 z-[100]"
                style={{
-                  bottom: `-9px`,
+                  bottom: `0px`,
                   height: `${bottomBar.height}px`
                }}
             >
-               {/* Split Handle - positioned at the top of the bottom bar */}
-               <div
-                  className="absolute top-0 left-0 right-0"
-                  style={{ transform: `translateY(-100%)` }}
-                  data-main-container
-               >
-                  <SplitHandle
-                     currentHeight={bottomBar.height}
-                     onHeightChange={setBottomBarHeight}
-                     minHeight={40}
-                     maxHeight={typeof window !== 'undefined' ? (window.innerHeight - 56) : 10000}
-                  />
-               </div>
 
                {/* Bottom Bar Content */}
                <BottomBar
@@ -222,31 +257,22 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                   height={bottomBar.height}
                   isOverlay={true}
                   onDragStart={handleBottomBarDragStart}
-                  onDragEnd={handleBottomBarDragEnd}
                   isDragging={isDraggingBottomBar}
-                  dragHandleRef={dragHandleRef}
                />
             </div>
          )}
 
-         {/* Bottom Bar - always rendered when visible */}
-         {bottomBar.isVisible && bottomBar.mode === 'push' && (
-            <div className="relative overflow-hidden">
-               {isHydrated && (
-                  <SplitHandle
-                     currentHeight={bottomBar.height}
-                     onHeightChange={setBottomBarHeight}
-                     className="absolute top-0 left-0 right-0 z-10"
-                  />
-               )}
-               <div className="h-full pt-2">
-                  <BottomBar
-                     mode={bottomBar.mode}
-                     onModeChange={isHydrated ? setBottomBarMode : () => {}}
-                     height={bottomBar.height - (isHydrated ? 8 : 0)} // Account for split handle only when hydrated
-                     isOverlay={false}
-                  />
-               </div>
+         {/* Bottom Bar - push mode rendered as separate grid row */}
+        {bottomBar.isVisible && bottomBar.mode === 'push' && (
+            <div className="relative overflow-hidden z-[50]">
+               <BottomBar
+                  mode={bottomBar.mode}
+                  onModeChange={isHydrated ? setBottomBarMode : () => {}}
+                  height={bottomBar.height}
+                  isOverlay={false}
+                  onDragStart={handleBottomBarDragStart}
+                  isDragging={isDraggingBottomBar}
+               />
             </div>
          )}
 
@@ -268,3 +294,6 @@ export default function MainLayout({ children, header, headersNumber = 2 }: Main
       </ResizableSidebarProvider>
    );
 }
+
+
+

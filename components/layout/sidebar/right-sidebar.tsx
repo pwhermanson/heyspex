@@ -2,18 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SidebarClosedIcon, SidebarOpenIcon } from '@/components/ui/sidebar-icons';
 import {
    Bot,
-   X,
    Settings,
    HelpCircle,
    MessageCircle,
-   PanelRightClose,
-   PanelRightOpen,
 } from 'lucide-react';
 import { ResizableSidebar } from './resizable-sidebar';
-import { cn } from '@/lib/utils';
 
 export function RightSidebar() {
    return (
