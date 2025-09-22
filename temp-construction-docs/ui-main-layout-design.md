@@ -17,7 +17,7 @@ This document outlines the complete redesign of the main layout to match a Spoti
 
 ### Screenshot Analysis (main-layout-ui.jpg)
 From the Spotify-inspired wireframe provided:
-- **Top Bar**: Full-width dark header with navigation controls, search, and profile area
+- **Top Bar (Section 0)**: Full-width dark header with navigation controls, search, and profile area
 - **Left Sidebar**: Collapsed to icon-only state (like ChatGPT), showing vertical icons
 - **Main Content**: Central content area with its own header
 - **Right Sidebar**: Visible on the far right
@@ -100,6 +100,30 @@ TopBar Layout:
 - `components/layout/top-bar.tsx` - Main TopBar component
 - Move demo user dropdown into profile circle menu (Phase 4)
 
+#### 2.1 Terminology and Contracts: Section vs Screen Control Bars
+**Goal**: Prevent feature drift and keep controls consistent across Sections A/B/C and any loaded screen.
+
+- **Section control bar (A/B/C)**: The top-most bar inside each section. Owns section-level controls only.
+  - Contains: tabs (or just a “+” and title when only one tab), section title, and the section’s expand icon (top-right).
+  - Does NOT contain: global search, notification bell, or screen-specific filters.
+- **Screen control bar (per-screen, optional)**: Renders immediately below the Section control bar when the loaded screen provides one.
+  - Contains: screen-specific actions such as Filter, Display, view modes, screen-local search if that screen defines its own narrow-scoped search (not global search).
+  - Never contains: section expand, global search, or global notifications.
+
+Specifics for Section B (currently showing Projects):
+- The expand icon belongs to the top Section control bar (not the Projects bar).
+- The Projects Filter/Display controls remain in the Screen control bar below the Section control bar.
+- The notification bell has been removed from Section B’s bars; global bell remains in Section 0 (Top Bar).
+- Global search is in Section 0 (Top Bar) at the right, not in Section B.
+
+Layout guidance for Section control bar:
+- Left: tabs or a single “+” and section title when only one tab exists.
+- Right: section expand icon (top-right alignment is required).
+
+Quality checks:
+- Expand icon appears only in the Section control bar for A/B/C.
+- If a screen has its own control bar, it renders exactly one row below the Section control bar.
+
 ### 3. Left Sidebar Icon-Only Collapse
 **Current**: Completely hides when collapsed
 **New**: ChatGPT-style icon rail (64px width)
@@ -136,6 +160,158 @@ const COLLAPSED_WIDTH = 64;
 ### 5. Remove Duplicate Left Sidebar Toggle
 **Problem**: Two toggle buttons (one in sidebar header, one in content header)
 **Solution**: Keep only the one in the top-left corner of MainContent area, remove the one from sidebar header
+
+### 6. Expand / Fullscreen Behavior (Sections A/B/C)
+**Objective**: A one-click expand for any section that hides global chrome visually but preserves state for restoration.
+
+- Introduce `fullscreenSection: null | 'A' | 'B' | 'C'` in layout provider.
+- When `fullscreenSection` is set:
+  - Hide Section 0 (Top Bar) and Section D (Bottom Bar) visually by driving CSS variables (do not mutate their persisted settings).
+  - Visually set other sections’ widths to 0 using CSS variables only; do not change A/C `isOpen` or `preferredWidth`.
+  - Remove container borders/radius for the expanded section’s main container so it truly fills the viewport.
+- On exit (set `fullscreenSection = null`):
+  - Restore previous CSS variable widths and show Section 0/D again.
+  - A/C sidebars return to their prior widths/open state from persistence.
+
+Quality checks:
+- Toggling expand on B does not erase A/C widths or states.
+- Bottom bar returns to the precise prior height/mode after exit.
+- Keyboard focus remains within the expanded section and returns gracefully on exit.
+
+### 7. Tabs and Screen Selector (Sections A/B/C)
+**Objective**: Load any screen into any section using tabs.
+
+- Tabs per section with persistence: `tabs: Record<'A'|'B'|'C', ScreenTab[]>`, `activeTab: Record<'A'|'B'|'C', string|null>`.
+- Single-tab UX: show only a “+” at far-left plus section title; no visible tab strip.
+- Multiple tabs UX: visible tabs with close buttons and an always-visible “+” at far-left.
+- Screen Selector modal (opens on “+”): pre-selects the clicked section, searchable registry of screens (id, label, icon, component).
+- Avoid global controls in tabs; tabs only switch screens for the section.
+
+Quality checks:
+- Creating, closing, and switching tabs do not alter Section control bar contents/placement.
+- Projects screen shows its Screen control bar beneath the Section control bar when active.
+
+#### 7.1 Screen Registry (Central Catalog)
+The Screen Selector reads from a typed registry of all screens that can be loaded into A/B/C. This keeps discovery, loading, and UX consistent.
+
+Type shape:
+```ts
+export type ScreenId =
+  | 'issues' | 'features' | 'roadmap' | 'projects' | 'teams'
+  | 'members' | 'inbox' | 'ai-chat' | 'unit-tests' | 'flows';
+
+export interface ScreenDefinition {
+  id: ScreenId;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  // Prefer lazy loading to keep initial bundle small
+  load: () => Promise<{ default: React.ComponentType<any> }>;
+  hasScreenControlBar?: boolean; // e.g., Projects, Issues
+  keywords?: string[]; // Modal search
+  enabled?: boolean; // Feature flag
+}
+
+export const screenRegistry: Record<ScreenId, ScreenDefinition> = {
+  projects: {
+    id: 'projects',
+    label: 'Projects',
+    icon: ProjectsIcon,
+    load: () => import('@/components/screens/projects-screen'),
+    hasScreenControlBar: true,
+    keywords: ['board', 'initiatives', 'plans'],
+    enabled: true,
+  },
+  issues: {
+    id: 'issues',
+    label: 'Issues',
+    icon: IssuesIcon,
+    load: () => import('@/components/screens/issues-screen'),
+    hasScreenControlBar: true,
+    keywords: ['bugs', 'tickets'],
+    enabled: true,
+  },
+  // ...others
+};
+```
+
+Notes:
+- Unique `id` values enable stable tab persistence and restoration.
+- `hasScreenControlBar` determines whether to render a Screen control bar below the Section control bar.
+- Use `keywords` for modal search quality; use `enabled` for gradual rollout.
+
+### 8. Sidebars A/C Collapsed Rail Spec (Predictable, independent)
+**Objective**: Ensure reliable collapsed rails that are always visible and independent of loaded content.
+
+- Collapsed width: maintain a minimal, consistent rail (e.g., 64px) across A and C.
+- The rail must always display the open/close trigger and icons with tooltips.
+- Content from any screen must not overlap the rail; enforce via z-index and container padding where necessary.
+- A and C operate independently; toggling one never mutates the other.
+- Persistence: remember `isOpen`, `width`, and `preferredWidth` per side.
+
+Quality checks:
+- With arbitrary screens loaded, the rail remains visible and interactive.
+- Resizing works only when open; rails remain fixed-width when collapsed.
+
+### 9. State Model and CSS Variables (Contract)
+**Canonical CSS variables** (set on `:root`):
+- `--sidebar-left-width`, `--sidebar-right-width`, `--grid-template-columns`, `--bottombar-height`.
+- Fullscreen drives visual zeroing via these variables; it does not overwrite persisted store values.
+
+Persistence keys:
+- Left/Right: open, width, preferredWidth.
+- Bottom bar: mode, height, visibility, overlay position (as applicable).
+- Optionally: `fullscreenSection` if persistence is desired (otherwise session-only).
+
+Quality checks:
+- On reload, sidebars and bottom bar restore from persistence without layout jank.
+- Reduced motion preference respected for transitions.
+
+### 10. Top Bar (Section 0) Specifics
+- Global search is on the right side of Section 0 (Top Bar). The old center search is removed.
+- Global notifications remain on the right in Section 0.
+- Section B (and others) must not reintroduce global search or bell in their bars.
+
+### 11. Animations and Timing
+- Grid column transitions: 200–300ms ease-in-out.
+- Sidebar drag disables transitions while dragging; re-enable after mouseup.
+- Respect `prefers-reduced-motion` to minimize or disable animations.
+
+### 12. Responsive and Accessibility
+- Responsive: on small screens, rails may hide under a breakpoint-specific rule, but toggles must remain accessible (e.g., Top Bar triggers).
+- Accessibility: roles for Top Bar (`banner`), Bottom Bar (`contentinfo`), split handle (`separator` + `aria-orientation`), tooltips with `aria-label`.
+- Keyboard shortcuts (future phase): toggles for A/C and expand per section; ensure focus management when entering/exiting fullscreen.
+
+### 13. Cross-Feature QA Checklist
+- Expand B while A is collapsed: rails remain visible; exit restores correctly.
+- Expand with Bottom Bar in push/overlay modes and non-zero height: exit restores exact height/mode.
+- Switch tabs in B while expanded: no layout shift in Section control bar; Screen control bar changes appropriately.
+- Load a screen without a Screen control bar: only Section control bar is visible; layout does not shift vertically.
+
+### 14. Context from Feature Ideas (Alignment)
+This layout plan aligns with the broader goals captured in the feature ideas document and brings forward the minimal context needed to keep implementation coherent:
+
+- Views and Settings integration (future phases):
+  - A settings UI will expose Section enable/disable, Views create/save/access, default view selection, and keyboard shortcut customization.
+  - The layout should keep state shape compatible with future Views (e.g., tabs per section, activeTab, sectionVisibility, widths) to allow saving/restoring.
+
+- Keyboard shortcuts (roadmap):
+  - Global: toggle left/right sidebars; focus sections; expand/exit fullscreen for A/B/C; quick open Screen Selector.
+  - Ensure focus management and ARIA roles added above are compatible with future shortcut handling.
+
+- AI layout control (roadmap):
+  - Natural-language commands (e.g., “show Issues in right sidebar”, “expand Section B”) should map to the same provider APIs (`setLeftSidebarOpen`, `setRightSidebarOpen`, `setFullscreenSection`, tab operations).
+  - Keep provider APIs deterministic and idempotent to support AI-driven flows.
+
+- Screen registry (for Screen Selector):
+  - Define a typed registry listing screens the user can load into any section (Issues, Features, Roadmap, Projects, Teams, Members, Inbox, AI Chat, Unit Tests, Flows, etc.).
+  - Each entry includes: `id`, `label`, `icon`, `component`, and optional `hasScreenControlBar` flag.
+
+- Naming of layout areas (reference):
+  - Section 0 (Top Bar), A (Left), B (Center), C (Right), D (Bottom). This doc’s terminology and control-bar contracts reflect that model.
+
+Quality checks:
+- Provider state and UI contracts remain compatible with saving/loading Views.
+- Shortcuts and AI can call the same provider APIs without special cases.
 
 ### 6. Content Layout Updates
 **MainArea Structure**:
@@ -298,6 +474,14 @@ All layout states will be persisted to localStorage:
 - ✅ All animations smooth and performant
 - ✅ No layout jank or scroll issues
 - ✅ Full accessibility compliance
+
+### Global (Cross-Feature)
+- ✅ Section vs Screen control bars are distinct: expand icon only in Section control bars (top-right), screen actions only in Screen control bars below.
+- ✅ Section B uses two bars correctly: Section (top) with expand; Projects screen bar (bottom) with Filter/Display; no bell/search in Section B.
+- ✅ A/C collapsed rails: fixed minimal width, always visible, triggers accessible, independent behavior.
+- ✅ Fullscreen: `fullscreenSection` hides Section 0/D visually, zeroes other sections via CSS vars, and restores prior widths/modes on exit.
+- ✅ Tabs: single-tab “+” behavior, modal screen selector, persistence, no interference with Section control bar layout.
+ - ✅ Layout state compatible with future Views, keyboard shortcuts, and AI control.
 
 ---
 

@@ -11,9 +11,12 @@ import { cn } from '@/lib/utils';
 import { useViewStore, ViewType } from '@/store/view-store';
 import { LayoutGrid, LayoutList, SlidersHorizontal } from 'lucide-react';
 import { Filter } from './filter';
+import { Maximize2, Minimize2 } from 'lucide-react';
+import { useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 
 export default function HeaderOptions() {
    const { viewType, setViewType } = useViewStore();
+  const { isMainFullscreen, setMainFullscreen } = useResizableSidebar();
 
    const handleViewChange = (type: ViewType) => {
       setViewType(type);
@@ -55,6 +58,15 @@ export default function HeaderOptions() {
                </DropdownMenuItem>
             </DropdownMenuContent>
          </DropdownMenu>
+         <Button
+           size="xs"
+           variant="ghost"
+           className="ml-2"
+           onClick={() => setMainFullscreen(!isMainFullscreen)}
+           aria-label={isMainFullscreen ? 'Exit full screen' : 'Enter full screen'}
+         >
+           {isMainFullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+         </Button>
       </div>
    );
 }

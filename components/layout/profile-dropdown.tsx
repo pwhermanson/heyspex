@@ -18,8 +18,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
 
 export function ProfileDropdown() {
+   const { theme, resolvedTheme, setTheme } = useTheme();
+   const [mounted, setMounted] = React.useState(false);
+
+   React.useEffect(() => {
+      setMounted(true);
+   }, []);
+
+   const currentTheme = (resolvedTheme || theme) as 'light' | 'dark' | undefined;
+   const toggleTheme = () => {
+      const next = currentTheme === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+   };
+
    return (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
@@ -41,7 +56,23 @@ export function ProfileDropdown() {
             sideOffset={4}
          >
             <DropdownMenuLabel className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
-               demo user
+               <div className="flex items-center justify-between gap-2">
+                  <span>demo user</span>
+                  <Button
+                     variant="ghost"
+                     size="icon"
+                     className="h-6 w-6"
+                     aria-label="Toggle theme"
+                     onClick={toggleTheme}
+                  >
+                     {mounted && currentTheme === 'light' ? (
+                        <Sun className="h-4 w-4" />
+                     ) : (
+                        <Moon className="h-4 w-4" />
+                     )}
+                     <span className="sr-only">Toggle theme</span>
+                  </Button>
+               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

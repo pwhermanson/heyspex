@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { CreateNewIssue } from './create-new-issue';
-import { ThemeToggle } from '../theme-toggle';
 import Link from 'next/link';
 
 export function OrgSwitcher() {
@@ -36,8 +35,6 @@ export function OrgSwitcher() {
                         <MoreHorizontal className="h-4 w-4" />
                      </SidebarMenuButton>
                   </DropdownMenuTrigger>
-
-                  <ThemeToggle />
 
                   <CreateNewIssue />
                </div>

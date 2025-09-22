@@ -42,7 +42,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       bottomBar,
       setBottomBarMode,
       setBottomBarHeight,
-      isHydrated
+      isHydrated,
+      isMainFullscreen
    } = useResizableSidebar();
 
   // Drag state for bottom bar overlay positioning
@@ -165,6 +166,9 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
   // Calculate grid rows based on bottom bar mode and visibility
   // Always render with bottom bar space to ensure consistent initial load experience
   const getGridRows = () => {
+    if (isMainFullscreen) {
+      return '1fr';
+    }
     // Always show bottom bar space for consistent initial load
     if (!bottomBar.isVisible) {
       return '56px 1fr'; // Just TopBar and MainArea
@@ -184,7 +188,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          data-bottom-mode={bottomBar.mode}
       >
          {/* TopBar - spans full width */}
-         <TopBar />
+         {!isMainFullscreen && <TopBar />}
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden">
@@ -200,29 +204,32 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                }}
             >
                {/* Left Sidebar Area */}
-               <div
-                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1"
+              <div
+                 className={cn('overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1', isMainFullscreen && 'p-0')}
                   style={{ gridArea: 'sidebar' }}
                >
                   <AppSidebar />
                </div>
 
                {/* Main Content Area */}
-               <div
-                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative"
+              <div
+                 className={cn('overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative', isMainFullscreen && 'p-0')}
                   style={{ gridArea: 'main' }}
                >
                <div
                   className={cn(
-                     'lg:border lg:rounded-md overflow-hidden flex flex-col items-center justify-start bg-container h-full'
+                    'overflow-hidden flex flex-col items-center justify-start bg-container h-full',
+                    !isMainFullscreen && 'lg:border lg:rounded-md'
                   )}
                   data-main-container
                >
-                     {header}
+                    {header}
                      <div
                         className={cn(
                            'overflow-auto w-full',
-                           isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height]
+                           isMainFullscreen
+                             ? 'h-full'
+                             : (isEmptyHeader(header) ? 'h-full' : height[headersNumber as keyof typeof height])
                         )}
                      >
                         {children}
@@ -231,8 +238,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                </div>
 
                {/* Right Sidebar Area */}
-               <div
-                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2"
+              <div
+                 className={cn('overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2', isMainFullscreen && 'p-0')}
                   style={{ gridArea: 'right-sidebar' }}
                >
                   <RightSidebar />
@@ -241,7 +248,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          </div>
 
          {/* Overlay Bottom Bar - positioned outside main area for true overlay */}
-         {isHydrated && bottomBar.isVisible && bottomBar.mode === 'overlay' && (
+         {isHydrated && !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'overlay' && (
             <div
                className="fixed left-2 right-2 z-[100]"
                style={{
@@ -263,7 +270,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          )}
 
          {/* Bottom Bar - push mode rendered as separate grid row */}
-        {bottomBar.isVisible && bottomBar.mode === 'push' && (
+        {!isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push' && (
             <div className="relative overflow-hidden z-[50]">
                <BottomBar
                   mode={bottomBar.mode}

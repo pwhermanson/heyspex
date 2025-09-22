@@ -51,6 +51,10 @@ type EnhancedSidebarContext = {
 
   // Grid CSS custom properties
   updateGridLayout: () => void;
+
+  // Fullscreen main content
+  isMainFullscreen: boolean;
+  setMainFullscreen: (fullscreen: boolean) => void;
 };
 
 const EnhancedSidebarContext = createContext<EnhancedSidebarContext | null>(null);
@@ -94,6 +98,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   });
 
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isMainFullscreen, setIsMainFullscreen] = useState(false);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
@@ -104,9 +109,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   // Update CSS Grid layout
   const updateGridLayout = useCallback(() => {
     const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
-    const leftWidth = leftSidebar.isOpen ? leftSidebar.width : COLLAPSED_SPACING;
-    const rightWidth = rightSidebar.isOpen ? rightSidebar.width : COLLAPSED_SPACING;
-    const bottomHeight = bottomBar.isVisible ? bottomBar.height : MIN_BOTTOM_HEIGHT;
+    const leftWidth = isMainFullscreen ? 0 : (leftSidebar.isOpen ? leftSidebar.width : COLLAPSED_SPACING);
+    const rightWidth = isMainFullscreen ? 0 : (rightSidebar.isOpen ? rightSidebar.width : COLLAPSED_SPACING);
+    const bottomHeight = isMainFullscreen ? 0 : (bottomBar.isVisible ? bottomBar.height : MIN_BOTTOM_HEIGHT);
 
     document.documentElement.style.setProperty('--sidebar-left-width', `${leftWidth}px`);
     document.documentElement.style.setProperty('--sidebar-right-width', `${rightWidth}px`);
@@ -116,7 +121,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       '--grid-template-columns',
       `${leftWidth}px 1fr ${rightWidth}px`
     );
-  }, [leftSidebar.isOpen, leftSidebar.width, rightSidebar.isOpen, rightSidebar.width, bottomBar]);
+  }, [leftSidebar.isOpen, leftSidebar.width, rightSidebar.isOpen, rightSidebar.width, bottomBar, isMainFullscreen]);
 
 
   // Hydration effect - load saved state after client-side hydration
@@ -191,6 +196,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     } catch (error) {
       console.warn('Failed to load sidebar state from localStorage:', error);
     }
+    try {
+      const savedFullscreen = localStorage.getItem('ui:mainFullscreen');
+      if (savedFullscreen !== null) {
+        setIsMainFullscreen(savedFullscreen === 'true');
+      }
+    } catch {}
   }, []);
 
   // Update grid layout whenever sidebar states change
@@ -414,6 +425,24 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       setDragSide,
       isHydrated,
       updateGridLayout,
+      isMainFullscreen,
+      setMainFullscreen: (fullscreen: boolean) => {
+        setIsMainFullscreen(fullscreen);
+        try {
+          localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
+        } catch {}
+        // When entering fullscreen, close sidebars and hide bottom bar, but remember their states via existing persistence
+        if (fullscreen) {
+          setLeftSidebarOpen(false);
+          setRightSidebarOpen(false);
+          setBottomBarVisible(false);
+        } else {
+          // On exit, simply show bottom bar again; sidebars restored via persisted state on user action
+          setBottomBarVisible(true);
+        }
+        // Update CSS variables immediately
+        setTimeout(updateGridLayout, 0);
+      },
     }),
     [
       leftSidebar,
@@ -436,6 +465,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       setDragSide,
       isHydrated,
       updateGridLayout,
+      isMainFullscreen,
     ]
   );
 

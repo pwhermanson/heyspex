@@ -40,7 +40,7 @@
 
 ## Naming of Layout Areas
 	Since each section can be configured, dragged, removed, expanded, and collapsed, the sections are all easily configurable to be almost any size, so any screen can be loaded in any section. Almost like you have a monitor on your desktop and want to view 3 windows at once. Plus an additional horizontal space at the bottom and top bar.
-	### Top Bar = Top Bar
+	### Top Bar = Section 0
 	### Left "sidebar" = Section A (Expandable/Collapsible)
 	### Middle content area = Section B (Expandable/Collapsible)
 	### Right "sidebar" = Section C (Expandable/Collapsible)
