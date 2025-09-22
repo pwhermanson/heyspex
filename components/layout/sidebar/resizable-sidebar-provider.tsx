@@ -9,6 +9,8 @@ type SidebarState = {
   preferredWidth: number;
 };
 
+export type LeftSidebarState = 'open' | 'collapsed';
+
 type BottomBarMode = 'push' | 'overlay';
 
 type BottomBarState = {
@@ -25,6 +27,8 @@ type EnhancedSidebarContext = {
   toggleLeftSidebar: () => void;
   setLeftSidebarWidth: (width: number) => void;
   setLeftSidebarOpen: (open: boolean) => void;
+  leftState: LeftSidebarState;
+  setLeftState: (state: LeftSidebarState) => void;
 
   // Right sidebar
   rightSidebar: SidebarState;
@@ -83,6 +87,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     width: DEFAULT_LEFT_WIDTH,
     preferredWidth: DEFAULT_LEFT_WIDTH,
   });
+  const [leftState, setLeftState] = useState<LeftSidebarState>('open');
 
   const [rightSidebar, setRightSidebar] = useState<SidebarState>({
     isOpen: false,
@@ -149,6 +154,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
         });
       }
 
+      const savedLeftState = localStorage.getItem('ui:leftState');
+      if (savedLeftState === 'open' || savedLeftState === 'collapsed') {
+        setLeftState(savedLeftState);
+      }
+
       // Load right sidebar state
       const savedRightOpen = localStorage.getItem('sidebar-right-open');
       const savedRightWidth = localStorage.getItem('sidebar-right-width');
@@ -203,6 +213,18 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       }
     } catch {}
   }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    try {
+      localStorage.setItem('ui:leftState', leftState);
+    } catch (error) {
+      console.warn('Failed to save left sidebar rail state to localStorage:', error);
+    }
+  }, [leftState, isHydrated]);
 
   // Update grid layout whenever sidebar states change
   useEffect(() => {
@@ -403,12 +425,18 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     });
   }, []);
 
+  const updateLeftRailState = useCallback((state: LeftSidebarState) => {
+    setLeftState(prev => (prev === state ? prev : state));
+  }, [setLeftState]);
+
   const contextValue = React.useMemo(
     () => ({
       leftSidebar,
       toggleLeftSidebar,
       setLeftSidebarWidth,
       setLeftSidebarOpen,
+      leftState,
+      setLeftState: updateLeftRailState,
       rightSidebar,
       toggleRightSidebar,
       setRightSidebarWidth,
@@ -449,6 +477,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       toggleLeftSidebar,
       setLeftSidebarWidth,
       setLeftSidebarOpen,
+      leftState,
+      updateLeftRailState,
       rightSidebar,
       toggleRightSidebar,
       setRightSidebarWidth,

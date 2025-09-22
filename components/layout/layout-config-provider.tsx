@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
 import { useLayoutConfigStore, LayoutSection, LayoutView, ScreenTab, LayoutConfigState } from '@/store/layout-config-store';
-import { useResizableSidebar } from './sidebar/resizable-sidebar-provider';
+import { useResizableSidebar, type LeftSidebarState } from './sidebar/resizable-sidebar-provider';
 import { useLayoutCompatibility, useVercelPerformance } from '@/hooks/use-vercel-compatibility';
 
 
@@ -18,6 +18,8 @@ interface LayoutConfigContextType {
   sectionVisibility: Record<LayoutSection, boolean>;
   toggleSection: (section: LayoutSection) => void;
   setSectionVisible: (section: LayoutSection, visible: boolean) => void;
+  leftState: LeftSidebarState;
+  setLeftState: (state: LeftSidebarState) => void;
 
   // Tab management within sections
   getActiveTab: (section: LayoutSection) => ScreenTab | null;
@@ -88,6 +90,8 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
     rightSidebar,
     setLeftSidebarOpen,
     setRightSidebarOpen,
+    leftState,
+    setLeftState: setLeftRailState,
     isHydrated: sidebarHydrated,
   } = useResizableSidebar();
 
@@ -270,6 +274,12 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
     console.log(`Removing tab ${tabId} from section ${section}`);
   }, [currentViewId, isHydrated]);
 
+  const setLeftSidebarState = useCallback((state: LeftSidebarState) => {
+    if (!isHydrated) return;
+
+    setLeftRailState(state);
+  }, [setLeftRailState, isHydrated]);
+
   // Update layout settings function
   const updateLayoutSettings = useCallback((newSettings: Partial<LayoutConfigState['settings']>) => {
     if (!isHydrated) return;
@@ -286,6 +296,8 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
     sectionVisibility,
     toggleSection: enhancedToggleSection,
     setSectionVisible: enhancedSetSectionVisible,
+    leftState,
+    setLeftState: setLeftSidebarState,
     getActiveTab,
     setActiveTab,
     addTabToSection,
@@ -304,6 +316,8 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
     sectionVisibility,
     enhancedToggleSection,
     enhancedSetSectionVisible,
+    leftState,
+    setLeftSidebarState,
     getActiveTab,
     setActiveTab,
     addTabToSection,
