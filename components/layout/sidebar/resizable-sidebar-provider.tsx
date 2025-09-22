@@ -123,17 +123,30 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
     const leftWidth = isMainFullscreen ? 0 : (leftSidebar.isOpen ? leftSidebar.width : COLLAPSED_SPACING);
     const rightWidth = isMainFullscreen ? 0 : (rightSidebar.isOpen ? rightSidebar.width : COLLAPSED_SPACING);
-    const bottomHeight = isMainFullscreen ? 0 : (bottomBar.isVisible ? bottomBar.height : MIN_BOTTOM_HEIGHT);
 
-    document.documentElement.style.setProperty('--sidebar-left-width', `${leftWidth}px`);
-    document.documentElement.style.setProperty('--sidebar-right-width', `${rightWidth}px`);
-    document.documentElement.style.setProperty('--bottombar-height', `${bottomHeight}px`);
-    document.documentElement.style.setProperty('--bottombar-mode', bottomBar.mode);
-    document.documentElement.style.setProperty(
-      '--grid-template-columns',
-      `${leftWidth}px 1fr ${rightWidth}px`
-    );
-  }, [leftSidebar.isOpen, leftSidebar.width, rightSidebar.isOpen, rightSidebar.width, bottomBar, isMainFullscreen]);
+    const rootStyle = document.documentElement.style;
+
+    rootStyle.setProperty('--left-width', `${leftWidth}px`);
+    rootStyle.setProperty('--right-width', `${rightWidth}px`);
+    rootStyle.setProperty('--sidebar-left-width', `${leftWidth}px`);
+    rootStyle.setProperty('--sidebar-right-width', `${rightWidth}px`);
+    rootStyle.setProperty('--grid-template-columns', `${leftWidth}px 1fr ${rightWidth}px`);
+
+    const effectiveBottomHeight =
+      !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push' ? bottomBar.height : 0;
+
+    rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
+    rootStyle.setProperty('--bottombar-mode', bottomBar.mode);
+  }, [
+    leftSidebar.isOpen,
+    leftSidebar.width,
+    rightSidebar.isOpen,
+    rightSidebar.width,
+    bottomBar.height,
+    bottomBar.isVisible,
+    bottomBar.mode,
+    isMainFullscreen,
+  ]);
 
 
   // Hydration effect - load saved state after client-side hydration

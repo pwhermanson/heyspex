@@ -197,9 +197,20 @@ input[type='search'] {
 
 /* CSS Grid Layout System for Sidebars */
 :root {
-  --sidebar-left-width: 244px;
-  --sidebar-right-width: 0px;
-  --grid-template-columns: 244px 1fr 0px;
+  --left-open: 280px;
+  --left-collapsed: 64px;
+  --left-width: var(--left-open);
+  --right-open: 320px;
+  --right-hidden: 0px;
+  --right-width: var(--right-hidden);
+  --topbar-height: 56px;
+  --bottombar-height: 40px;
+  --center-bottom-split: 0px;
+
+  /* Legacy aliases for in-flight migrations */
+  --sidebar-left-width: var(--left-width);
+  --sidebar-right-width: var(--right-width);
+  --grid-template-columns: var(--left-width) 1fr var(--right-width);
 }
 
 /* Smooth transitions for CSS Grid layout changes */
@@ -211,4 +222,3 @@ input[type='search'] {
 .sidebar-dragging .grid-layout {
   transition: none !important;
 }
-

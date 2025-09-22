@@ -1,4 +1,4 @@
-# UI Main Layout Design - Spotify-Inspired Redesign
+﻿# UI Main Layout Design - Spotify-Inspired Redesign
 
 ## GOALS/VISION
 
@@ -9,12 +9,12 @@
   - Never contains screen-specific controls.
 
 - **Left Sidebar (Section A)**
-  - Two states: open (≈280px) and collapsed icon rail (64px). Collapsed rail always visible with tooltips.
+  - Two states: open (â‰ˆ280px) and collapsed icon rail (64px). Collapsed rail always visible with tooltips.
   - Independent from the right sidebar; width and state persist.
 
 - **Center (Section B)**
   - Primary content area. Uses a clear two-row control system:
-    - Section control bar (top): tabs/“+” and section expand button (top-right).
+    - Section control bar (top): tabs/â€œ+â€ and section expand button (top-right).
     - Screen control bar (below, optional): screen-specific actions like Filters/Display. No global search/bell here.
 
 - **Right Sidebar (Section C)**
@@ -56,16 +56,16 @@ A Spotify-inspired, modern workspace where navigation and global context live in
 ### Iterative micro-iterations and acceptance checklists
 
 ### Phase 1: TopBar
-- [x] TopBar renders above all content and spans full width.
-- [x] Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
-- [x] Integrates existing header-nav functionality (search, notifications).
-- [x] Profile circle placeholder is present on the right side.
-- [ ] Main layout structure updated to accommodate TopBar (pending CSS variable pass).
-#### Updated Phase 1 Completion Plan
-1. (Done) Implement the `enableTopBar` feature flag gate, leveraging the "Feature Flags" mitigation in Safe Deployment Strategy to allow instant rollback if regressions surface.
-2. Introduce shared layout CSS variables for heights and rails, aligning with the "Graceful Degradation" mitigation so the layout falls back cleanly when variables are unsupported.
-3. Expand reduced-motion handling and token polish, guided by the "Reduced Motion Conflicts" mitigation and ensuring accessibility checks pass before deployment.
-4. Run the acceptance testing checklist with logging through existing error boundaries, echoing the "Error Boundaries" mitigation to capture regressions before release.
+- [x] **1.1** TopBar renders above all content and spans full width.
+- [x] **1.2** Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
+- [x] **1.3** Integrates existing header-nav functionality (search, notifications).
+- [x] **1.4** Profile circle placeholder is present on the right side.
+- [ ] **1.5** Main layout structure updated to accommodate TopBar (pending CSS variable pass).
+#### Sub-phase 1.5 Completion Plan
+1.5.1 (Done) Implement the `enableTopBar` feature flag gate, leveraging the "Feature Flags" mitigation in Safe Deployment Strategy to allow instant rollback if regressions surface.
+1.5.2 (Done) Introduce shared layout CSS variables for heights and rails, aligning with the "Graceful Degradation" mitigation so the layout falls back cleanly when variables are unsupported.
+1.5.3 Expand reduced-motion handling and token polish, guided by the "Reduced Motion Conflicts" mitigation and ensuring accessibility checks pass before deployment.
+1.5.4 Run the acceptance testing checklist with logging through existing error boundaries, echoing the "Error Boundaries" mitigation to capture regressions before release.
 ### Phase 2: Left Sidebar icon-rail
 **Status**: 2.1 complete; 2.2+ pending CSS variable work
 - [x] 2.1 State model refactor (non-visual) (completed)
@@ -74,14 +74,14 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - No user-facing changes yet
 - 2.2 CSS vars + grid readiness
   - `--left-open`, `--left-collapsed`, `--left-width` in place
-  - Grid columns read from vars; still behaves as “open” by default
+  - Grid columns read from vars; still behaves as â€œopenâ€ by default
   - No layout jank on load
 - 2.3 Render collapsed rail visuals
   - 64px rail renders behind `enableLeftRail`
   - Icons align vertically; no text visible
   - Rail z-index prevents overlap from content
 - 2.4 Toggle wiring
-  - Toggle switches `open` ↔ `collapsed` smoothly
+  - Toggle switches `open` â†” `collapsed` smoothly
   - Text fades out on collapse; returns on open
   - No content reflow beyond intended width change
 - 2.5 Tooltips and focus
@@ -92,8 +92,8 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Width/text transitions are smooth; disabled during drag
   - No layout thrashing (only CSS transitions on vars)
   - Reduced motion respected
-- 2.7 Remove old “hidden” pathway (cleanup)
-  - All codepaths for “hidden” removed/redirected
+- 2.7 Remove old â€œhiddenâ€ pathway (cleanup)
+  - All codepaths for â€œhiddenâ€ removed/redirected
   - Right sidebar unaffected
   - Persistence migration leaves users in valid states
 
@@ -124,7 +124,7 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Safe defaults when localStorage is unavailable
 - 3.7 Keyboard accessibility
   - Handle has `role="separator"` and `aria-orientation="horizontal"`
-  - Arrow keys adjust height in 4–8px steps with bounds
+  - Arrow keys adjust height in 4â€“8px steps with bounds
   - Focus visible; ESC leaves focus cleanly
 - 3.8 Visual polish
   - Handle visual aligns with design (shadow, grip, etc.)
@@ -196,7 +196,7 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - No flicker in dark/light transitions
 - 4.6 Final QA checklist
   - Expand B restores A/C rails and BottomBar height precisely
-  - Tabs (if present) don’t shift Section control bar layout
+  - Tabs (if present) donâ€™t shift Section control bar layout
   - No layout jank or scroll glitches across routes
 
 ## Recommended additions and risk guardrails
@@ -212,7 +212,7 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Drag handle touch events; tooltip fallbacks without hover
   - Breakpoint rules for hiding rails while keeping toggles accessible
 - Persistence versioning/migrations
-  - Version key for layout state; migrate legacy `hidden` → `collapsed`
+  - Version key for layout state; migrate legacy `hidden` â†’ `collapsed`
 - Testing strategy
   - Unit tests for state selectors; E2E for toggles/split/restore
   - Visual snapshots for Top/Bottom bars and collapsed rail
@@ -343,7 +343,7 @@ TopBar Layout:
 **Goal**: Prevent feature drift and keep controls consistent across Sections A/B/C and any loaded screen.
 
 - **Section control bar (A/B/C)**: The top-most bar inside each section. Owns section-level controls only.
-  - Contains: tabs (or just a “+” and title when only one tab), section title, and the section’s expand icon (top-right).
+  - Contains: tabs (or just a â€œ+â€ and title when only one tab), section title, and the sectionâ€™s expand icon (top-right).
   - Does NOT contain: global search, notification bell, or screen-specific filters.
 - **Screen control bar (per-screen, optional)**: Renders immediately below the Section control bar when the loaded screen provides one.
   - Contains: screen-specific actions such as Filter, Display, view modes, screen-local search if that screen defines its own narrow-scoped search (not global search).
@@ -352,11 +352,11 @@ TopBar Layout:
 Specifics for Section B (currently showing Projects):
 - The expand icon belongs to the top Section control bar (not the Projects bar).
 - The Projects Filter/Display controls remain in the Screen control bar below the Section control bar.
-- The notification bell has been removed from Section B’s bars; global bell remains in Section 0 (Top Bar).
+- The notification bell has been removed from Section Bâ€™s bars; global bell remains in Section 0 (Top Bar).
 - Global search is in Section 0 (Top Bar) at the right, not in Section B.
 
 Layout guidance for Section control bar:
-- Left: tabs or a single “+” and section title when only one tab exists.
+- Left: tabs or a single â€œ+â€ and section title when only one tab exists.
 - Right: section expand icon (top-right alignment is required).
 
 Quality checks:
@@ -406,8 +406,8 @@ const COLLAPSED_WIDTH = 64;
 - Introduce `fullscreenSection: null | 'A' | 'B' | 'C'` in layout provider.
 - When `fullscreenSection` is set:
   - Hide Section 0 (Top Bar) and Section D (Bottom Bar) visually by driving CSS variables (do not mutate their persisted settings).
-  - Visually set other sections’ widths to 0 using CSS variables only; do not change A/C `isOpen` or `preferredWidth`.
-  - Remove container borders/radius for the expanded section’s main container so it truly fills the viewport.
+  - Visually set other sectionsâ€™ widths to 0 using CSS variables only; do not change A/C `isOpen` or `preferredWidth`.
+  - Remove container borders/radius for the expanded sectionâ€™s main container so it truly fills the viewport.
 - On exit (set `fullscreenSection = null`):
   - Restore previous CSS variable widths and show Section 0/D again.
   - A/C sidebars return to their prior widths/open state from persistence.
@@ -421,9 +421,9 @@ Quality checks:
 **Objective**: Load any screen into any section using tabs.
 
 - Tabs per section with persistence: `tabs: Record<'A'|'B'|'C', ScreenTab[]>`, `activeTab: Record<'A'|'B'|'C', string|null>`.
-- Single-tab UX: show only a “+” at far-left plus section title; no visible tab strip.
-- Multiple tabs UX: visible tabs with close buttons and an always-visible “+” at far-left.
-- Screen Selector modal (opens on “+”): pre-selects the clicked section, searchable registry of screens (id, label, icon, component).
+- Single-tab UX: show only a â€œ+â€ at far-left plus section title; no visible tab strip.
+- Multiple tabs UX: visible tabs with close buttons and an always-visible â€œ+â€ at far-left.
+- Screen Selector modal (opens on â€œ+â€): pre-selects the clicked section, searchable registry of screens (id, label, icon, component).
 - Avoid global controls in tabs; tabs only switch screens for the section.
 
 Quality checks:
@@ -511,7 +511,7 @@ Quality checks:
 - Section B (and others) must not reintroduce global search or bell in their bars.
 
 ### 11. Animations and Timing
-- Grid column transitions: 200–300ms ease-in-out.
+- Grid column transitions: 200â€“300ms ease-in-out.
 - Sidebar drag disables transitions while dragging; re-enable after mouseup.
 - Respect `prefers-reduced-motion` to minimize or disable animations.
 
@@ -538,7 +538,7 @@ This layout plan aligns with the broader goals captured in the feature ideas doc
   - Ensure focus management and ARIA roles added above are compatible with future shortcut handling.
 
 - AI layout control (roadmap):
-  - Natural-language commands (e.g., “show Issues in right sidebar”, “expand Section B”) should map to the same provider APIs (`setLeftSidebarOpen`, `setRightSidebarOpen`, `setFullscreenSection`, tab operations).
+  - Natural-language commands (e.g., â€œshow Issues in right sidebarâ€, â€œexpand Section Bâ€) should map to the same provider APIs (`setLeftSidebarOpen`, `setRightSidebarOpen`, `setFullscreenSection`, tab operations).
   - Keep provider APIs deterministic and idempotent to support AI-driven flows.
 
 - Screen registry (for Screen Selector):
@@ -546,7 +546,7 @@ This layout plan aligns with the broader goals captured in the feature ideas doc
   - Each entry includes: `id`, `label`, `icon`, `component`, and optional `hasScreenControlBar` flag.
 
 - Naming of layout areas (reference):
-  - Section 0 (Top Bar), A (Left), B (Center), C (Right), D (Bottom). This doc’s terminology and control-bar contracts reflect that model.
+  - Section 0 (Top Bar), A (Left), B (Center), C (Right), D (Bottom). This docâ€™s terminology and control-bar contracts reflect that model.
 
 Quality checks:
 - Provider state and UI contracts remain compatible with saving/loading Views.
@@ -556,12 +556,12 @@ Quality checks:
 **MainArea Structure**:
 ```
 MainArea (middle row of app-shell):
-├── main-grid (contains 3 panels)
-│   ├── LeftSidebar (icon-only when collapsed)
-│   ├── MainContent
-│   └── RightSidebar
-├── split-handle (draggable)
-└── [adjustable space above BottomBar]
+â”œâ”€â”€ main-grid (contains 3 panels)
+â”‚   â”œâ”€â”€ LeftSidebar (icon-only when collapsed)
+â”‚   â”œâ”€â”€ MainContent
+â”‚   â””â”€â”€ RightSidebar
+â”œâ”€â”€ split-handle (draggable)
+â””â”€â”€ [adjustable space above BottomBar]
 ```
 
 ### 7. CSS Grid Variables System
@@ -687,40 +687,40 @@ All layout states will be persisted to localStorage:
 ## Acceptance Criteria
 
 ### Phase 1: TopBar
-- [x] TopBar renders above all content and spans full width.
-- [x] Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
-- [x] Integrates existing header-nav functionality (search, notifications).
-- [x] Profile circle placeholder is present on the right side.
-- [ ] Main layout structure updated to accommodate TopBar (pending CSS variable pass).
+- [x] **1.1** TopBar renders above all content and spans full width.
+- [x] **1.2** Contains items previously in LeftSidebar top section (OrgSwitcher/BackToApp).
+- [x] **1.3** Integrates existing header-nav functionality (search, notifications).
+- [x] **1.4** Profile circle placeholder is present on the right side.
+- [ ] **1.5** Main layout structure updated to accommodate TopBar (pending CSS variable pass).
 
 ### Phase 2: Icon-Only Sidebar
 - [ ] Left sidebar collapses to 64px icon-only rail
-- ✅ Icons remain visible with text labels hidden when collapsed
-- ✅ Smooth transitions and animations
-- ✅ Tooltips show on hover for collapsed icons
-- ✅ Toggle between open (280px) and collapsed (64px) states
+- âœ… Icons remain visible with text labels hidden when collapsed
+- âœ… Smooth transitions and animations
+- âœ… Tooltips show on hover for collapsed icons
+- âœ… Toggle between open (280px) and collapsed (64px) states
 
 ### Phase 3: BottomBar & Split
-- ✅ BottomBar renders below all content and spans full width
-- ✅ Draggable split handle above BottomBar adjusts content area
-- ✅ Split height persists across browser sessions
-- ✅ Keyboard accessibility for split adjustment
-- ✅ Range: 0-50% viewport-height adjustable space
+- âœ… BottomBar renders below all content and spans full width
+- âœ… Draggable split handle above BottomBar adjusts content area
+- âœ… Split height persists across browser sessions
+- âœ… Keyboard accessibility for split adjustment
+- âœ… Range: 0-50% viewport-height adjustable space
 
 ### Phase 4: Polish & Cleanup
-- ✅ Single left sidebar toggle (duplicate removed)
-- ✅ Demo user dropdown moved to profile circle menu
-- ✅ All animations smooth and performant
-- ✅ No layout jank or scroll issues
-- ✅ Full accessibility compliance
+- âœ… Single left sidebar toggle (duplicate removed)
+- âœ… Demo user dropdown moved to profile circle menu
+- âœ… All animations smooth and performant
+- âœ… No layout jank or scroll issues
+- âœ… Full accessibility compliance
 
 ### Global (Cross-Feature)
-- ✅ Section vs Screen control bars are distinct: expand icon only in Section control bars (top-right), screen actions only in Screen control bars below.
-- ✅ Section B uses two bars correctly: Section (top) with expand; Projects screen bar (bottom) with Filter/Display; no bell/search in Section B.
-- ✅ A/C collapsed rails: fixed minimal width, always visible, triggers accessible, independent behavior.
-- ✅ Fullscreen: `fullscreenSection` hides Section 0/D visually, zeroes other sections via CSS vars, and restores prior widths/modes on exit.
-- ✅ Tabs: single-tab “+” behavior, modal screen selector, persistence, no interference with Section control bar layout.
- - ✅ Layout state compatible with future Views, keyboard shortcuts, and AI control.
+- âœ… Section vs Screen control bars are distinct: expand icon only in Section control bars (top-right), screen actions only in Screen control bars below.
+- âœ… Section B uses two bars correctly: Section (top) with expand; Projects screen bar (bottom) with Filter/Display; no bell/search in Section B.
+- âœ… A/C collapsed rails: fixed minimal width, always visible, triggers accessible, independent behavior.
+- âœ… Fullscreen: `fullscreenSection` hides Section 0/D visually, zeroes other sections via CSS vars, and restores prior widths/modes on exit.
+- âœ… Tabs: single-tab â€œ+â€ behavior, modal screen selector, persistence, no interference with Section control bar layout.
+ - âœ… Layout state compatible with future Views, keyboard shortcuts, and AI control.
 
 ---
 
@@ -729,12 +729,12 @@ All layout states will be persisted to localStorage:
 
 ---
 
-# 🛡️ Vercel Compatibility & Deployment Validation
+# ðŸ›¡ï¸ Vercel Compatibility & Deployment Validation
 
 ## Overview
 This layout system is designed from the ground up for Vercel deployment with comprehensive compatibility checks and production-ready optimizations.
 
-## 🚀 Vercel-Specific Quality Checks
+## ðŸš€ Vercel-Specific Quality Checks
 
 ### **Server-Side Rendering (SSR) Safety**
 - [ ] All layout components render correctly without JavaScript
@@ -768,7 +768,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 🔍 Conflict Prevention & Integration Points
+## ðŸ” Conflict Prevention & Integration Points
 
 ### **Potential Conflicts to Avoid**
 
@@ -794,7 +794,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 🧪 Testing & Validation Checklist
+## ðŸ§ª Testing & Validation Checklist
 
 ### **Pre-Deployment Testing**
 - [ ] Development server runs without errors
@@ -822,7 +822,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 📊 Performance Benchmarks
+## ðŸ“Š Performance Benchmarks
 
 ### **Target Metrics for Vercel Deployment**
 - **First Contentful Paint**: <1.5s
@@ -839,7 +839,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 🔧 Deployment & Rollback Procedures
+## ðŸ”§ Deployment & Rollback Procedures
 
 ### **Safe Deployment Strategy**
 1. **Feature Flags**: All phases behind feature flags for gradual rollout
@@ -855,7 +855,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 🐛 Known Issues & Mitigations
+## ðŸ› Known Issues & Mitigations
 
 ### **Potential Issues Identified**
 1. **localStorage Unavailable**: Fallback to session storage or in-memory state
@@ -871,7 +871,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 📋 Integration with Existing Systems
+## ðŸ“‹ Integration with Existing Systems
 
 ### **Existing Component Compatibility**
 - [ ] Layout works with current header navigation
@@ -887,7 +887,7 @@ This layout system is designed from the ground up for Vercel deployment with com
 
 ---
 
-## 🎯 Success Criteria for Vercel Deployment
+## ðŸŽ¯ Success Criteria for Vercel Deployment
 
 ### **Technical Success**
 - [ ] Zero production errors related to layout system
@@ -912,4 +912,5 @@ This layout system is designed from the ground up for Vercel deployment with com
 **Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
 **Risk Level**: Low - All potential conflicts identified and mitigated
 **Confidence Level**: High - Architecture designed specifically for Vercel deployment
+
 

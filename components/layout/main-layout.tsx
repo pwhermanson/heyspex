@@ -171,22 +171,28 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
   }, []);
 
   // Calculate grid rows based on bottom bar mode and visibility
-  // Always render with bottom bar space to ensure consistent initial load experience
+  // Leverage shared CSS variables so top/bottom rails stay in sync
   const getGridRows = () => {
     if (isMainFullscreen) {
       return '1fr';
     }
-    const hasTopBar = isTopBarEnabled && !isMainFullscreen;
 
-    if (!bottomBar.isVisible) {
-      return hasTopBar ? '56px 1fr' : '1fr';
+    const rows: string[] = [];
+
+    if (isTopBarEnabled) {
+      rows.push('var(--topbar-height, 56px)');
     }
 
-    if (bottomBar.mode === 'push') {
-      return hasTopBar ? `56px 1fr ${bottomBar.height}px` : `1fr ${bottomBar.height}px`;
+    rows.push('1fr');
+
+    const shouldReserveBottomRow =
+      bottomBar.mode === 'push' && bottomBar.isVisible && !isMainFullscreen;
+
+    if (shouldReserveBottomRow) {
+      rows.push('var(--bottombar-height, 40px)');
     }
 
-    return hasTopBar ? '56px 1fr' : '1fr';
+    return rows.join(' ');
   };
 
    return (

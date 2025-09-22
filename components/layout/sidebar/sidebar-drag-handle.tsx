@@ -70,9 +70,12 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       const effectiveLeftWidth = leftSidebar.isOpen ? leftWidth : COLLAPSED_SPACING;
       const effectiveRightWidth = rightSidebar.isOpen ? rightWidth : COLLAPSED_SPACING;
 
-      document.documentElement.style.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
-      document.documentElement.style.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);
-      document.documentElement.style.setProperty(
+      const rootStyle = document.documentElement.style;
+      rootStyle.setProperty('--left-width', `${effectiveLeftWidth}px`);
+      rootStyle.setProperty('--right-width', `${effectiveRightWidth}px`);
+      rootStyle.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
+      rootStyle.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);
+      rootStyle.setProperty(
         '--grid-template-columns',
         `${effectiveLeftWidth}px 1fr ${effectiveRightWidth}px`
       );
@@ -84,27 +87,31 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       document.body.classList.remove('sidebar-dragging');
 
       // Get final width from CSS custom property and update state
-      const finalLeftWidth = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--sidebar-left-width').replace('px', ''),
-        10
-      );
-      const finalRightWidth = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--sidebar-right-width').replace('px', ''),
-        10
-      );
+      const rootStyle = document.documentElement.style;
+      const computedStyles = getComputedStyle(document.documentElement);
 
-      const nextLeftWidth = !isNaN(finalLeftWidth) ? finalLeftWidth : leftSidebar.width;
-      const nextRightWidth = !isNaN(finalRightWidth) ? finalRightWidth : rightSidebar.width;
+      const readWidth = (primaryVar: string, legacyVar: string, fallback: number) => {
+        const primary = computedStyles.getPropertyValue(primaryVar).trim();
+        const legacy = computedStyles.getPropertyValue(legacyVar).trim();
+        const target = primary || legacy;
+        const parsed = parseInt(target.replace('px', ''), 10);
+        return Number.isNaN(parsed) ? fallback : parsed;
+      };
+
+      const finalLeftWidth = readWidth('--left-width', '--sidebar-left-width', leftSidebar.width);
+      const finalRightWidth = readWidth('--right-width', '--sidebar-right-width', rightSidebar.width);
 
       const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
-      const effectiveLeftWidth = leftSidebar.isOpen ? nextLeftWidth : COLLAPSED_SPACING;
-      const effectiveRightWidth = rightSidebar.isOpen ? nextRightWidth : COLLAPSED_SPACING;
+      const nextLeftWidth = leftSidebar.isOpen ? finalLeftWidth : COLLAPSED_SPACING;
+      const nextRightWidth = rightSidebar.isOpen ? finalRightWidth : COLLAPSED_SPACING;
 
-      document.documentElement.style.setProperty('--sidebar-left-width', `${effectiveLeftWidth}px`);
-      document.documentElement.style.setProperty('--sidebar-right-width', `${effectiveRightWidth}px`);
-      document.documentElement.style.setProperty(
+      rootStyle.setProperty('--left-width', `${nextLeftWidth}px`);
+      rootStyle.setProperty('--right-width', `${nextRightWidth}px`);
+      rootStyle.setProperty('--sidebar-left-width', `${nextLeftWidth}px`);
+      rootStyle.setProperty('--sidebar-right-width', `${nextRightWidth}px`);
+      rootStyle.setProperty(
         '--grid-template-columns',
-        `${effectiveLeftWidth}px 1fr ${effectiveRightWidth}px`
+        `${nextLeftWidth}px 1fr ${nextRightWidth}px`
       );
 
       if (side === 'left' && leftSidebar.isOpen) {
