@@ -52,7 +52,7 @@ export function TopBar() {
    return (
       <div
          className="w-full h-14 border-b bg-background flex items-center justify-between px-4 gap-4"
-         role="banner"
+         role="banner" data-top-bar
       >
          {/* Left Section - Sidebar Toggle + Org/Back */}
          <div className="flex items-center gap-2 sm:gap-3">

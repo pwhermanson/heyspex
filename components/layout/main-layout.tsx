@@ -50,6 +50,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
    } = useResizableSidebar();
 
    const isTopBarEnabled = useFeatureFlag('enableTopBar');
+   const initialTopBarHeightRef = React.useRef<string | null>(null);
 
   // Drag state for bottom bar overlay positioning
   const [isDraggingBottomBar, setIsDraggingBottomBar] = React.useState(false);
@@ -70,6 +71,64 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       1: 'h-[calc(100svh-40px)] lg:h-[calc(100svh-56px)]',
       2: 'h-[calc(100svh-80px)] lg:h-[calc(100svh-96px)]',
    };
+
+  React.useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const root = document.documentElement;
+    const rootStyle = root.style;
+
+    if (initialTopBarHeightRef.current === null) {
+      const computed = getComputedStyle(root).getPropertyValue('--topbar-height');
+      initialTopBarHeightRef.current = computed?.trim() || '56px';
+    }
+
+    const restore = () => {
+      const fallback = initialTopBarHeightRef.current ?? '56px';
+      rootStyle.setProperty('--topbar-height', fallback);
+    };
+
+    if (!isTopBarEnabled || isMainFullscreen) {
+      rootStyle.setProperty('--topbar-height', '0px');
+      return restore;
+    }
+
+    const topBarElement = document.querySelector('[data-top-bar]') as HTMLElement | null;
+    const applyHeight = (height: number) => {
+      const safeHeight = Number.isFinite(height) ? Math.max(0, Math.round(height)) : 56;
+      rootStyle.setProperty('--topbar-height', `${safeHeight}px`);
+    };
+
+    if (!topBarElement) {
+      applyHeight(56);
+      return restore;
+    }
+
+    applyHeight(topBarElement.offsetHeight);
+
+    if (typeof ResizeObserver === 'undefined') {
+      return restore;
+    }
+
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.target === topBarElement) {
+          const height = entry.contentRect?.height ?? topBarElement.offsetHeight;
+          applyHeight(height);
+        }
+      }
+    });
+
+    observer.observe(topBarElement);
+
+    return () => {
+      observer.disconnect();
+      restore();
+    };
+  }, [isTopBarEnabled, isMainFullscreen]);
+
 
   // Helper function to get main container top position (same logic as BottomBar component)
   const getMainTop = () => {

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 type SidebarState = {
@@ -66,6 +67,7 @@ const EnhancedSidebarContext = createContext<EnhancedSidebarContext | null>(null
 const MIN_SIDEBAR_WIDTH = 200;
 const MAX_SIDEBAR_WIDTH = 500;
 const DEFAULT_LEFT_WIDTH = 244;
+const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
 
 const MIN_BOTTOM_HEIGHT = 40; // Collapsed state height
@@ -115,16 +117,34 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   const [isDragging, setIsDragging] = useState(false);
   const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
 
+  const enableLeftRail = useFeatureFlag('enableLeftRail');
+
   // Debounced save to localStorage
   const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Update CSS Grid layout
   const updateGridLayout = useCallback(() => {
-    const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
-    const leftWidth = isMainFullscreen ? 0 : (leftSidebar.isOpen ? leftSidebar.width : COLLAPSED_SPACING);
-    const rightWidth = isMainFullscreen ? 0 : (rightSidebar.isOpen ? rightSidebar.width : COLLAPSED_SPACING);
+    if (typeof document === 'undefined') {
+      return;
+    }
 
-    const rootStyle = document.documentElement.style;
+    const rootElement = document.documentElement;
+    const rootStyle = rootElement.style;
+
+    const rightCollapsedSpacing = 8;
+    const leftCollapsedWidth = enableLeftRail ? LEFT_COLLAPSED_WIDTH : 0;
+
+    const leftWidth = isMainFullscreen
+      ? 0
+      : leftSidebar.isOpen
+        ? leftSidebar.width
+        : leftCollapsedWidth;
+
+    const rightWidth = isMainFullscreen
+      ? 0
+      : rightSidebar.isOpen
+        ? rightSidebar.width
+        : rightCollapsedSpacing;
 
     rootStyle.setProperty('--left-width', `${leftWidth}px`);
     rootStyle.setProperty('--right-width', `${rightWidth}px`);
@@ -132,12 +152,18 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     rootStyle.setProperty('--sidebar-right-width', `${rightWidth}px`);
     rootStyle.setProperty('--grid-template-columns', `${leftWidth}px 1fr ${rightWidth}px`);
 
+    if (enableLeftRail) {
+      rootStyle.setProperty('--left-open', `${leftSidebar.width}px`);
+      rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
+    }
+
     const effectiveBottomHeight =
       !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push' ? bottomBar.height : 0;
 
     rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
     rootStyle.setProperty('--bottombar-mode', bottomBar.mode);
   }, [
+    enableLeftRail,
     leftSidebar.isOpen,
     leftSidebar.width,
     rightSidebar.isOpen,
@@ -148,6 +174,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     isMainFullscreen,
   ]);
 
+  const updateLeftRailState = useCallback((state: LeftSidebarState) => {
+    setLeftState(prev => (prev === state ? prev : state));
+  }, [setLeftState]);
 
   // Hydration effect - load saved state after client-side hydration
   useEffect(() => {
@@ -288,16 +317,24 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
   const toggleLeftSidebar = useCallback(() => {
     setLeftSidebar(prev => {
+      const isOpening = !prev.isOpen;
+      const width = isOpening ? prev.preferredWidth : prev.width;
+      const preferredWidth = isOpening ? prev.preferredWidth : prev.width;
+
       const newState = {
         ...prev,
-        isOpen: !prev.isOpen,
-        width: !prev.isOpen ? prev.preferredWidth : prev.width,
-        preferredWidth: !prev.isOpen ? prev.preferredWidth : prev.width,
+        isOpen: isOpening,
+        width,
+        preferredWidth,
       };
+
       saveToLocalStorage('left', newState);
+      updateLeftRailState(isOpening ? 'open' : 'collapsed');
+
       return newState;
     });
-  }, [saveToLocalStorage]);
+  }, [saveToLocalStorage, updateLeftRailState]);
+
 
   const setLeftSidebarOpen = useCallback((open: boolean) => {
     setLeftSidebar(prev => {
@@ -308,9 +345,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
         preferredWidth: open ? prev.preferredWidth : prev.width,
       };
       saveToLocalStorage('left', newState);
+      updateLeftRailState(open ? 'open' : 'collapsed');
       return newState;
     });
-  }, [saveToLocalStorage]);
+  }, [saveToLocalStorage, updateLeftRailState]);
+
 
   const setLeftSidebarWidth = useCallback((width: number) => {
     const clampedWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, width));
@@ -371,7 +410,6 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       return prev;
     });
   }, [saveToLocalStorage]);
-
   // Bottom bar management functions
   const setBottomBarMode = useCallback((mode: BottomBarMode) => {
     setBottomBar(prev => {
@@ -454,9 +492,6 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     });
   }, []);
 
-  const updateLeftRailState = useCallback((state: LeftSidebarState) => {
-    setLeftState(prev => (prev === state ? prev : state));
-  }, [setLeftState]);
 
   const contextValue = React.useMemo(
     () => ({
@@ -534,4 +569,3 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     </EnhancedSidebarContext.Provider>
   );
 }
-
