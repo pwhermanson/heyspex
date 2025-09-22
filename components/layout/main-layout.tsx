@@ -145,7 +145,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             >
                {/* Left Sidebar Area */}
                <div
-                  className="overflow-hidden lg:p-2"
+                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1"
                   style={{ gridArea: 'sidebar' }}
                >
                   <AppSidebar />
@@ -153,7 +153,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
                {/* Main Content Area */}
                <div
-                  className="overflow-hidden lg:p-2 w-full relative"
+                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative"
                   style={{ gridArea: 'main' }}
                >
                <div
@@ -176,7 +176,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
                {/* Right Sidebar Area */}
                <div
-                  className="overflow-hidden lg:p-2"
+                  className="overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2"
                   style={{ gridArea: 'right-sidebar' }}
                >
                   <RightSidebar />
@@ -197,7 +197,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             <div
                className="fixed left-0 right-0 z-50"
                style={{
-                  bottom: `0px`,
+                  bottom: `-9px`,
                   height: `${bottomBar.height}px`
                }}
             >
