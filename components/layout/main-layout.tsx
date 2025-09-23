@@ -16,6 +16,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/components/common/issues/create-issue-modal-provider';
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomBar } from '@/components/layout/bottom-bar';
+import { SplitHandle } from '@/components/layout/split-handle';
 import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { cn } from '@/lib/utils';
 import { CommandPaletteModal } from '@/components/command-palette/command-palette-modal';
@@ -427,59 +428,17 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                      {/* Split Handle - only rendered when split is active */}
                      {centerBottomSplit > 0 && (
                         <div className="relative">
-                           <div
-                              className={cn(
-                                 'absolute inset-x-0 -top-1 h-2 cursor-row-resize group z-10 select-none touch-none',
-                                 'transition-all layout-transition-short motion-reduce:transition-none',
-                                 'hover:bg-blue-500/30',
-                                 isDraggingCenterSplit && 'bg-blue-500/30'
-                              )}
-                              onMouseDown={handleCenterSplitDragStart}
-                              onKeyDown={(e) => {
-                                 const step = e.shiftKey ? 40 : 10;
-                                 let newHeight = centerBottomSplit;
-                                 const maxHeight = Math.max(100, Math.round(windowHeight * 0.5));
-
-                                 switch (e.key) {
-                                    case 'ArrowUp':
-                                       e.preventDefault();
-                                       newHeight = Math.min(maxHeight, centerBottomSplit + step);
-                                       break;
-                                    case 'ArrowDown':
-                                       e.preventDefault();
-                                       newHeight = Math.max(0, centerBottomSplit - step);
-                                       break;
-                                    case 'PageUp':
-                                       e.preventDefault();
-                                       newHeight = Math.min(maxHeight, centerBottomSplit + 40);
-                                       break;
-                                    case 'PageDown':
-                                       e.preventDefault();
-                                       newHeight = Math.max(0, centerBottomSplit - 40);
-                                       break;
-                                    case 'Home':
-                                       e.preventDefault();
-                                       newHeight = 0;
-                                       break;
-                                    case 'End':
-                                       e.preventDefault();
-                                       newHeight = maxHeight;
-                                       break;
-                                    default:
-                                       return;
-                                 }
-                                 setCenterBottomSplit(newHeight);
-                              }}
-                              role="separator"
-                              aria-orientation="horizontal"
-                              aria-label={`Adjust center-bottom split: ${centerBottomSplit}px`}
-                              aria-valuenow={centerBottomSplit}
-                              aria-valuemin={0}
-                              aria-valuemax={Math.max(100, Math.round(windowHeight * 0.5))}
-                              tabIndex={0}
-                           >
-                              <div className="absolute inset-x-0 top-0.5 h-0.5 bg-transparent transition-colors layout-transition-short motion-reduce:transition-none group-hover:bg-blue-500" />
-                              <div className="absolute inset-x-0 -top-2 h-4 cursor-row-resize" />
+                           <div className="absolute inset-x-0 -top-1 z-10">
+                              <SplitHandle
+                                 currentHeight={centerBottomSplit}
+                                 minHeight={0}
+                                 maxHeight={Math.max(100, Math.round(windowHeight * 0.5))}
+                                 onHeightChange={setCenterBottomSplit}
+                                 onDragStart={handleCenterSplitDragStart}
+                                 onDragEnd={handleCenterSplitDragEnd}
+                                 isDragging={isDraggingCenterSplit}
+                                 aria-label="Adjust center-bottom split"
+                              />
                            </div>
                         </div>
                      )}

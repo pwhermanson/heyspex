@@ -19,6 +19,20 @@ function getResizableSidebarContext() {
             })
          );
       },
+      setCenterBottomSplit: (height: number) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setCenterBottomSplit', height },
+            })
+         );
+      },
+      toggleCenterBottomSplit: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleCenterBottomSplit' },
+            })
+         );
+      },
    };
 }
 
@@ -47,6 +61,49 @@ registerCommand({
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
          sidebarContext.setBottomBarVisible(false);
+      }
+   },
+});
+
+// Register Center Bottom Split Toggle command
+registerCommand({
+   id: 'split.center.bottom.toggle',
+   title: '/split center bottom',
+   keywords: ['split', 'center', 'bottom', 'toggle', 'divide', 'section'],
+   shortcut: 'Ctrl+Shift+3',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         sidebarContext.toggleCenterBottomSplit();
+      }
+   },
+});
+
+// Register Center Bottom Split Open command
+registerCommand({
+   id: 'split.center.bottom.open',
+   title: '/split center bottom open',
+   keywords: ['split', 'center', 'bottom', 'open', 'show', '200px'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         sidebarContext.setCenterBottomSplit(200);
+      }
+   },
+});
+
+// Register Center Bottom Split Close command
+registerCommand({
+   id: 'split.center.bottom.close',
+   title: '/split center bottom close',
+   keywords: ['split', 'center', 'bottom', 'close', 'hide', 'collapse'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         sidebarContext.setCenterBottomSplit(0);
       }
    },
 });

@@ -8,6 +8,55 @@ import { cn } from '@/lib/utils';
 import { useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 import { BottomDragHandle } from '@/components/layout/bottom-drag-handle';
 
+// Layout icons for Section D
+const LayoutFullIcon = ({ className }: { className?: string }) => (
+   <svg viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect
+         x="1"
+         y="1"
+         width="14"
+         height="10"
+         rx="1"
+         stroke="currentColor"
+         strokeWidth="1.5"
+         fill="none"
+      />
+   </svg>
+);
+
+const Layout2SplitIcon = ({ className }: { className?: string }) => (
+   <svg viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect
+         x="1"
+         y="1"
+         width="14"
+         height="10"
+         rx="1"
+         stroke="currentColor"
+         strokeWidth="1.5"
+         fill="none"
+      />
+      <line x1="8" y1="1" x2="8" y2="11" stroke="currentColor" strokeWidth="1.5" />
+   </svg>
+);
+
+const Layout3SplitIcon = ({ className }: { className?: string }) => (
+   <svg viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect
+         x="1"
+         y="1"
+         width="14"
+         height="10"
+         rx="1"
+         stroke="currentColor"
+         strokeWidth="1.5"
+         fill="none"
+      />
+      <line x1="5.67" y1="1" x2="5.67" y2="11" stroke="currentColor" strokeWidth="1.5" />
+      <line x1="10.33" y1="1" x2="10.33" y2="11" stroke="currentColor" strokeWidth="1.5" />
+   </svg>
+);
+
 interface BottomBarProps {
    mode: BottomBarMode;
    onModeChange: (mode: BottomBarMode) => void;
@@ -108,6 +157,37 @@ export function BottomBar({
             </div>
 
             <div className="flex items-center gap-2">
+               {/* Layout Icons */}
+               <div className="flex items-center gap-1 border-r border-border pr-2 mr-1">
+                  <Button
+                     variant="ghost"
+                     size="icon"
+                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     aria-label="Full width layout"
+                     title="Full width layout"
+                  >
+                     <LayoutFullIcon className="h-3 w-4" />
+                  </Button>
+                  <Button
+                     variant="ghost"
+                     size="icon"
+                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     aria-label="2-split layout"
+                     title="2-split layout"
+                  >
+                     <Layout2SplitIcon className="h-3 w-4" />
+                  </Button>
+                  <Button
+                     variant="ghost"
+                     size="icon"
+                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     aria-label="3-split layout"
+                     title="3-split layout"
+                  >
+                     <Layout3SplitIcon className="h-3 w-4" />
+                  </Button>
+               </div>
+
                {/* Mode Toggle - moved to the right side */}
                <BottomBarModeToggle mode={mode} onChange={onModeChange} className="h-6" />
 
