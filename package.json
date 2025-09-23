@@ -4,12 +4,15 @@
    "private": true,
    "scripts": {
       "dev": "next dev --turbopack --port 3000",
+      "dev:fast": "next dev --turbopack --port 3000 --experimental-https",
       "build": "next build",
+      "build:analyze": "ANALYZE=true next build",
       "start": "next start",
       "lint": "next lint",
       "format": "prettier --write .",
       "prepare": "husky install",
-      "test:palette": "cross-env TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"commonjs\\\"}\" ts-node lib/command-palette/__tests__/search-engine.test.ts"
+      "test:palette": "cross-env TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"commonjs\\\"}\" ts-node lib/command-palette/__tests__/search-engine.test.ts",
+      "clean": "powershell -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }; if (Test-Path node_modules/.cache) { Remove-Item -Recurse -Force node_modules/.cache }\""
    },
    "dependencies": {
       "@hookform/resolvers": "^4.1.2",

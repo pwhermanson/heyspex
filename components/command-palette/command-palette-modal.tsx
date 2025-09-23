@@ -127,8 +127,6 @@ export function CommandPaletteModal() {
                      console.log('🎯 CommandInput onValueChange triggered with:', value);
                      handleQueryChange(value);
                   }}
-                  onInput={(e) => console.log('🔤 Raw input event:', e.target.value)}
-                  onChange={(e) => console.log('🔄 Raw change event:', e.target.value)}
                />
                <CommandList>
                   {!hasQuery && (

@@ -7,11 +7,16 @@ const inter = Inter({
    variable: '--font-inter',
    subsets: ['latin'],
    display: 'swap',
+   preload: true,
+   fallback: ['system-ui', 'arial'],
 });
 
 const geistMono = Geist_Mono({
    variable: '--font-geist-mono',
    subsets: ['latin'],
+   display: 'swap',
+   preload: false, // Only preload the primary font
+   fallback: ['ui-monospace', 'monospace'],
 });
 
 const siteUrl = 'https://heyspex.com';
@@ -39,8 +44,7 @@ export const metadata: Metadata = {
    },
    twitter: {
       card: 'summary_large_image',
-      site: '@ln_dev7',
-      creator: '@ln_dev7',
+      // site and creator removed
       images: [
          {
             url: `${siteUrl}/banner.png`,

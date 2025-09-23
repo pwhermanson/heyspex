@@ -60,6 +60,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       setBottomBarHeight,
       isHydrated,
       isMainFullscreen,
+      centerBottomSplit,
+      setCenterBottomSplit,
    } = useResizableSidebar();
 
    // Initialize command palette keyboard shortcuts
@@ -75,6 +77,12 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
    const dragStartYRef = React.useRef(0);
    const dragStartHeightRef = React.useRef(0);
    const isDraggingRef = React.useRef(false);
+
+   // Drag state for center-bottom split
+   const [isDraggingCenterSplit, setIsDraggingCenterSplit] = React.useState(false);
+   const splitDragStartYRef = React.useRef(0);
+   const splitDragStartHeightRef = React.useRef(0);
+   const isDraggingSplitRef = React.useRef(false);
 
    // Window height state for responsive calculations
    const [windowHeight, setWindowHeight] = React.useState(
@@ -216,6 +224,54 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       [bottomBar.height, handleBottomBarDragMove, handleBottomBarDragEnd]
    );
 
+   // Center-bottom split drag handlers
+   const handleCenterSplitDragMove = React.useCallback(
+      (event: MouseEvent) => {
+         if (!isDraggingSplitRef.current) return;
+
+         // Dragging up (smaller clientY) increases height; dragging down (larger clientY) decreases height
+         const deltaY = splitDragStartYRef.current - event.clientY; // Positive when dragging up
+         const proposedHeight = Math.max(0, splitDragStartHeightRef.current + deltaY);
+
+         // Max height should be around 50% of viewport height
+         const maxHeight = Math.max(100, Math.round(windowHeight * 0.5));
+
+         setCenterBottomSplit(Math.min(maxHeight, proposedHeight));
+      },
+      [windowHeight, setCenterBottomSplit]
+   );
+
+   const handleCenterSplitDragEnd = React.useCallback(() => {
+      if (!isDraggingSplitRef.current) return;
+
+      isDraggingSplitRef.current = false;
+      setIsDraggingCenterSplit(false);
+      document.body.classList.remove('sidebar-dragging');
+
+      // Remove global mouse event listeners
+      document.removeEventListener('mousemove', handleCenterSplitDragMove);
+      document.removeEventListener('mouseup', handleCenterSplitDragEnd);
+   }, [handleCenterSplitDragMove]);
+
+   const handleCenterSplitDragStart = React.useCallback(
+      (event: React.MouseEvent) => {
+         event.preventDefault();
+         event.stopPropagation();
+
+         isDraggingSplitRef.current = true;
+         setIsDraggingCenterSplit(true);
+         splitDragStartYRef.current = event.clientY;
+         splitDragStartHeightRef.current = centerBottomSplit;
+
+         document.body.classList.add('sidebar-dragging');
+
+         // Add global mouse event listeners
+         document.addEventListener('mousemove', handleCenterSplitDragMove);
+         document.addEventListener('mouseup', handleCenterSplitDragEnd);
+      },
+      [centerBottomSplit, handleCenterSplitDragMove, handleCenterSplitDragEnd]
+   );
+
    // Handle window resize to keep bottom bar responsive
    React.useEffect(() => {
       const handleWindowResize = () => {
@@ -249,10 +305,14 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          if (dragEndRef.current) {
             document.removeEventListener('mouseup', dragEndRef.current);
          }
+         // Cleanup center split drag listeners
+         document.removeEventListener('mousemove', handleCenterSplitDragMove);
+         document.removeEventListener('mouseup', handleCenterSplitDragEnd);
          document.body.classList.remove('sidebar-dragging');
          isDraggingRef.current = false;
+         isDraggingSplitRef.current = false;
       };
-   }, []);
+   }, [handleCenterSplitDragMove, handleCenterSplitDragEnd]);
 
    // Calculate grid rows based on bottom bar mode and visibility
    // Leverage shared CSS variables so top/bottom rails stay in sync
@@ -323,24 +383,164 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                >
                   <div
                      className={cn(
-                        'overflow-hidden flex flex-col items-center justify-start bg-container h-full',
-                        !isMainFullscreen && 'lg:border lg:rounded-md'
+                        'overflow-hidden bg-container h-full',
+                        !isMainFullscreen && 'lg:border lg:rounded-md',
+                        centerBottomSplit > 0 ? 'grid' : 'flex flex-col items-center justify-start'
                      )}
+                     style={
+                        centerBottomSplit > 0
+                           ? {
+                                gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
+                                gridTemplateAreas: '"center" "bottom"',
+                             }
+                           : undefined
+                     }
                      data-main-container
                   >
-                     {header}
+                     {/* Center Content Area */}
                      <div
                         className={cn(
-                           'overflow-auto w-full',
-                           isMainFullscreen
-                              ? 'h-full'
-                              : isEmptyHeader(header)
-                                ? 'h-full'
-                                : height[headersNumber as keyof typeof height]
+                           'overflow-hidden',
+                           centerBottomSplit > 0
+                              ? 'flex flex-col items-center justify-start'
+                              : 'contents'
                         )}
+                        style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
                      >
-                        {children}
+                        {header}
+                        <div
+                           className={cn(
+                              'overflow-auto w-full',
+                              isMainFullscreen
+                                 ? 'h-full'
+                                 : isEmptyHeader(header)
+                                   ? 'h-full'
+                                   : centerBottomSplit > 0
+                                     ? 'h-full'
+                                     : height[headersNumber as keyof typeof height]
+                           )}
+                        >
+                           {children}
+                        </div>
                      </div>
+
+                     {/* Split Handle - only rendered when split is active */}
+                     {centerBottomSplit > 0 && (
+                        <div className="relative">
+                           <div
+                              className={cn(
+                                 'absolute inset-x-0 -top-1 h-2 cursor-row-resize group z-10 select-none touch-none',
+                                 'transition-all layout-transition-short motion-reduce:transition-none',
+                                 'hover:bg-blue-500/30',
+                                 isDraggingCenterSplit && 'bg-blue-500/30'
+                              )}
+                              onMouseDown={handleCenterSplitDragStart}
+                              onKeyDown={(e) => {
+                                 const step = e.shiftKey ? 40 : 10;
+                                 let newHeight = centerBottomSplit;
+                                 const maxHeight = Math.max(100, Math.round(windowHeight * 0.5));
+
+                                 switch (e.key) {
+                                    case 'ArrowUp':
+                                       e.preventDefault();
+                                       newHeight = Math.min(maxHeight, centerBottomSplit + step);
+                                       break;
+                                    case 'ArrowDown':
+                                       e.preventDefault();
+                                       newHeight = Math.max(0, centerBottomSplit - step);
+                                       break;
+                                    case 'PageUp':
+                                       e.preventDefault();
+                                       newHeight = Math.min(maxHeight, centerBottomSplit + 40);
+                                       break;
+                                    case 'PageDown':
+                                       e.preventDefault();
+                                       newHeight = Math.max(0, centerBottomSplit - 40);
+                                       break;
+                                    case 'Home':
+                                       e.preventDefault();
+                                       newHeight = 0;
+                                       break;
+                                    case 'End':
+                                       e.preventDefault();
+                                       newHeight = maxHeight;
+                                       break;
+                                    default:
+                                       return;
+                                 }
+                                 setCenterBottomSplit(newHeight);
+                              }}
+                              role="separator"
+                              aria-orientation="horizontal"
+                              aria-label={`Adjust center-bottom split: ${centerBottomSplit}px`}
+                              aria-valuenow={centerBottomSplit}
+                              aria-valuemin={0}
+                              aria-valuemax={Math.max(100, Math.round(windowHeight * 0.5))}
+                              tabIndex={0}
+                           >
+                              <div className="absolute inset-x-0 top-0.5 h-0.5 bg-transparent transition-colors layout-transition-short motion-reduce:transition-none group-hover:bg-blue-500" />
+                              <div className="absolute inset-x-0 -top-2 h-4 cursor-row-resize" />
+                           </div>
+                        </div>
+                     )}
+
+                     {/* Bottom Content Area - only rendered when split is active */}
+                     {centerBottomSplit > 0 && (
+                        <div
+                           className="overflow-hidden border-t bg-muted/30"
+                           style={{ gridArea: 'bottom' }}
+                        >
+                           <div className="h-full overflow-auto p-4">
+                              <div className="text-sm text-muted-foreground">
+                                 <p>Bottom split area</p>
+                                 <p className="mt-2">
+                                    Height: <strong>{centerBottomSplit}px</strong>
+                                 </p>
+                                 <p className="mt-1 text-xs">
+                                    This area can be used for secondary content, logs, or debugging
+                                    tools.
+                                 </p>
+
+                                 {/* Dev controls for testing state changes */}
+                                 <div className="mt-4 p-3 bg-background border rounded-md">
+                                    <p className="text-xs font-medium mb-2">
+                                       Dev Controls (Phase 3.4)
+                                    </p>
+                                    <div className="flex gap-2 flex-wrap">
+                                       <button
+                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+                                          onClick={() => setCenterBottomSplit(0)}
+                                       >
+                                          Reset (0px)
+                                       </button>
+                                       <button
+                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+                                          onClick={() => setCenterBottomSplit(200)}
+                                       >
+                                          Small (200px)
+                                       </button>
+                                       <button
+                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+                                          onClick={() => setCenterBottomSplit(300)}
+                                       >
+                                          Medium (300px)
+                                       </button>
+                                       <button
+                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+                                          onClick={() =>
+                                             setCenterBottomSplit(
+                                                Math.max(100, Math.round(windowHeight * 0.5))
+                                             )
+                                          }
+                                       >
+                                          Max (50% vh)
+                                       </button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     )}
                   </div>
                </div>
 

@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import Link from 'next/link';
-import { RiBox3Fill, RiLinkedinFill, RiThreadsFill, RiTwitterXFill } from '@remixicon/react';
+import { RiBox3Fill, RiLinkedinFill } from '@remixicon/react';
 import { useResizableSidebar } from './resizable-sidebar-provider';
 import { useFeatureFlag } from '@/hooks/use-feature-flag';
 
@@ -62,21 +62,7 @@ export function HelpButton() {
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Follow me</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-               <Link href="https://x.com/ln_dev7" target="_blank">
-                  <RiTwitterXFill className="mr-2 h-4 w-4" />
-                  <span>X - Twitter</span>
-                  <ExternalLink className="ml-auto h-3 w-3 text-muted-foreground" />
-               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-               <Link href="https://threads.net/@ln_dev7" target="_blank">
-                  <RiThreadsFill className="mr-2 h-4 w-4" />
-                  <span>Threads</span>
-                  <ExternalLink className="ml-auto h-3 w-3 text-muted-foreground" />
-               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-               <Link href="https://linkedin.com/in/heyspex" target="_blank">
+               <Link href="http://linkedin.com/in/paulhermanson" target="_blank">
                   <RiLinkedinFill className="mr-2 h-4 w-4" />
                   <span>LinkedIn</span>
                   <ExternalLink className="ml-auto h-3 w-3 text-muted-foreground" />
@@ -84,10 +70,7 @@ export function HelpButton() {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-               <Link
-                  href="https://heyspex.com/store"
-                  target="_blank"
-               >
+               <Link href="https://heyspex.com/store" target="_blank">
                   <RiBox3Fill className="mr-2 h-4 w-4" />
                   <span>Support project</span>
                </Link>
@@ -108,19 +91,6 @@ export function HelpButton() {
                      <div className="h-1.5 w-1.5 rounded-full bg-blue-500"></div>
                   </div>
                   <span>New portfolio</span>
-               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-               <Link
-                  href="https://github.com/pwhermanson/heyspex"
-                  target="_blank"
-                  className="flex items-center"
-               >
-                  <div className="mr-2 flex h-4 w-4 items-center justify-center">
-                     <div className="h-1.5 w-1.5 rounded-full bg-transparent"></div>
-                  </div>
-                  <span>GitHub</span>
-                  <ExternalLink className="ml-2 h-3 w-3 text-muted-foreground" />
                </Link>
             </DropdownMenuItem>
          </DropdownMenuContent>

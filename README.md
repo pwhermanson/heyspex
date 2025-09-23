@@ -84,6 +84,10 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - Inspired by Linear.app, Spotify, Railway,
 - Each section is fully configurable - you can load any screen or tool into any section, resize them, expand/collapse them, and create custom views. This gives you the flexibility to arrange your workspace exactly how you need it.
 
+## Licenses
+
+Refer to LICENSE and LICENSE-COM
+
 ## Quick Start
 
 ### Installation

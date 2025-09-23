@@ -46,6 +46,10 @@ type EnhancedSidebarContext = {
    setBottomBarOverlayPosition: (position: number) => void;
    toggleBottomBar: () => void;
 
+   // Center-bottom split
+   centerBottomSplit: number;
+   setCenterBottomSplit: (height: number) => void;
+
    // Drag state
    isDragging: boolean;
    setIsDragging: (dragging: boolean) => void;
@@ -120,6 +124,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    const [isDragging, setIsDragging] = useState(false);
    const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
 
+   // Center-bottom split height (0 = no split, >0 = split height)
+   const [centerBottomSplit, setCenterBottomSplit] = useState(0);
+
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
    // Keep latest values in refs for a stable keydown listener
@@ -181,6 +188,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
       rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
       rootStyle.setProperty('--bottombar-mode', enableBottomSplit ? bottomBar.mode : 'push');
+      rootStyle.setProperty('--center-bottom-split', `${centerBottomSplit}px`);
    }, [
       enableLeftRail,
       enableBottomSplit,
@@ -193,6 +201,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       bottomBar.isVisible,
       bottomBar.mode,
       isMainFullscreen,
+      centerBottomSplit,
    ]);
 
    const updateLeftRailState = useCallback(
@@ -312,6 +321,19 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             });
          }
          // If no saved state, keep the default collapsed state (40px)
+
+         // Load center-bottom split state
+         const savedCenterBottomSplit = localStorage.getItem('ui:centerBottomSplit');
+         if (savedCenterBottomSplit !== null) {
+            const splitHeight = parseInt(savedCenterBottomSplit, 10);
+            if (!isNaN(splitHeight) && splitHeight >= 0) {
+               const viewportHeight =
+                  typeof window !== 'undefined' ? window.innerHeight : FALLBACK_VIEWPORT_HEIGHT;
+               const maxHeight = Math.max(100, Math.round(viewportHeight * 0.5));
+               const validHeight = Math.min(maxHeight, Math.max(0, splitHeight));
+               setCenterBottomSplit(validHeight);
+            }
+         }
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }
@@ -334,6 +356,18 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          console.warn('Failed to save left sidebar rail state to localStorage:', error);
       }
    }, [leftState, isHydrated]);
+
+   useEffect(() => {
+      if (!isHydrated) {
+         return;
+      }
+
+      try {
+         localStorage.setItem('ui:centerBottomSplit', centerBottomSplit.toString());
+      } catch (error) {
+         console.warn('Failed to save center-bottom split state to localStorage:', error);
+      }
+   }, [centerBottomSplit, isHydrated]);
 
    // Update grid layout whenever sidebar states change
    useEffect(() => {
@@ -625,7 +659,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    // Listen for panel command events from command palette
    useEffect(() => {
       const handlePanelCommand = (event: CustomEvent) => {
-         const { action, visible } = event.detail;
+         const { action, visible, height } = event.detail;
 
          if (action === 'setBottomBarVisible') {
             if (visible && !bottomBar.isVisible) {
@@ -638,11 +672,35 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             }
             setBottomBarVisible(visible);
          }
+
+         if (action === 'setCenterBottomSplit') {
+            const splitHeight = height || 200;
+            const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+            const maxHeight = Math.max(100, Math.round(viewportHeight * 0.5));
+            const validHeight = Math.min(maxHeight, Math.max(0, splitHeight));
+            setCenterBottomSplit(validHeight);
+         }
+
+         if (action === 'toggleCenterBottomSplit') {
+            if (centerBottomSplit > 0) {
+               setCenterBottomSplit(0);
+            } else {
+               const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+               const defaultHeight = Math.max(200, Math.round(viewportHeight * 0.3));
+               setCenterBottomSplit(defaultHeight);
+            }
+         }
       };
 
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
       return () => window.removeEventListener('panel-command', handlePanelCommand as EventListener);
-   }, [bottomBar.isVisible, setBottomBarHeight, setBottomBarVisible]);
+   }, [
+      bottomBar.isVisible,
+      setBottomBarHeight,
+      setBottomBarVisible,
+      centerBottomSplit,
+      setCenterBottomSplit,
+   ]);
 
    const contextValue = React.useMemo(
       () => ({
@@ -662,6 +720,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          setBottomBarVisible,
          setBottomBarOverlayPosition,
          toggleBottomBar,
+         centerBottomSplit,
+         setCenterBottomSplit,
          isDragging,
          setIsDragging,
          dragSide,
@@ -704,6 +764,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          setBottomBarVisible,
          setBottomBarOverlayPosition,
          toggleBottomBar,
+         centerBottomSplit,
+         setCenterBottomSplit,
          isDragging,
          setIsDragging,
          dragSide,
