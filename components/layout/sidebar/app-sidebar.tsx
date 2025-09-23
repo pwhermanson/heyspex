@@ -2,7 +2,6 @@
 
 import { RiGithubLine } from '@remixicon/react';
 import * as React from 'react';
-import Image from 'next/image';
 
 import { HelpButton } from '@/components/layout/sidebar/help-button';
 import { NavInbox } from '@/components/layout/sidebar/nav-inbox';
@@ -41,7 +40,7 @@ export function AppSidebar() {
                <LeftSidebarTrigger className="h-6 w-6" />
             </div>
          </div>
-         
+
          {/* Sidebar Content */}
          <div className="flex-1 overflow-y-auto pt-4">
             {isSettings ? (
@@ -63,7 +62,9 @@ export function AppSidebar() {
          <div className="p-4 border-t">
             <div className="w-full flex flex-col gap-2">
                {open && showText && (
-                  <div className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`}>
+                  <div
+                     className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`}
+                  >
                      <div
                         className="absolute top-2.5 right-2 z-10 cursor-pointer"
                         onClick={() => setOpen(!open)}
@@ -75,7 +76,8 @@ export function AppSidebar() {
                         Welcome to HeySpex!
                      </div>
                      <div>
-                        It&apos;s free forever! Or upgrade to Pro for unlimited projects, advanced analytics, and priority support.
+                        It&apos;s free forever! Or upgrade to Pro for unlimited projects, advanced
+                        analytics, and priority support.
                      </div>
                      <Link
                         target="_blank"
@@ -96,18 +98,9 @@ export function AppSidebar() {
                      </Button>
                   </div>
                )}
-               {showText && (
-                  <a className={`my-1.5 sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`} href="https://vercel.com/oss">
-                     <Image
-                       alt="Vercel OSS Program"
-                       src="https://vercel.com/oss/program-badge.svg"
-                       width={100}
-                       height={20}
-                       priority={false}
-                     />
-                  </a>
-               )}
-               <div className={`w-full flex items-center sidebar-content-text ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}>
+               <div
+                  className={`w-full flex items-center sidebar-content-text ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}
+               >
                   <HelpButton />
                   {showText ? (
                      <Button size="icon" variant="secondary" asChild>
@@ -121,7 +114,8 @@ export function AppSidebar() {
                         </Link>
                      </Button>
                   ) : (
-                     enableLeftRail && leftState === 'collapsed' && (
+                     enableLeftRail &&
+                     leftState === 'collapsed' && (
                         <Tooltip>
                            <TooltipTrigger asChild>
                               <Button size="icon" variant="secondary" asChild>

@@ -56,17 +56,8 @@ export function PaletteProvider({ children, context, limit }: PaletteProviderPro
       }
    }, [context]);
 
-   useEffect(() => {
-      const store = storeRef.current;
-      if (!store) {
-         return;
-      }
-
-      const state = store.getState();
-      if (!state.initialResultsLoaded) {
-         void state.loadInitialResults();
-      }
-   }, []);
+   // Don't load initial results automatically
+   // Only search when user types
 
    return (
       <PaletteStoreContext.Provider value={storeRef.current}>

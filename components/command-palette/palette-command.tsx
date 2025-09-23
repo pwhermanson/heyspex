@@ -10,14 +10,13 @@ type PaletteCommandProps = Omit<ComponentProps<typeof Command>, 'value' | 'onVal
 };
 
 export function PaletteCommand({ onQueryChange, ...props }: PaletteCommandProps) {
-   const query = usePaletteStore((state) => state.query);
-
    const handleValueChange = useCallback(
       (value: string) => {
+         console.log('🎯 PaletteCommand received value change:', value);
          onQueryChange?.(value);
       },
       [onQueryChange]
    );
 
-   return <Command value={query} onValueChange={handleValueChange} {...props} />;
+   return <Command onValueChange={handleValueChange} shouldFilter={false} {...props} />;
 }
