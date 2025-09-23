@@ -51,7 +51,6 @@ Forget thrash. Loops keep you focused on steady progress with light weekly cycle
 ### 🗺️ Direction Without Overhead
 
 Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
-
 ## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
@@ -67,7 +66,6 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - Build UI
 
 ### Haven't Started
-
 - Connect Convex Database
 - Connect Firebase Auth
 - Connect Vercel
@@ -117,4 +115,4 @@ Hey Spex treats AI coding agents like teammates with transparency and reproducib
 
 ---
 
-_Hey Spex. Spec-driven development for solo devs._
+*Hey Spex. Spec-driven development for solo devs.*
