@@ -8,7 +8,8 @@
       "start": "next start",
       "lint": "next lint",
       "format": "prettier --write .",
-      "prepare": "husky install"
+      "prepare": "husky install",
+      "test:palette": "cross-env TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"commonjs\\\"}\" ts-node lib/command-palette/__tests__/search-engine.test.ts"
    },
    "dependencies": {
       "@hookform/resolvers": "^4.1.2",
@@ -70,6 +71,8 @@
       "lint-staged": "^15.4.3",
       "prettier": "^3.5.2",
       "tailwindcss": "^4",
-      "typescript": "^5"
+      "typescript": "^5",
+      "ts-node": "^10.9.2",
+      "cross-env": "^7.0.3"
    }
 }
