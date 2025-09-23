@@ -20,20 +20,34 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
+import { useUserStore } from '@/store/user-store';
+import { getUserInitials } from '@/lib/user-utils';
+import { users } from '@/mock-data/users';
 
 export function ProfileDropdown() {
    const { theme, resolvedTheme, setTheme } = useTheme();
    const [mounted, setMounted] = React.useState(false);
+   const { currentUser, setCurrentUser } = useUserStore();
 
    React.useEffect(() => {
       setMounted(true);
-   }, []);
+      // Initialize with demo user if no current user is set
+      if (!currentUser) {
+         const demoUser = users.find((user) => user.id === 'demo');
+         if (demoUser) {
+            setCurrentUser(demoUser);
+         }
+      }
+   }, [currentUser, setCurrentUser]);
 
    const currentTheme = (resolvedTheme || theme) as 'light' | 'dark' | undefined;
    const toggleTheme = () => {
       const next = currentTheme === 'dark' ? 'light' : 'dark';
       setTheme(next);
    };
+
+   const userInitials = currentUser ? getUserInitials(currentUser.name) : '?';
+   const displayName = currentUser ? currentUser.name : 'Unknown User';
 
    return (
       <DropdownMenu>
@@ -45,7 +59,7 @@ export function ProfileDropdown() {
                aria-label="Profile menu"
             >
                <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-medium">
-                  LN
+                  {userInitials}
                </div>
             </Button>
          </DropdownMenuTrigger>
@@ -57,7 +71,7 @@ export function ProfileDropdown() {
          >
             <DropdownMenuLabel className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
                <div className="flex items-center justify-between gap-2">
-                  <span>demo user</span>
+                  <span>{displayName}</span>
                   <Button
                      variant="ghost"
                      size="icon"
@@ -93,13 +107,15 @@ export function ProfileDropdown() {
                <DropdownMenuSubTrigger>Switch Workspace</DropdownMenuSubTrigger>
                <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                     <DropdownMenuLabel>leonelngoya@gmail.com</DropdownMenuLabel>
+                     <DropdownMenuLabel>
+                        {currentUser?.email || 'demo@example.com'}
+                     </DropdownMenuLabel>
                      <DropdownMenuSeparator />
                      <DropdownMenuItem>
                         <div className="flex aspect-square size-6 items-center justify-center rounded bg-orange-500 text-sidebar-primary-foreground">
-                           LN
+                           {userInitials}
                         </div>
-                        demo-user
+                        {currentUser?.name.toLowerCase().replace(/\s+/g, '-') || 'demo-user'}
                      </DropdownMenuItem>
                      <DropdownMenuSeparator />
                      <DropdownMenuItem>Create or join workspace</DropdownMenuItem>

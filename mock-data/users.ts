@@ -19,6 +19,16 @@ export const statusUserColors = {
 
 export const users: User[] = [
    {
+      id: 'demo',
+      name: 'Demo User',
+      avatarUrl: avatarUrl('demo'),
+      email: 'demo@example.com',
+      status: 'online',
+      role: 'Admin',
+      joinedDate: '2024-01-01',
+      teamIds: ['CORE', 'PERF', 'DESIGN', 'WEB'],
+   },
+   {
       id: 'ln',
       name: 'leonel.ngoya',
       avatarUrl: avatarUrl('ln'),
