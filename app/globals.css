@@ -218,23 +218,36 @@ input[type='search'] {
   --grid-template-columns: var(--left-width) 1fr var(--right-width);
 }
 
-/* Left sidebar rail transitions */
-[data-resizable-sidebar="left"] {
-  transition: width var(--layout-motion-duration-medium) var(--layout-motion-easing);
+/* Optimal sidebar width transitions - CSS variables only for no layout thrashing */
+:root {
+  transition:
+    --left-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
+    --right-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
+    --grid-template-columns var(--layout-motion-duration-medium) var(--layout-motion-easing);
 }
 
-/* Text fade transitions for sidebar content */
+/* Text fade transitions for sidebar content with staggered timing */
 .sidebar-content-text {
-  transition: opacity var(--layout-motion-duration-medium) var(--layout-motion-easing);
+  transition: opacity var(--layout-motion-duration-short) var(--layout-motion-easing);
 }
 
-/* Smooth transitions for CSS Grid layout changes */
-.grid-layout {
-  transition: grid-template-columns var(--layout-motion-duration-long) var(--layout-motion-easing);
+/* Optimized sidebar container transitions - avoid width, use transform */
+[data-resizable-sidebar="left"],
+[data-resizable-sidebar="right"] {
+  /* Only transition transform and visual properties, never width/height */
+  transition:
+    transform var(--layout-motion-duration-medium) var(--layout-motion-easing),
+    opacity var(--layout-motion-duration-medium) var(--layout-motion-easing);
 }
 
-/* Disable grid transitions during drag for better performance */
-.sidebar-dragging .grid-layout {
+/* Disable ALL transitions during drag for maximum performance */
+.sidebar-dragging,
+.sidebar-dragging * {
+  transition: none !important;
+}
+
+/* Disable CSS variable transitions during drag */
+.sidebar-dragging:root {
   transition: none !important;
 }
 
@@ -259,12 +272,22 @@ input[type='search'] {
     --layout-motion-duration-short: 0ms;
     --layout-motion-duration-medium: 0ms;
     --layout-motion-duration-long: 0ms;
+    /* Disable CSS variable transitions for reduced motion */
+    transition: none !important;
   }
 
   .layout-transition,
   .layout-transition-short,
-  .layout-transition-long {
-    transition-duration: 0ms !important;
+  .layout-transition-long,
+  .sidebar-content-text,
+  [data-resizable-sidebar] {
+    transition: none !important;
+  }
+
+  /* Keep essential visual feedback but remove timing */
+  .sidebar-drag-handle:hover,
+  .sidebar-drag-handle:active {
+    transition: none !important;
   }
 }
 

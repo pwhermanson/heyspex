@@ -63,7 +63,7 @@ export function AppSidebar() {
          <div className="p-4 border-t">
             <div className="w-full flex flex-col gap-2">
                {open && showText && (
-                  <div className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full transition-opacity layout-transition ${showText ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`}>
                      <div
                         className="absolute top-2.5 right-2 z-10 cursor-pointer"
                         onClick={() => setOpen(!open)}
@@ -97,7 +97,7 @@ export function AppSidebar() {
                   </div>
                )}
                {showText && (
-                  <a className={`my-1.5 transition-opacity layout-transition ${showText ? 'opacity-100' : 'opacity-0'}`} href="https://vercel.com/oss">
+                  <a className={`my-1.5 sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`} href="https://vercel.com/oss">
                      <Image
                        alt="Vercel OSS Program"
                        src="https://vercel.com/oss/program-badge.svg"
@@ -107,7 +107,7 @@ export function AppSidebar() {
                      />
                   </a>
                )}
-               <div className={`w-full flex items-center transition-opacity layout-transition ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}>
+               <div className={`w-full flex items-center sidebar-content-text ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}>
                   <HelpButton />
                   {showText ? (
                      <Button size="icon" variant="secondary" asChild>

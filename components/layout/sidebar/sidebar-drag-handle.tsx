@@ -24,8 +24,9 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
   // Cleanup on unmount
   React.useEffect(() => {
     return () => {
-      // Clean up any pending animation frames and body class
+      // Clean up any pending animation frames and both classes
       document.body.classList.remove('sidebar-dragging');
+      document.documentElement.classList.remove('sidebar-dragging');
     };
   }, []);
 
@@ -39,8 +40,9 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
     setIsDragging(true);
     setDragSide(side);
 
-    // Add dragging class to body to prevent text selection
+    // Add dragging class to both body and root for comprehensive transition disabling
     document.body.classList.add('sidebar-dragging');
+    document.documentElement.classList.add('sidebar-dragging');
 
     const startX = e.clientX;
     const startWidth = currentSidebar.width;
@@ -85,6 +87,7 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       setIsDragging(false);
       setDragSide(null);
       document.body.classList.remove('sidebar-dragging');
+      document.documentElement.classList.remove('sidebar-dragging');
 
       // Get final width from CSS custom property and update state
       const rootStyle = document.documentElement.style;

@@ -69,6 +69,7 @@ const MAX_SIDEBAR_WIDTH = 500;
 const DEFAULT_LEFT_WIDTH = 244;
 const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
+const RIGHT_COLLAPSED_WIDTH = 64;
 
 const MIN_BOTTOM_HEIGHT = 40; // Collapsed state height
 const MAX_BOTTOM_HEIGHT_RATIO = 0.5;
@@ -131,8 +132,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     const rootElement = document.documentElement;
     const rootStyle = rootElement.style;
 
-    const rightCollapsedSpacing = 8;
-    const leftCollapsedWidth = enableLeftRail ? LEFT_COLLAPSED_WIDTH : 0;
+    const leftCollapsedWidth = LEFT_COLLAPSED_WIDTH;
+    const rightCollapsedWidth = RIGHT_COLLAPSED_WIDTH;
 
     const leftWidth = isMainFullscreen
       ? 0
@@ -144,7 +145,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       ? 0
       : rightSidebar.isOpen
         ? rightSidebar.width
-        : rightCollapsedSpacing;
+        : rightCollapsedWidth;
 
     rootStyle.setProperty('--left-width', `${leftWidth}px`);
     rootStyle.setProperty('--right-width', `${rightWidth}px`);

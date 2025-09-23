@@ -7,12 +7,14 @@ interface BottomDragHandleProps {
   onMouseDown?: (e: React.MouseEvent) => void;
   isDragging?: boolean;
   className?: string;
+  mode?: 'push' | 'overlay';
 }
 
 export function BottomDragHandle({
   onMouseDown,
   isDragging = false,
-  className
+  className,
+  mode = 'push'
 }: BottomDragHandleProps) {
   const handleMouseDown = React.useCallback(
     (event: React.MouseEvent) => {
@@ -25,8 +27,9 @@ export function BottomDragHandle({
     <div
       className={cn(
         'absolute inset-x-0 top-0 h-2 cursor-row-resize group z-50 select-none touch-none pointer-events-auto',
-        'transition-all layout-transition-short motion-reduce:transition-none hover:bg-blue-500/30',
-        isDragging && 'bg-blue-500/30',
+        'transition-all layout-transition-short motion-reduce:transition-none',
+        mode === 'overlay' && 'hover:bg-blue-500/30',
+        mode === 'overlay' && isDragging && 'bg-blue-500/30',
         className
       )}
       onMouseDown={handleMouseDown}

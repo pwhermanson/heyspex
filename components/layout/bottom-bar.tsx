@@ -158,6 +158,7 @@ export function BottomBar({
       <BottomDragHandle
         onMouseDown={onDragStart}
         isDragging={isDragging}
+        mode={mode}
       />
 
       {/* Bottom Bar Content - only show if not collapsed */}
