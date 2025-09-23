@@ -7,6 +7,7 @@ import { X, Minus, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useResizableSidebar } from '@/components/layout/sidebar/resizable-sidebar-provider';
 import { BottomDragHandle } from '@/components/layout/bottom-drag-handle';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 // Layout icons for Section D
 const LayoutFullIcon = ({ className }: { className?: string }) => (
@@ -278,57 +279,222 @@ export function BottomBar({
                ) : (
                   <div className="h-full">
                      {sectionDLayout === 'full' && (
-                        <div className="h-full p-4">
-                           <div className="text-sm text-muted-foreground">
-                              <p>Output panel - Full width layout</p>
-                              <p className="mt-2">
-                                 Mode: <strong className="capitalize">{mode}</strong> | Height:{' '}
-                                 <strong>{height}px</strong>
-                              </p>
-                              <p className="mt-1 text-xs">
-                                 Single content area spanning the full width of the panel.
-                              </p>
+                        <div className="h-full overflow-hidden">
+                           <div className="h-full overflow-y-auto">
+                              <div className="p-4 space-y-4 max-w-4xl mx-auto">
+                                 <div className="text-sm text-muted-foreground">
+                                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                                       Output Panel - Full Width Layout
+                                    </h3>
+                                    <p className="mb-2">
+                                       Mode: <strong className="capitalize">{mode}</strong> |
+                                       Height: <strong>{height}px</strong>
+                                    </p>
+                                    <p className="text-xs">
+                                       Single content area spanning the full width of the panel.
+                                    </p>
+                                 </div>
+
+                                 {/* Sample content to demonstrate scrolling */}
+                                 <div className="space-y-2">
+                                    {Array.from({ length: 20 }, (_, i) => (
+                                       <div key={i} className="p-3 bg-muted/20 border rounded-lg">
+                                          <p className="text-sm font-medium">
+                                             Content Item {i + 1}
+                                          </p>
+                                          <p className="text-xs text-muted-foreground line-clamp-1">
+                                             This content responds to panel resizing and scrolls
+                                             when needed.
+                                          </p>
+                                       </div>
+                                    ))}
+                                 </div>
+                              </div>
                            </div>
                         </div>
                      )}
 
                      {sectionDLayout === '2-split' && (
-                        <div className="h-full grid grid-cols-2 gap-4 p-4">
-                           <div className="bg-muted/20 border rounded-lg p-3">
-                              <div className="text-sm text-muted-foreground">
-                                 <p className="font-medium">Section D2A</p>
-                                 <p className="mt-1 text-xs">Left content area</p>
-                              </div>
-                           </div>
-                           <div className="bg-muted/20 border rounded-lg p-3">
-                              <div className="text-sm text-muted-foreground">
-                                 <p className="font-medium">Section D2B</p>
-                                 <p className="mt-1 text-xs">Right content area</p>
-                              </div>
-                           </div>
+                        <div className="h-full">
+                           <ResizablePanelGroup
+                              direction="horizontal"
+                              autoSaveId="section-d-2-split"
+                              className="h-full"
+                           >
+                              <ResizablePanel defaultSize={50} minSize={5}>
+                                 <div className="bg-muted/20 border h-full overflow-hidden">
+                                    <div className="h-full overflow-y-auto">
+                                       <div className="p-4 space-y-3">
+                                          <div className="p-2 bg-background/50 rounded border">
+                                             <p className="text-sm font-medium line-clamp-1">
+                                                Section D2A
+                                             </p>
+                                             <p className="text-xs text-muted-foreground line-clamp-1">
+                                                Left content area - resizes responsively
+                                             </p>
+                                          </div>
+
+                                          {/* Sample responsive content */}
+                                          <div className="space-y-2">
+                                             {Array.from({ length: 10 }, (_, i) => (
+                                                <div
+                                                   key={i}
+                                                   className="p-2 bg-background/50 rounded border"
+                                                >
+                                                   <p className="text-xs font-medium line-clamp-1">
+                                                      Item {i + 1}
+                                                   </p>
+                                                   <p className="text-xs text-muted-foreground line-clamp-1">
+                                                      Content adapts to width changes
+                                                   </p>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </ResizablePanel>
+                              <ResizableHandle withHandle />
+                              <ResizablePanel defaultSize={50} minSize={5}>
+                                 <div className="bg-muted/20 border h-full overflow-hidden">
+                                    <div className="h-full overflow-y-auto">
+                                       <div className="p-4 space-y-3">
+                                          <div className="p-2 bg-background/50 rounded border">
+                                             <p className="text-sm font-medium line-clamp-1">
+                                                Section D2B
+                                             </p>
+                                             <p className="text-xs text-muted-foreground line-clamp-1">
+                                                Right content area - resizes responsively
+                                             </p>
+                                          </div>
+
+                                          {/* Sample responsive content */}
+                                          <div className="space-y-2">
+                                             {Array.from({ length: 15 }, (_, i) => (
+                                                <div
+                                                   key={i}
+                                                   className="p-2 bg-background/50 rounded border"
+                                                >
+                                                   <p className="text-xs font-medium line-clamp-1">
+                                                      Item {i + 1}
+                                                   </p>
+                                                   <p className="text-xs text-muted-foreground line-clamp-1">
+                                                      Content adapts to width changes
+                                                   </p>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </ResizablePanel>
+                           </ResizablePanelGroup>
                         </div>
                      )}
 
                      {sectionDLayout === '3-split' && (
-                        <div className="h-full grid grid-cols-3 gap-4 p-4">
-                           <div className="bg-muted/20 border rounded-lg p-3">
-                              <div className="text-sm text-muted-foreground">
-                                 <p className="font-medium">Section D3A</p>
-                                 <p className="mt-1 text-xs">Left content area</p>
-                              </div>
-                           </div>
-                           <div className="bg-muted/20 border rounded-lg p-3">
-                              <div className="text-sm text-muted-foreground">
-                                 <p className="font-medium">Section D3B</p>
-                                 <p className="mt-1 text-xs">Center content area</p>
-                              </div>
-                           </div>
-                           <div className="bg-muted/20 border rounded-lg p-3">
-                              <div className="text-sm text-muted-foreground">
-                                 <p className="font-medium">Section D3C</p>
-                                 <p className="mt-1 text-xs">Right content area</p>
-                              </div>
-                           </div>
+                        <div className="h-full">
+                           <ResizablePanelGroup
+                              direction="horizontal"
+                              autoSaveId="section-d-3-split"
+                              className="h-full"
+                           >
+                              <ResizablePanel defaultSize={33.33} minSize={3.75}>
+                                 <div className="bg-muted/20 border h-full overflow-hidden">
+                                    <div className="h-full overflow-y-auto">
+                                       <div className="p-3 space-y-2">
+                                          <div className="p-1.5 bg-background/50 rounded text-xs">
+                                             <p className="font-medium line-clamp-1">Section D3A</p>
+                                             <p className="text-muted-foreground line-clamp-1">
+                                                Left panel - responsive
+                                             </p>
+                                          </div>
+
+                                          {/* Sample responsive content */}
+                                          <div className="space-y-1">
+                                             {Array.from({ length: 8 }, (_, i) => (
+                                                <div
+                                                   key={i}
+                                                   className="p-1.5 bg-background/50 rounded text-xs"
+                                                >
+                                                   <p className="font-medium line-clamp-1">
+                                                      Item {i + 1}
+                                                   </p>
+                                                   <p className="text-muted-foreground line-clamp-1">
+                                                      Adapts to width
+                                                   </p>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </ResizablePanel>
+                              <ResizableHandle withHandle />
+                              <ResizablePanel defaultSize={33.33} minSize={3.75}>
+                                 <div className="bg-muted/20 border h-full overflow-hidden">
+                                    <div className="h-full overflow-y-auto">
+                                       <div className="p-3 space-y-2">
+                                          <div className="p-1.5 bg-background/50 rounded text-xs">
+                                             <p className="font-medium line-clamp-1">Section D3B</p>
+                                             <p className="text-muted-foreground line-clamp-1">
+                                                Center panel - responsive
+                                             </p>
+                                          </div>
+
+                                          {/* Sample responsive content */}
+                                          <div className="space-y-1">
+                                             {Array.from({ length: 12 }, (_, i) => (
+                                                <div
+                                                   key={i}
+                                                   className="p-1.5 bg-background/50 rounded text-xs"
+                                                >
+                                                   <p className="font-medium line-clamp-1">
+                                                      Item {i + 1}
+                                                   </p>
+                                                   <p className="text-muted-foreground line-clamp-1">
+                                                      Adapts to width
+                                                   </p>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </ResizablePanel>
+                              <ResizableHandle withHandle />
+                              <ResizablePanel defaultSize={33.34} minSize={3.75}>
+                                 <div className="bg-muted/20 border h-full overflow-hidden">
+                                    <div className="h-full overflow-y-auto">
+                                       <div className="p-3 space-y-2">
+                                          <div className="p-1.5 bg-background/50 rounded text-xs">
+                                             <p className="font-medium line-clamp-1">Section D3C</p>
+                                             <p className="text-muted-foreground line-clamp-1">
+                                                Right panel - responsive
+                                             </p>
+                                          </div>
+
+                                          {/* Sample responsive content */}
+                                          <div className="space-y-1">
+                                             {Array.from({ length: 10 }, (_, i) => (
+                                                <div
+                                                   key={i}
+                                                   className="p-1.5 bg-background/50 rounded text-xs"
+                                                >
+                                                   <p className="font-medium line-clamp-1">
+                                                      Item {i + 1}
+                                                   </p>
+                                                   <p className="text-muted-foreground line-clamp-1">
+                                                      Adapts to width
+                                                   </p>
+                                                </div>
+                                             ))}
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </ResizablePanel>
+                           </ResizablePanelGroup>
                         </div>
                      )}
                   </div>
