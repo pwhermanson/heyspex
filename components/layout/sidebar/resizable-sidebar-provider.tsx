@@ -555,7 +555,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
     document.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => document.removeEventListener('keydown', handleKeyDown, { capture: true } as AddEventListenerOptions);
-  }, [toggleBottomBar]);
+  }, [toggleBottomBar, setBottomBarHeight, setBottomBarVisible]);
 
 
   const contextValue = React.useMemo(

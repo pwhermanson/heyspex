@@ -55,6 +55,8 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from '@/components/layout/theme-provider';
+import { HydrationErrorBoundary } from '@/components/common/HydrationErrorBoundary';
+import { SafeHydrate } from '@/components/common/SafeHydrate';
 
 export default function RootLayout({
    children,
@@ -67,10 +69,14 @@ export default function RootLayout({
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
          </head>
          <body className={`${inter.variable} ${geistMono.variable} antialiased bg-background`}>
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-               {children}
-               <Toaster />
-            </ThemeProvider>
+            <HydrationErrorBoundary>
+               <SafeHydrate>
+                  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+                     {children}
+                     <Toaster />
+                  </ThemeProvider>
+               </SafeHydrate>
+            </HydrationErrorBoundary>
          </body>
       </html>
    );

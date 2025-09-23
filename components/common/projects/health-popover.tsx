@@ -7,6 +7,7 @@ import { Project } from '@/mock-data/projects';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { ClientDate } from '@/components/common/ClientDate';
 
 interface HealthPopoverProps {
    project: Project;
@@ -82,7 +83,7 @@ export function HealthPopover({ project }: HealthPopoverProps) {
                      <span className="text-xs text-muted-foreground">{project.lead.name}</span>
                      <span className="text-xs text-muted-foreground">·</span>
                      <span className="text-xs text-muted-foreground">
-                        {new Date(project.startDate).toLocaleDateString()}
+                        <ClientDate date={project.startDate} />
                      </span>
                   </div>
                </div>
