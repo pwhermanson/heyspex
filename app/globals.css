@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-   --font-sans: var(--font-geist-sans);
+   --font-sans: var(--font-inter);
    --font-mono: var(--font-geist-mono);
 }
 
@@ -290,5 +290,4 @@ input[type='search'] {
     transition: none !important;
   }
 }
-
 

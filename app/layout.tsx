@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist_Mono, Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
-const geistSans = Geist({
-   variable: '--font-geist-sans',
+const inter = Inter({
+   variable: '--font-inter',
    subsets: ['latin'],
+   display: 'swap',
 });
 
 const geistMono = Geist_Mono({
@@ -65,7 +66,7 @@ export default function RootLayout({
          <head>
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
          </head>
-         <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}>
+         <body className={`${inter.variable} ${geistMono.variable} antialiased bg-background`}>
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                {children}
                <Toaster />

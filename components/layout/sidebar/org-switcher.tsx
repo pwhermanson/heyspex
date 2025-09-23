@@ -21,8 +21,10 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useCreateIssueStore } from '@/store/create-issue-store';
 
 export function OrgSwitcher() {
+   const { openModal } = useCreateIssueStore();
    return (
       <SidebarMenu>
          <SidebarMenuItem>
@@ -39,7 +41,12 @@ export function OrgSwitcher() {
                      </SidebarMenuButton>
                   </DropdownMenuTrigger>
 
-                  <Button size="icon" variant="ghost" className="h-8 w-8 p-0">
+                  <Button
+                     size="icon"
+                     variant="ghost"
+                     className="h-8 w-8 p-0"
+                     onClick={() => openModal()}
+                  >
                      <Plus className="h-4 w-4" />
                      <span className="sr-only">Create new issue</span>
                   </Button>
