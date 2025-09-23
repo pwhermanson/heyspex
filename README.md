@@ -53,6 +53,19 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Spec Engine**: Built on [GitHub's SpecKit](https://github.com/github/speckit)
 
+## Roadmap
+
+### In Progress
+
+- Build UI
+
+### Haven't Started
+- Connect Convex Database
+- Connect Firebase Auth
+- Github Integration
+- Create local MCP, connect to Cursor
+- Create "staged tasks" workflow
+
 ## Quick Start
 
 ### Installation
