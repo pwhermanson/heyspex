@@ -8,12 +8,22 @@ Hey Spex is a lightweight spec-driven development layer for solo devs and indie 
 
 ## The Problem
 
-AI is great at patterns, terrible at reading your mind. Vague prompts lead to fragile code, misaligned features, and endless debugging sessions. When you "vibe code" with AI, you're essentially asking it to guess what you want to build.
+AI is great at patterns, terrible at reading your mind. Vague prompts lead to fragile code, misaligned features, and endless debugging sessions. When you "vibe code" with AI, you're essentially asking it to guess what you want to build. IDEs like Cursor are not planning tools. They are for implementation. HeySpex handles planning outside of your IDE environment and then creates a feedback loop for iterative cycles. The truth is, development is messy. HeySpex allows the messy to happen and organizes it for us and helps us enhance our implementation as we go - with the perfect context that each task needs.
 
 ## The Solution
 
 **Spec-driven development** changes everything. Instead of hoping AI understands your intent, you define it clearly through living specifications that guide every decision.
 
+![HeySpex Flowchart](/media/heyspex-flowchart.png)
+
+
+## Built For
+
+- **Solo developers** who want clarity, not clutter
+- **Indie makers** who ship with AI but need control
+- **Teams** who want clean code, not guesses
+- **Anyone** tired of AI building the wrong thing
+  
 ### Four Clear Phases
 
 1. **Specify** → Define intent, outcomes, and user journeys
@@ -21,7 +31,7 @@ AI is great at patterns, terrible at reading your mind. Vague prompts lead to fr
 3. **Tasks** → Break down into safe, testable units
 4. **Implement** → AI executes incrementally with validation at every step
 
-## Key Features
+## Features Overview
 
 ### 🎯 Spec-First, Not Guess-First
 Write intent, outcomes, and flows before code. Hey Spex turns it into a living spec the AI can actually follow.
@@ -37,13 +47,6 @@ Forget thrash. Loops keep you focused on steady progress with light weekly cycle
 
 ### 🗺️ Direction Without Overhead
 Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
-
-## Built For
-
-- **Solo developers** who want clarity, not clutter
-- **Indie makers** who ship with AI but need control
-- **Teams** who want clean code, not guesses
-- **Anyone** tired of AI building the wrong thing
 
 ## Tech Stack
 
@@ -62,9 +65,20 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 ### Haven't Started
 - Connect Convex Database
 - Connect Firebase Auth
+- Connect Vercel
 - Github Integration
 - Create local MCP, connect to Cursor
 - Create "staged tasks" workflow
+- Create Docs V1
+- Google SpecKit Integration
+
+## Features
+
+### UI
+
+- Inspired by Linear.app, Spotify, Railway,
+- Each section is fully configurable - you can load any screen or tool into any section, resize them, expand/collapse them, and create custom views. This gives you the flexibility to arrange your workspace exactly how you need it.
+
 
 ## Quick Start
 
