@@ -23,6 +23,7 @@
 - **Bottom Bar (Section D)**
   - Full-width global bar. Above it is an adjustable split area (0-50% viewport height) controlled by a draggable handle and keyboard.
   - Height persists and restores without jank.
+  - `Ctrl/Cmd + Shift + 2` (top number row) or `Ctrl/Cmd + Numpad2` toggles the Section D bottom bar while keyboard settings are under construction (first press enables the split flag if it was still off).
 
 - **Fullscreen per-section**
   - Expands A/B/C to fill the viewport visually. Top/Bottom bars hide; other sidebars zero out via CSS vars (original states preserved). Exit restores exact prior states.
@@ -104,10 +105,10 @@ A Spotify-inspired, modern workspace where navigation and global context live in
   - Persistence migration leaves users in valid states
 
 ### Phase 3: BottomBar + split
-- 3.1 BottomBar shell behind a flag
-  - BottomBar renders with `role="contentinfo"` when `enableBottomSplit` is true
-  - `--bottombar-height` defined and applied
-  - No change when flag is off
+- [x] 3.1 BottomBar shell behind a flag
+  - [x] BottomBar renders with `role="contentinfo"` when `enableBottomSplit` is true
+  - [x] `--bottombar-height` defined and applied
+  - [x] No change when flag is off
 - 3.2 Main-area split scaffolding
   - Middle row uses `--center-bottom-split`; default 0px
   - No additional scrollbars or CLS introduced
@@ -925,3 +926,5 @@ This layout system is designed from the ground up for Vercel deployment with com
 **Vercel Deployment Status**: Ready for production with comprehensive compatibility checks
 **Risk Level**: Low - All potential conflicts identified and mitigated
 **Confidence Level**: High - Architecture designed specifically for Vercel deployment
+
+

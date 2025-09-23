@@ -50,6 +50,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
    } = useResizableSidebar();
 
    const isTopBarEnabled = useFeatureFlag('enableTopBar');
+   const isBottomSplitEnabled = useFeatureFlag('enableBottomSplit');
+   const safeBottomEnabled = isHydrated && isBottomSplitEnabled;
    const initialTopBarHeightRef = React.useRef<string | null>(null);
 
   // Drag state for bottom bar overlay positioning
@@ -244,8 +246,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
     rows.push('1fr');
 
-    const shouldReserveBottomRow =
-      bottomBar.mode === 'push' && bottomBar.isVisible && !isMainFullscreen;
+    const shouldReserveBottomRow = safeBottomEnabled && bottomBar.mode === 'push' && bottomBar.isVisible && !isMainFullscreen;
 
     if (shouldReserveBottomRow) {
       rows.push('var(--bottombar-height, 40px)');
@@ -258,7 +259,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       <div
          className="h-svh w-full grid"
          style={{ gridTemplateRows: getGridRows() }}
-         data-bottom-mode={bottomBar.mode}
+         data-bottom-mode={safeBottomEnabled ? bottomBar.mode : undefined}
       >
          {/* TopBar - spans full width */}
          {!isMainFullscreen && isTopBarEnabled && <TopBar />}
@@ -321,7 +322,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          </div>
 
          {/* Overlay Bottom Bar - positioned outside main area for true overlay */}
-         {isHydrated && !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'overlay' && (
+         {isBottomSplitEnabled && isHydrated && !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'overlay' && (
             <div
                className="fixed left-2 right-2 z-[100]"
                style={{
@@ -343,7 +344,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
          )}
 
          {/* Bottom Bar - push mode rendered as separate grid row */}
-        {!isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push' && (
+        {!isMainFullscreen && safeBottomEnabled && bottomBar.isVisible && bottomBar.mode === 'push' && (
             <div className="relative overflow-hidden z-[50]">
                <BottomBar
                   mode={bottomBar.mode}
@@ -374,4 +375,3 @@ export default function MainLayout({ children, header, headersNumber = 2 }: Main
       </ResizableSidebarProvider>
    );
 }
-

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useFeatureFlag } from '@/hooks/use-feature-flag';
+import { setFeatureFlag } from '@/lib/feature-flags';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 type SidebarState = {
@@ -119,6 +120,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
   const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
 
   const enableLeftRail = useFeatureFlag('enableLeftRail');
+  const enableBottomSplit = useFeatureFlag('enableBottomSplit');
+  // Keep latest values in refs for a stable keydown listener
+  const enableBottomSplitRef = React.useRef(enableBottomSplit);
+  useEffect(() => { enableBottomSplitRef.current = enableBottomSplit; }, [enableBottomSplit]);
+  const bottomBarHeightRef = React.useRef(bottomBar.height);
+  useEffect(() => { bottomBarHeightRef.current = bottomBar.height; }, [bottomBar.height]);
 
   // Debounced save to localStorage
   const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -158,13 +165,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
     }
 
-    const effectiveBottomHeight =
-      !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push' ? bottomBar.height : 0;
+    const shouldShowBottomBar =
+      enableBottomSplit && !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push';
+
+    const effectiveBottomHeight = shouldShowBottomBar ? bottomBar.height : 0;
 
     rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
-    rootStyle.setProperty('--bottombar-mode', bottomBar.mode);
+    rootStyle.setProperty('--bottombar-mode', enableBottomSplit ? bottomBar.mode : 'push');
   }, [
     enableLeftRail,
+    enableBottomSplit,
     leftState,
     leftSidebar.isOpen,
     leftSidebar.width,
@@ -523,6 +533,30 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     });
   }, []);
 
+  // Temporary shortcut for toggling Section D until settings wiring is in place.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isCtrlLike = event.ctrlKey || event.metaKey;
+      const isTopDigit2 = event.shiftKey && event.code === 'Digit2';
+      const isNumpad2 = event.code === 'Numpad2';
+      if (isCtrlLike && !event.altKey && (isTopDigit2 || isNumpad2)) {
+        event.preventDefault();
+
+        if (!enableBottomSplitRef.current) {
+          setFeatureFlag('enableBottomSplit', true);
+          setBottomBarVisible(true);
+          try { setBottomBarHeight(Math.max(bottomBarHeightRef.current ?? 40, 240)); } catch {}
+          return;
+        }
+
+        toggleBottomBar();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => document.removeEventListener('keydown', handleKeyDown, { capture: true } as AddEventListenerOptions);
+  }, [toggleBottomBar]);
+
 
   const contextValue = React.useMemo(
     () => ({
@@ -600,3 +634,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
     </EnhancedSidebarContext.Provider>
   );
 }
+
+
+
+

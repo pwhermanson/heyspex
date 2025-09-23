@@ -1,10 +1,11 @@
-export type FeatureFlagName = 'enableTopBar' | 'enableLeftRail';
+export type FeatureFlagName = 'enableTopBar' | 'enableLeftRail' | 'enableBottomSplit';
 
 type FeatureFlagState = Record<FeatureFlagName, boolean>;
 
 const DEFAULT_FLAGS: FeatureFlagState = {
   enableTopBar: true,
   enableLeftRail: false,
+  enableBottomSplit: false,
 };
 
 const STORAGE_PREFIX = 'heyspex:feature-flag:';
