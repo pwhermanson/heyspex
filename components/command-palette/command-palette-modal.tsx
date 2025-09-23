@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import {
    CommandDialog,
@@ -21,6 +22,7 @@ export function CommandPaletteModal() {
    const loadInitialResults = usePaletteStore((state) => state.loadInitialResults);
    const initialResultsLoaded = usePaletteStore((state) => state.initialResultsLoaded);
    const results = usePaletteStore((state) => state.results);
+   const isLoading = usePaletteStore((state) => state.isLoading);
    const context = usePaletteStore((state) => state.context);
 
    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,13 +87,28 @@ export function CommandPaletteModal() {
       [executeQuery, setQuery]
    );
 
+   // Show loading skeletons while initial results are loading
+   const showLoadingSkeletons = open && !initialResultsLoaded && isLoading;
+   const showResults = open && initialResultsLoaded && !isLoading;
+   const showEmpty = open && initialResultsLoaded && !isLoading && results.length === 0;
+
    return (
       <CommandDialog open={open} onOpenChange={handleOpenChange}>
          <PaletteCommand onQueryChange={handleQueryChange}>
             <CommandInput placeholder="Search for commands or actions..." />
             <CommandList>
-               <CommandEmpty>No matching results</CommandEmpty>
-               {results.length > 0 && (
+               {showLoadingSkeletons && (
+                  <div className="p-2 space-y-2">
+                     {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex items-center space-x-2 px-2 py-1.5">
+                           <Skeleton className="h-4 w-4 rounded" />
+                           <Skeleton className="h-4 flex-1" />
+                        </div>
+                     ))}
+                  </div>
+               )}
+               {showEmpty && <CommandEmpty>No matching results</CommandEmpty>}
+               {showResults && results.length > 0 && (
                   <CommandGroup heading="Results">
                      {results.map((result) => (
                         <CommandItem
