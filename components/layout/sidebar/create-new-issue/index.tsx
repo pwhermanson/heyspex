@@ -14,11 +14,13 @@ import { useIssuesStore } from '@/store/issues-store';
 import { useCreateIssueStore } from '@/store/create-issue-store';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
-import { StatusSelector } from './status-selector';
-import { PrioritySelector } from './priority-selector';
-import { AssigneeSelector } from './assignee-selector';
-import { ProjectSelector } from './project-selector';
-import { LabelSelector } from './label-selector';
+import {
+   StatusSelector,
+   PrioritySelector,
+   AssigneeSelector,
+   ProjectSelector,
+   LabelSelector,
+} from '@/components/common/selectors';
 import { ranks } from '@/mock-data/issues';
 import { DialogTitle } from '@radix-ui/react-dialog';
 
@@ -116,26 +118,26 @@ export function CreateNewIssue() {
 
                <div className="w-full flex items-center justify-start gap-1.5 flex-wrap">
                   <StatusSelector
-                     status={addIssueForm.status}
-                     onChange={(newStatus) =>
+                     selectedItem={addIssueForm.status}
+                     onSelectionChange={(newStatus) =>
                         setAddIssueForm({ ...addIssueForm, status: newStatus })
                      }
                   />
                   <PrioritySelector
-                     priority={addIssueForm.priority}
-                     onChange={(newPriority) =>
+                     selectedItem={addIssueForm.priority}
+                     onSelectionChange={(newPriority) =>
                         setAddIssueForm({ ...addIssueForm, priority: newPriority })
                      }
                   />
                   <AssigneeSelector
-                     assignee={addIssueForm.assignee}
-                     onChange={(newAssignee) =>
+                     selectedItem={addIssueForm.assignee}
+                     onSelectionChange={(newAssignee) =>
                         setAddIssueForm({ ...addIssueForm, assignee: newAssignee })
                      }
                   />
                   <ProjectSelector
-                     project={addIssueForm.project}
-                     onChange={(newProject) =>
+                     selectedItem={addIssueForm.project}
+                     onSelectionChange={(newProject) =>
                         setAddIssueForm({ ...addIssueForm, project: newProject })
                      }
                   />

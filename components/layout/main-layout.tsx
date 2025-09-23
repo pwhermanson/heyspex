@@ -22,7 +22,6 @@ import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { cn } from '@/lib/utils';
 import { CommandPaletteModal } from '@/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/lib/command-palette/use-command-palette-shortcuts';
-import { LayoutConfigProvider } from '@/components/layout/layout-config-provider';
 // Import panel commands to register them
 import '@/lib/command-palette/commands/panel-commands';
 

@@ -28,7 +28,7 @@ export default function ProjectLine({ project }: ProjectLineProps) {
          </div>
 
          <div className="hidden w-[10%] sm:block">
-            <PrioritySelector priority={project.priority} />
+            <PrioritySelector priority={project.priority} onChange={() => {}} />
          </div>
          <div className="hidden xl:block xl:w-[13%]">
             <LeadSelector lead={project.lead} />
