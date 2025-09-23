@@ -8,35 +8,13 @@ Hey Spex is a lightweight spec-driven development layer for solo devs and indie 
 
 ## The Problem
 
-AI is great at patterns, terrible at reading your mind. Vague prompts lead to fragile code, misaligned features, and endless debugging sessions. When you "vibe code" with AI, you're essentially asking it to guess what you want to build.
+AI is great at patterns, terrible at reading your mind. Vague prompts lead to fragile code, misaligned features, and endless debugging sessions. When you "vibe code" with AI, you're essentially asking it to guess what you want to build. IDEs like Cursor are not planning tools. They are for implementation. HeySpex handles planning outside of your IDE environment and then creates a feedback loop for iterative cycles. The truth is, development is messy. HeySpex allows the messy to happen and organizes it for us and helps us enhance our implementation as we go - with the perfect context that each task needs.
 
 ## The Solution
 
 **Spec-driven development** changes everything. Instead of hoping AI understands your intent, you define it clearly through living specifications that guide every decision.
 
-### Four Clear Phases
-
-1. **Specify** → Define intent, outcomes, and user journeys
-2. **Plan** → Set architecture, constraints, and technical requirements  
-3. **Tasks** → Break down into safe, testable units
-4. **Implement** → AI executes incrementally with validation at every step
-
-## Key Features
-
-### 🎯 Spec-First, Not Guess-First
-Write intent, outcomes, and flows before code. Hey Spex turns it into a living spec the AI can actually follow.
-
-### 🛡️ Guardrails, Not Chaos
-Catch fragile code, missing tests, and unsafe changes before they hit your repo.
-
-### 🧠 Context That Sticks
-Keep your specs, prompts, errors, and notes in sync. You'll never lose track of what the AI was supposed to build.
-
-### 🔄 Build Momentum with Loops
-Forget thrash. Loops keep you focused on steady progress with light weekly cycles around specs.
-
-### 🗺️ Direction Without Overhead
-Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
+![HeySpex Flowchart](/media/heyspex-flowchart.png)
 
 ## Built For
 
@@ -45,19 +23,34 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - **Teams** who want clean code, not guesses
 - **Anyone** tired of AI building the wrong thing
 
-## Layout Areas
+### Four Clear Phases
 
-Hey Spex features a flexible 5-section layout that can be customized to your workflow:
+1. **Specify** → Define intent, outcomes, and user journeys
+2. **Plan** → Set architecture, constraints, and technical requirements
+3. **Tasks** → Break down into safe, testable units
+4. **Implement** → AI executes incrementally with validation at every step
 
-- **Top Bar** - Fixed header with navigation and controls
-- **Section A** - Left sidebar area (typically for main navigation) - *Expandable/Collapsible*
-- **Section B** - Main content area (primary workspace) - *Expandable/Collapsible*
-- **Section C** - Right sidebar area (typically for secondary tools) - *Expandable/Collapsible*
-- **Section D** - Bottom content area (additional workspace) - *Two modes available:*
-  - **Section D - Push** - Pushes content up when expanded/collapsed
-  - **Section D - Overlay** - Overlays on top of existing content when expanded/collapsed
+## Features Overview
 
-Each section is fully configurable - you can load any screen or tool into any section, resize them, expand/collapse them, and create custom views. This gives you the flexibility to arrange your workspace exactly how you need it, similar to having multiple windows on your desktop.
+### 🎯 Spec-First, Not Guess-First
+
+Write intent, outcomes, and flows before code. Hey Spex turns it into a living spec the AI can actually follow.
+
+### 🛡️ Guardrails, Not Chaos
+
+Catch fragile code, missing tests, and unsafe changes before they hit your repo.
+
+### 🧠 Context That Sticks
+
+Keep your specs, prompts, errors, and notes in sync. You'll never lose track of what the AI was supposed to build.
+
+### 🔄 Build Momentum with Loops
+
+Forget thrash. Loops keep you focused on steady progress with light weekly cycles around specs.
+
+### 🗺️ Direction Without Overhead
+
+Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
 
 ## Tech Stack
 
@@ -66,6 +59,30 @@ Each section is fully configurable - you can load any screen or tool into any se
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Spec Engine**: Built on [GitHub's SpecKit](https://github.com/github/speckit)
+
+## Roadmap
+
+### In Progress
+
+- Build UI
+
+### Haven't Started
+
+- Connect Convex Database
+- Connect Firebase Auth
+- Connect Vercel
+- Github Integration
+- Create local MCP, connect to Cursor
+- Create "staged tasks" workflow
+- Create Docs V1
+- Google SpecKit Integration
+
+## Features
+
+### UI
+
+- Inspired by Linear.app, Spotify, Railway,
+- Each section is fully configurable - you can load any screen or tool into any section, resize them, expand/collapse them, and create custom views. This gives you the flexibility to arrange your workspace exactly how you need it.
 
 ## Quick Start
 
@@ -96,4 +113,4 @@ Hey Spex treats AI coding agents like teammates with transparency and reproducib
 
 ---
 
-*Hey Spex. Spec-driven development for solo devs.*
+_Hey Spex. Spec-driven development for solo devs._
