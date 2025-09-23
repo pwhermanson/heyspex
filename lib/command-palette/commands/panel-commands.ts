@@ -28,6 +28,7 @@ registerCommand({
    title: '/panel D open',
    keywords: ['panel', 'section', 'bottom', 'open', 'show'],
    shortcut: 'Ctrl+Shift+2',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
@@ -41,6 +42,7 @@ registerCommand({
    id: 'panel.d.close',
    title: '/panel D close',
    keywords: ['panel', 'section', 'bottom', 'close', 'hide'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
