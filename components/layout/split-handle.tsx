@@ -156,7 +156,7 @@ export function SplitHandle({
       <div
          className={cn(
             // Split handle with accessible hit area
-            'relative h-2 cursor-row-resize flex items-center justify-center group',
+            'relative h-2 cursor-grab active:cursor-grabbing flex items-center justify-center group',
             'select-none touch-none', // Prevent text selection and touch scrolling
             // Background and border styling with drag states
             activeDragging

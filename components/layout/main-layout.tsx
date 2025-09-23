@@ -17,6 +17,7 @@ import { CreateIssueModalProvider } from '@/components/common/issues/create-issu
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomBar } from '@/components/layout/bottom-bar';
 import { SplitHandle } from '@/components/layout/split-handle';
+import { SidebarDragHandle } from '@/components/layout/sidebar/sidebar-drag-handle';
 import { useFeatureFlag } from '@/hooks/use-feature-flag';
 import { cn } from '@/lib/utils';
 import { CommandPaletteModal } from '@/components/command-palette/command-palette-modal';
@@ -63,6 +64,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       isMainFullscreen,
       centerBottomSplit,
       setCenterBottomSplit,
+      leftSidebar,
+      rightSidebar,
    } = useResizableSidebar();
 
    // Initialize command palette keyboard shortcuts
@@ -514,6 +517,37 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                   <RightSidebar />
                </div>
             </div>
+
+            {/* Drag handles positioned between sections */}
+            {!isMainFullscreen && (
+               <>
+                  {/* Left drag handle - between Section A and B - only show when left sidebar is open */}
+                  {leftSidebar.isOpen && (
+                     <div
+                        className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
+                        style={{
+                           left: 'var(--left-width, 244px)',
+                           transform: 'translateX(-50%)',
+                        }}
+                     >
+                        <SidebarDragHandle side="left" />
+                     </div>
+                  )}
+
+                  {/* Right drag handle - between Section B and C - only show when right sidebar is open */}
+                  {rightSidebar.isOpen && (
+                     <div
+                        className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
+                        style={{
+                           right: 'var(--right-width, 0px)',
+                           transform: 'translateX(50%)',
+                        }}
+                     >
+                        <SidebarDragHandle side="right" />
+                     </div>
+                  )}
+               </>
+            )}
          </div>
 
          {/* Overlay Bottom Bar - positioned outside main area for true overlay */}
