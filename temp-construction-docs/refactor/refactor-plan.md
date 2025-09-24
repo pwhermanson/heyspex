@@ -130,8 +130,8 @@ Testing infrastructure is essential for maintaining code quality as we continue 
 
 - [x] Test `useLayoutViewsStore` functionality id:phase1-task17 done:2025-01-27 sha:latest notes:Comprehensive test suite created with 23 passing tests covering all store functionality
 - [x] Test `useLayoutSectionsStore` functionality id:phase1-task18 done:2025-01-27 sha:latest notes:Comprehensive test suite created with 26 passing tests covering all store functionality
-- Test `useLayoutShortcutsStore` functionality id:phase1-task19
-- Test `useLayoutSettingsStore` functionality id:phase1-task20
+- [x] Test `useLayoutShortcutsStore` functionality id:phase1-task19 done:2025-01-27 sha:4925b05 notes:Comprehensive test suite created with 31 passing tests covering all store functionality
+- [x] Test `useLayoutSettingsStore` functionality id:phase1-task20 done:2025-09-24 sha:latest notes:Comprehensive test suite created with 13 passing tests covering all store functionality
 - Test `useMembersDataStore` functionality id:phase1-task21
 - Test `useProjectsDataStore` functionality id:phase1-task22
 - Test `useTeamsDataStore` functionality id:phase1-task23
