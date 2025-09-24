@@ -2,7 +2,7 @@
 
 import { create, type StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDefaultLayoutView, createPredefinedViews } from '@/src/lib/lib/layout-utils';
+import { createDefaultLayoutView, createPredefinedViews } from '@/lib/lib/layout-utils';
 
 // Types for layout sections as defined in the feature requirements
 export type LayoutSection = 'A' | 'B' | 'C'; // Left sidebar, main content, right sidebar
