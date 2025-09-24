@@ -1,5 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { act } from '@testing-library/react';
+import React, { ReactNode } from 'react';
 
 // Utility for testing Zustand stores
 export const createStoreTestWrapper = (providers: ReactNode[] = []) => {
@@ -14,7 +14,10 @@ export const createStoreTestWrapper = (providers: ReactNode[] = []) => {
 };
 
 // Helper to test store actions with proper act wrapping
-export const testStoreAction = async (storeHook: any, action: () => void | Promise<void>) => {
+export const testStoreAction = async (
+   storeHook: { result: { current: unknown } },
+   action: () => void | Promise<void>
+) => {
    await act(async () => {
       await action();
    });

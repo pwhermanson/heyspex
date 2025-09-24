@@ -1,25 +1,31 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render as customRender } from './test-utils';
 
 // Common test patterns for components
 export const componentTestUtils = {
    // Test component rendering
-   testRendering: (Component: React.ComponentType<any>, props = {}) => {
+   testRendering: (Component: React.ComponentType<Record<string, unknown>>, props = {}) => {
       const { container } = customRender(<Component {...props} />);
       return { container, screen };
    },
 
    // Test user interactions
-   testUserInteraction: async (Component: React.ComponentType<any>, props = {}) => {
+   testUserInteraction: async (
+      Component: React.ComponentType<Record<string, unknown>>,
+      props = {}
+   ) => {
       const user = userEvent.setup();
       customRender(<Component {...props} />);
       return { user, screen };
    },
 
    // Test component with different props
-   testWithProps: (Component: React.ComponentType<any>, propSets: any[]) => {
+   testWithProps: (
+      Component: React.ComponentType<Record<string, unknown>>,
+      propSets: Record<string, unknown>[]
+   ) => {
       return propSets.map((props) => {
          const { container } = customRender(<Component {...props} />);
          return { props, container };
@@ -27,7 +33,7 @@ export const componentTestUtils = {
    },
 
    // Test accessibility
-   testAccessibility: (Component: React.ComponentType<any>, props = {}) => {
+   testAccessibility: (Component: React.ComponentType<Record<string, unknown>>, props = {}) => {
       const { container } = customRender(<Component {...props} />);
 
       // Basic accessibility checks
@@ -44,19 +50,43 @@ export const componentTestUtils = {
 
 // Mock components for testing
 export const MockComponents = {
-   Button: ({ children, onClick, ...props }: any) => (
+   Button: ({
+      children,
+      onClick,
+      ...props
+   }: {
+      children: React.ReactNode;
+      onClick?: () => void;
+      [key: string]: unknown;
+   }) => (
       <button onClick={onClick} {...props}>
          {children}
       </button>
    ),
 
-   Input: ({ value, onChange, ...props }: any) => (
-      <input value={value} onChange={onChange} {...props} />
-   ),
+   Input: ({
+      value,
+      onChange,
+      ...props
+   }: {
+      value?: string;
+      onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+      [key: string]: unknown;
+   }) => <input value={value} onChange={onChange} {...props} />,
 
-   Select: ({ options, value, onChange, ...props }: any) => (
+   Select: ({
+      options,
+      value,
+      onChange,
+      ...props
+   }: {
+      options?: Array<{ value: string; label: string }>;
+      value?: string;
+      onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+      [key: string]: unknown;
+   }) => (
       <select value={value} onChange={onChange} {...props}>
-         {options?.map((option: any) => (
+         {options?.map((option) => (
             <option key={option.value} value={option.value}>
                {option.label}
             </option>
