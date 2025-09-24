@@ -1,0 +1,18 @@
+import { Button } from '@/src/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
+import { ThemeToggle } from '@/src/components/layout/theme-toggle';
+
+export function BackToApp() {
+   return (
+      <div className="w-full flex items-center justify-between gap-2">
+         <Button className="w-fit" size="xs" variant="outline" asChild>
+            <Link href="/demo-user/team/CORE/all">
+               <ChevronLeft className="size-4" />
+               Back to app
+            </Link>
+         </Button>
+         <ThemeToggle />
+      </div>
+   );
+}

@@ -11,6 +11,10 @@
       "lint": "next lint",
       "format": "prettier --write .",
       "prepare": "husky install",
+      "test": "vitest run",
+      "test:watch": "vitest",
+      "test:ui": "vitest --ui",
+      "test:coverage": "vitest run --coverage",
       "test:palette": "cross-env TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"commonjs\\\"}\" ts-node lib/command-palette/__tests__/search-engine.test.ts",
       "clean": "powershell -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }; if (Test-Path node_modules/.cache) { Remove-Item -Recurse -Force node_modules/.cache }\""
    },
