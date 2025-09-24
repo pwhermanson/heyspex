@@ -1,0 +1,45 @@
+[33mcommit 02fcd35777bc16c41310291bfcd5e93d8ec63980[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrefactor0923[m[33m, [m[1;31morigin/refactor0923[m[33m)[m
+Author: pwher <pwhermanson@gmail.com>
+Date:   Tue Sep 23 21:30:53 2025 -0500
+
+    refactor(testing): configure vitest with proper setup
+    
+    - why: Establish testing infrastructure for safe refactoring
+    - what: Created vitest.config.mjs, test setup file, and test scripts
+    - risk: low
+    - rollback: git revert <sha>
+
+[33mcommit ccc98ad9e4fff6863be041e4d3909d40d287d919[m
+Author: pwher <pwhermanson@gmail.com>
+Date:   Tue Sep 23 21:19:46 2025 -0500
+
+    docs: update refactor plan - mark testing dependencies as complete
+    
+    - why: Track progress on refactoring tasks
+    - what: Updated refactor-plan.md to mark phase1-task1 through phase1-task6 as completed
+    - risk: low
+    - rollback: git revert <sha>
+
+[33mcommit 7d3b4155f34665adeb1f0824ecb80639f39d140c[m
+Author: pwher <pwhermanson@gmail.com>
+Date:   Tue Sep 23 21:19:05 2025 -0500
+
+    refactor(testing): install testing dependencies
+    
+    - why: Establish testing infrastructure for safe refactoring
+    - what: Added @testing-library/react, @testing-library/jest-dom, @testing-library/user-event, vitest, jsdom, @types/jest
+    - risk: low
+    - rollback: git revert <sha>
+
+[33mcommit 3a98501bc6387b54f1d190c77654c492fdbfec23[m
+Author: pwher <pwhermanson@gmail.com>
+Date:   Tue Sep 23 16:33:10 2025 -0500
+
+    refactor plan doc updated with enhanced file structure
+
+[33mcommit 2055cb32b325ddbb3b5abace3282feff09fe7cf8[m[33m ([m[1;31morigin/main-layout-design[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mmain-layout-design[m[33m, [m[1;32mmain[m[33m)[m
+Merge: f710775 2ec8a0c
+Author: pwher <pwhermanson@gmail.com>
+Date:   Tue Sep 23 16:09:25 2025 -0500
+
+    Merge main-layout-design into main
