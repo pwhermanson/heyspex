@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, users } from '@/src/tests/test-data/users';
+import { User, users } from '../../../tests/test-data/users';
 
 interface MembersDataState {
    // Data
@@ -32,23 +32,27 @@ export const useMembersDataStore = create<MembersDataState>((set, get) => ({
 
    // Actions
    getAllMembers: () => {
-      return get().members;
+      return [...get().members]; // Return new array reference for immutability
    },
 
    getMemberById: (id) => {
-      return get().members.find((member) => member.id === id);
+      const state = get();
+      return state.members.find((member) => member.id === id);
    },
 
    getMembersByTeam: (teamId) => {
-      return get().members.filter((member) => member.teamIds.includes(teamId));
+      const state = get();
+      return state.members.filter((member) => member.teamIds.includes(teamId));
    },
 
    getMembersByRole: (role) => {
-      return get().members.filter((member) => member.role === role);
+      const state = get();
+      return state.members.filter((member) => member.role === role);
    },
 
    getOnlineMembers: () => {
-      return get().members.filter((member) => member.status === 'online');
+      const state = get();
+      return state.members.filter((member) => member.status === 'online');
    },
 
    // Member management

@@ -9,6 +9,8 @@
    --font-mono: var(--font-geist-mono);
 }
 
+@import '../styles/tokens.css';
+
 :root {
    --card: oklch(0.99 0.002 240);
    --card-foreground: oklch(0.25 0.008 285.823);
@@ -123,9 +125,11 @@
 }
 
 @layer base {
+   * {
+      @apply border-border outline-ring/50;
+   }
    body {
-      background-color: hsl(var(--background));
-      color: hsl(var(--foreground));
+      @apply bg-background text-foreground;
    }
 }
 
@@ -211,7 +215,6 @@ input[type='search'] {
    --layout-motion-duration-medium: 240ms;
    --layout-motion-duration-long: 320ms;
    --layout-motion-easing: cubic-bezier(0.32, 0.72, 0, 1);
-
    /* Legacy aliases for in-flight migrations */
    --sidebar-left-width: var(--left-width);
    --sidebar-right-width: var(--right-width);

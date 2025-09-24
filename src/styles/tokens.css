@@ -1,0 +1,99 @@
+/* CSS Custom Properties and Design Tokens */
+@layer base {
+   :root {
+      /* Layout System Variables */
+      --left-open: 280px;
+      --left-collapsed: 64px;
+      --left-width: var(--left-open);
+      --right-open: 320px;
+      --right-hidden: 0px;
+      --right-width: var(--right-hidden);
+      --topbar-height: 56px;
+      --bottombar-height: 40px;
+      --center-bottom-split: 0px;
+
+      /* Motion and Animation Variables */
+      --layout-motion-duration-short: 160ms;
+      --layout-motion-duration-medium: 240ms;
+      --layout-motion-duration-long: 320ms;
+      --layout-motion-easing: cubic-bezier(0.32, 0.72, 0, 1);
+
+      /* Legacy aliases for in-flight migrations */
+      --sidebar-left-width: var(--left-width);
+      --sidebar-right-width: var(--right-width);
+      --grid-template-columns: var(--left-width) 1fr var(--right-width);
+   }
+
+   /* Optimal sidebar width transitions - CSS variables only for no layout thrashing */
+   :root {
+      transition:
+         --left-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
+         --right-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
+         --grid-template-columns var(--layout-motion-duration-medium) var(--layout-motion-easing);
+   }
+
+   /* Text fade transitions for sidebar content with staggered timing */
+   .sidebar-content-text {
+      transition: opacity var(--layout-motion-duration-short) var(--layout-motion-easing);
+   }
+
+   /* Optimized sidebar container transitions - avoid width, use transform */
+   [data-resizable-sidebar='left'],
+   [data-resizable-sidebar='right'] {
+      /* Only transition transform and visual properties, never width/height */
+      transition:
+         transform var(--layout-motion-duration-medium) var(--layout-motion-easing),
+         opacity var(--layout-motion-duration-medium) var(--layout-motion-easing);
+   }
+
+   /* Disable ALL transitions during drag for maximum performance */
+   .sidebar-dragging,
+   .sidebar-dragging * {
+      transition: none !important;
+   }
+
+   /* Disable CSS variable transitions during drag */
+   .sidebar-dragging:root {
+      transition: none !important;
+   }
+
+   /* Layout transition helpers respect reduced motion preferences */
+   .layout-transition {
+      transition-duration: var(--layout-motion-duration-medium);
+      transition-timing-function: var(--layout-motion-easing);
+   }
+
+   .layout-transition-short {
+      transition-duration: var(--layout-motion-duration-short);
+      transition-timing-function: var(--layout-motion-easing);
+   }
+
+   .layout-transition-long {
+      transition-duration: var(--layout-motion-duration-long);
+      transition-timing-function: var(--layout-motion-easing);
+   }
+
+   @media (prefers-reduced-motion: reduce) {
+      :root {
+         --layout-motion-duration-short: 0ms;
+         --layout-motion-duration-medium: 0ms;
+         --layout-motion-duration-long: 0ms;
+         /* Disable CSS variable transitions for reduced motion */
+         transition: none !important;
+      }
+
+      .layout-transition,
+      .layout-transition-short,
+      .layout-transition-long,
+      .sidebar-content-text,
+      [data-resizable-sidebar] {
+         transition: none !important;
+      }
+
+      /* Keep essential visual feedback but remove timing */
+      .sidebar-drag-handle:hover,
+      .sidebar-drag-handle:active {
+         transition: none !important;
+      }
+   }
+}

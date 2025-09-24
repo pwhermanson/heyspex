@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Project, projects } from '@/src/tests/test-data/projects';
-import { User } from '@/src/tests/test-data/users';
+import { Project, projects } from '../../../tests/test-data/projects';
+import { User } from '../../../tests/test-data/users';
 
 interface ProjectsDataState {
    // Data
@@ -97,7 +97,19 @@ export const useProjectsDataStore = create<ProjectsDataState>((set, get) => ({
       set((state) => ({
          projects: state.projects.map((project) =>
             project.id === projectId
-               ? { ...project, lead: { id: leadId, name: '', avatarUrl: '' } as User }
+               ? {
+                    ...project,
+                    lead: {
+                       id: leadId,
+                       name: 'Updated User',
+                       avatarUrl: '',
+                       email: '',
+                       status: 'online',
+                       role: 'Member',
+                       joinedDate: '2024-01-01',
+                       teamIds: [],
+                    } as User,
+                 }
                : project
          ),
       }));
