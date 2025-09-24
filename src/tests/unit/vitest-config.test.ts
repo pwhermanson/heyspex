@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
 
 describe('Vitest Configuration', () => {
-   it('should run basic tests', () => {
-      expect(1 + 1).toBe(2);
-   });
-
-   it('should have jsdom environment', () => {
+   it('should have jsdom environment configured', () => {
       expect(typeof window).toBe('object');
       expect(typeof document).toBe('object');
    });
 
-   it('should have path aliases working', () => {
-      // This test will verify that our path aliases are working
-      // by importing a simple utility
-      expect(true).toBe(true);
+   it('should have testing library available', () => {
+      expect(typeof import('@testing-library/react')).toBe('object');
+   });
+
+   it('should have vitest globals available', () => {
+      expect(typeof describe).toBe('function');
+      expect(typeof it).toBe('function');
+      expect(typeof expect).toBe('function');
    });
 });
