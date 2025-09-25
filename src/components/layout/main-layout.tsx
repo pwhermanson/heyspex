@@ -16,6 +16,7 @@ import { SidebarProvider } from '@/src/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-issue-modal-provider';
 import { TopBar } from '@/src/components/layout/top-bar';
 import { BottomBar } from '@/src/components/layout/bottom-bar';
+import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-b-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
 import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
 import { SidebarDragHandle } from '@/src/components/layout/sidebar/sidebar-drag-handle';
@@ -552,49 +553,19 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             )}
          </div>
 
-         {/* Overlay Bottom Bar - positioned outside main area for true overlay */}
-         {isBottomSplitEnabled &&
-            isHydrated &&
-            !isMainFullscreen &&
-            bottomBar.isVisible &&
-            bottomBar.mode === 'overlay' && (
-               <div
-                  className="fixed left-0 right-0 z-[100] workspace-zone-b workspace-zone-b-overlay"
-                  style={{
-                     bottom: `0px`,
-                     height: `${bottomBar.height}px`,
-                     backgroundColor: 'var(--workspace-zone-b-bg)',
-                     background: 'var(--workspace-zone-b-bg)',
-                  }}
-               >
-                  {/* Bottom Bar Content */}
-                  <BottomBar
-                     mode={bottomBar.mode}
-                     onModeChange={setBottomBarMode}
-                     height={bottomBar.height}
-                     isOverlay={true}
-                     onDragStart={handleBottomBarDragStart}
-                     isDragging={isDraggingBottomBar}
-                  />
-               </div>
-            )}
-
-         {/* Bottom Bar - push mode rendered as separate grid row */}
-         {!isMainFullscreen &&
-            safeBottomEnabled &&
-            bottomBar.isVisible &&
-            bottomBar.mode === 'push' && (
-               <div className="relative overflow-hidden z-[50] px-2 workspace-zone-b workspace-zone-b-push">
-                  <BottomBar
-                     mode={bottomBar.mode}
-                     onModeChange={isHydrated ? setBottomBarMode : () => {}}
-                     height={bottomBar.height}
-                     isOverlay={false}
-                     onDragStart={handleBottomBarDragStart}
-                     isDragging={isDraggingBottomBar}
-                  />
-               </div>
-            )}
+         {/* Workspace Zone B - Unified Container */}
+         {isBottomSplitEnabled && isHydrated && !isMainFullscreen && bottomBar.isVisible && (
+            <WorkspaceZoneBContainer mode={bottomBar.mode} height={bottomBar.height}>
+               <BottomBar
+                  mode={bottomBar.mode}
+                  onModeChange={isHydrated ? setBottomBarMode : () => {}}
+                  height={bottomBar.height}
+                  isOverlay={bottomBar.mode === 'overlay'}
+                  onDragStart={handleBottomBarDragStart}
+                  isDragging={isDraggingBottomBar}
+               />
+            </WorkspaceZoneBContainer>
+         )}
 
          {/* Command Palette Modal */}
          <CommandPaletteModal />

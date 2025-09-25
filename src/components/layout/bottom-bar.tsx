@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { BottomBarModeToggle, type BottomBarMode } from './bottom-bar-mode-toggle';
+import { WorkspaceZoneBContent } from './workspace-zone-b-content';
 import { Button } from '@/src/components/ui/button';
 import { X, Minus, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/src/lib/lib/utils';
@@ -277,125 +278,7 @@ export function BottomBar({
                   <div className="p-4">{children}</div>
                ) : (
                   <div className="h-full">
-                     {sectionDLayout === 'full' && (
-                        <div className="h-full overflow-hidden">
-                           <div className="h-full overflow-y-auto">
-                              <div className="p-4 space-y-4 max-w-4xl mx-auto">
-                                 <div className="text-sm text-muted-foreground">
-                                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                                       {isOverlay
-                                          ? 'HeySpex Development Console'
-                                          : 'HeySpex Build Output'}
-                                    </h3>
-                                    <p className="mb-2">
-                                       Mode: <strong className="capitalize">{mode}</strong> |
-                                       Height: <strong>{height}px</strong>
-                                    </p>
-                                    <p className="text-xs">
-                                       {isOverlay
-                                          ? 'Real-time development tools and debugging information.'
-                                          : 'Build logs, compilation status, and development server output.'}
-                                    </p>
-                                 </div>
-
-                                 {/* Different content based on mode */}
-                                 {isOverlay ? (
-                                    // Overlay mode - Development Console
-                                    <div className="space-y-2">
-                                       <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                                          <p className="text-sm font-medium text-green-400">
-                                             ✓ Workspace Zone B Overlay Fixed
-                                          </p>
-                                          <p className="text-xs text-green-300">
-                                             Background color now matches push mode using --card
-                                             variable
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                                          <p className="text-sm font-medium text-blue-400">
-                                             🔧 CSS Custom Properties Working
-                                          </p>
-                                          <p className="text-xs text-blue-300">
-                                             Inline styles now use var(--workspace-zone-b-bg)
-                                             successfully
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                                          <p className="text-sm font-medium text-yellow-400">
-                                             ⚠️ Toggle Button Styling Updated
-                                          </p>
-                                          <p className="text-xs text-yellow-300">
-                                             Changed from bg-muted to bg-muted/20 for better
-                                             contrast
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-muted/20 border rounded-lg">
-                                          <p className="text-sm font-medium">
-                                             🎯 Next: Test Theme Switching
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                             Verify overlay mode works correctly in both light and
-                                             dark themes
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-muted/20 border rounded-lg">
-                                          <p className="text-sm font-medium">
-                                             📝 Refactor Complete
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                             Workspace Zone B now uses robust CSS architecture with
-                                             single source of truth
-                                          </p>
-                                       </div>
-                                    </div>
-                                 ) : (
-                                    // Push mode - Build Output
-                                    <div className="space-y-2">
-                                       <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                                          <p className="text-sm font-medium text-green-400">
-                                             ✓ Build Successful
-                                          </p>
-                                          <p className="text-xs text-green-300">
-                                             Compiled 1,247 components in 2.3s
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                                          <p className="text-sm font-medium text-blue-400">
-                                             📦 Bundle Analysis
-                                          </p>
-                                          <p className="text-xs text-blue-300">
-                                             Main bundle: 234KB, Chunks: 12, Tree-shaking: 98.7%
-                                             effective
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-muted/20 border rounded-lg">
-                                          <p className="text-sm font-medium">
-                                             🔄 Hot Reload Active
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                             Watching 847 files for changes
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-muted/20 border rounded-lg">
-                                          <p className="text-sm font-medium">🧪 Tests Passing</p>
-                                          <p className="text-xs text-muted-foreground">
-                                             156/156 tests passed, 0.8s execution time
-                                          </p>
-                                       </div>
-                                       <div className="p-3 bg-muted/20 border rounded-lg">
-                                          <p className="text-sm font-medium">
-                                             📊 Performance Metrics
-                                          </p>
-                                          <p className="text-xs text-muted-foreground">
-                                             LCP: 1.2s, FID: 45ms, CLS: 0.05
-                                          </p>
-                                       </div>
-                                    </div>
-                                 )}
-                              </div>
-                           </div>
-                        </div>
-                     )}
+                     {sectionDLayout === 'full' && <WorkspaceZoneBContent />}
 
                      {sectionDLayout === '2-split' && (
                         <div className="h-full">
