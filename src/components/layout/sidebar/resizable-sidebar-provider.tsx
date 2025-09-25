@@ -111,7 +111,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    const [leftState, setLeftState] = useState<LeftSidebarState>('open');
 
    const [rightSidebar, setRightSidebar] = useState<SidebarState>({
-      isOpen: false,
+      isOpen: true,
       width: DEFAULT_RIGHT_WIDTH,
       preferredWidth: DEFAULT_RIGHT_WIDTH,
    });

@@ -24,6 +24,7 @@ import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
+import { CenteredLogo } from '@/src/components/layout/centered-logo';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
 
@@ -239,7 +240,10 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      <RightSidebar />
                   </div>
                </div>
-            ) : null}
+            ) : (
+               /* Centered Logo when Workspace Zone A is closed */
+               <CenteredLogo />
+            )}
 
             {/* Drag handles positioned between sections */}
             {!isMainFullscreen && isWorkspaceZoneAVisible && (
@@ -257,18 +261,16 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      </div>
                   )}
 
-                  {/* Right drag handle - between Section B and C - only show when right sidebar is open */}
-                  {rightSidebar.isOpen && (
-                     <div
-                        className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
-                        style={{
-                           right: 'var(--right-width, 0px)',
-                           transform: 'translateX(50%)',
-                        }}
-                     >
-                        <SidebarDragHandle side="right" />
-                     </div>
-                  )}
+                  {/* Right drag handle - between Section B and C - always show for drag functionality */}
+                  <div
+                     className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
+                     style={{
+                        right: rightSidebar.isOpen ? 'var(--right-width, 0px)' : '0px',
+                        transform: 'translateX(50%)',
+                     }}
+                  >
+                     <SidebarDragHandle side="right" />
+                  </div>
                </>
             )}
          </div>

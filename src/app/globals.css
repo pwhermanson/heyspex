@@ -140,6 +140,11 @@
 }
 
 @layer components {
+   /* Radial gradient for logo glow effect */
+   .bg-gradient-radial {
+      background: radial-gradient(circle, var(--tw-gradient-stops));
+   }
+
    .panel-control-bar {
       background-color: hsl(var(--muted));
    }

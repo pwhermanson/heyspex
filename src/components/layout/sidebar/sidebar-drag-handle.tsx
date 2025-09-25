@@ -15,6 +15,8 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       rightSidebar,
       setLeftSidebarWidth,
       setRightSidebarWidth,
+      setLeftSidebarOpen,
+      setRightSidebarOpen,
       isDragging,
       setIsDragging,
       dragSide,
@@ -34,12 +36,24 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
       (e: React.MouseEvent) => {
          e.preventDefault();
 
-         // Only allow dragging if the sidebar is open
          const currentSidebar = side === 'left' ? leftSidebar : rightSidebar;
-         if (!currentSidebar.isOpen) return;
 
-         setIsDragging(true);
-         setDragSide(side);
+         // If sidebar is closed, open it first before allowing drag
+         if (!currentSidebar.isOpen) {
+            if (side === 'left') {
+               setLeftSidebarOpen(true);
+            } else {
+               setRightSidebarOpen(true);
+            }
+            // Small delay to allow the sidebar to open before starting drag
+            setTimeout(() => {
+               setIsDragging(true);
+               setDragSide(side);
+            }, 50);
+         } else {
+            setIsDragging(true);
+            setDragSide(side);
+         }
 
          // Add dragging class to both body and root for comprehensive transition disabling
          document.body.classList.add('sidebar-dragging');
@@ -143,12 +157,16 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
          rightSidebar,
          setLeftSidebarWidth,
          setRightSidebarWidth,
+         setLeftSidebarOpen,
+         setRightSidebarOpen,
          setIsDragging,
          setDragSide,
       ]
    );
 
    const isActive = isDragging && dragSide === side;
+   const currentSidebar = side === 'left' ? leftSidebar : rightSidebar;
+   const isSidebarClosed = !currentSidebar.isOpen;
 
    return (
       <div
@@ -156,17 +174,19 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
             'w-full h-full cursor-grab active:cursor-grabbing group sidebar-drag-handle',
             'hover:bg-blue-500/30 transition-all layout-transition-short motion-reduce:transition-none',
             isActive && 'bg-blue-500/50',
+            isSidebarClosed && 'bg-blue-500/20 hover:bg-blue-500/40', // More visible when closed
             isDragging && dragSide !== side && 'pointer-events-none',
             className
          )}
          onMouseDown={handleMouseDown}
       >
-         {/* Visual indicator line - more prominent on hover */}
+         {/* Visual indicator line - more prominent on hover and when closed */}
          <div
             className={cn(
                'absolute top-0 bottom-0 w-0.5 bg-transparent group-hover:bg-blue-500 transition-all layout-transition-short motion-reduce:transition-none',
                'left-1/2 transform -translate-x-1/2',
-               isActive && 'bg-blue-500'
+               isActive && 'bg-blue-500',
+               isSidebarClosed && 'bg-blue-500/60 group-hover:bg-blue-500' // More visible when closed
             )}
          />
 
