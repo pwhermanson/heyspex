@@ -75,6 +75,8 @@ interface BottomBarProps {
    // Drag functionality props
    onDragStart?: (e: React.MouseEvent) => void;
    isDragging?: boolean;
+   // Workspace Zone A visibility
+   isWorkspaceZoneAHidden?: boolean;
 }
 
 export function BottomBar({
@@ -88,9 +90,20 @@ export function BottomBar({
    children,
    onDragStart,
    isDragging = false,
+   isWorkspaceZoneAHidden = false,
 }: BottomBarProps) {
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
    const { bottomBar: layoutBottomBar, setBottomBarHeight } = useResizableSidebar();
+
+   // When Workspace Zone A is hidden, force overlay mode
+   const effectiveMode = isWorkspaceZoneAHidden ? 'overlay' : mode;
+
+   // Automatically switch to overlay mode when Workspace Zone A is hidden
+   React.useEffect(() => {
+      if (isWorkspaceZoneAHidden && mode !== 'overlay') {
+         onModeChange('overlay');
+      }
+   }, [isWorkspaceZoneAHidden, mode, onModeChange]);
 
    // Section D layout state: 'full' | '2-split' | '3-split'
    const [sectionDLayout, setSectionDLayout] = React.useState<'full' | '2-split' | '3-split'>(
@@ -108,7 +121,7 @@ export function BottomBar({
 
    const pushMaxHeight = Math.max(40, Math.round(windowHeight * 0.5));
    const maxHeight =
-      layoutBottomBar.mode === 'overlay'
+      effectiveMode === 'overlay'
          ? isClient
             ? Math.max(40, windowHeight - getMainTop())
             : height
@@ -218,8 +231,10 @@ export function BottomBar({
                   </Button>
                </div>
 
-               {/* Mode Toggle - moved to the right side */}
-               <BottomBarModeToggle mode={mode} onChange={onModeChange} className="h-6" />
+               {/* Mode Toggle - hidden when Workspace Zone A is hidden */}
+               {!isWorkspaceZoneAHidden && (
+                  <BottomBarModeToggle mode={mode} onChange={onModeChange} className="h-6" />
+               )}
 
                {/* Fullscreen / Collapse Toggle */}
                <Button
@@ -262,7 +277,7 @@ export function BottomBar({
          </div>
 
          {/* Bottom Drag Handle - available in both overlay and push modes */}
-         <BottomDragHandle onMouseDown={onDragStart} isDragging={isDragging} mode={mode} />
+         <BottomDragHandle onMouseDown={onDragStart} isDragging={isDragging} mode={effectiveMode} />
 
          {/* Bottom Bar Content - only show if not collapsed */}
          {!isCollapsed && (

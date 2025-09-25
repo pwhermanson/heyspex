@@ -75,6 +75,20 @@ function getResizableSidebarContext() {
             })
          );
       },
+      setWorkspaceZoneAVisible: (visible: boolean) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setWorkspaceZoneAVisible', visible },
+            })
+         );
+      },
+      toggleWorkspaceZoneA: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleWorkspaceZoneA' },
+            })
+         );
+      },
    };
 }
 
@@ -148,11 +162,8 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Open left sidebar and right sidebar to show full Workspace Zone A
-         sidebarContext.setLeftSidebarOpen(true);
-         sidebarContext.setRightSidebarOpen(true);
-         // Ensure main content is not in fullscreen mode
-         sidebarContext.setMainFullscreen(false);
+         // Show Workspace Zone A container (panels A, B, C)
+         sidebarContext.setWorkspaceZoneAVisible(true);
       }
    },
 });
@@ -166,9 +177,8 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Close both sidebars to hide Workspace Zone A panels
-         sidebarContext.setLeftSidebarOpen(false);
-         sidebarContext.setRightSidebarOpen(false);
+         // Hide Workspace Zone A container (panels A, B, C)
+         sidebarContext.setWorkspaceZoneAVisible(false);
       }
    },
 });
@@ -182,9 +192,8 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Toggle both sidebars to show/hide Workspace Zone A panels
-         sidebarContext.toggleLeftSidebar();
-         sidebarContext.toggleRightSidebar();
+         // Toggle Workspace Zone A container visibility
+         sidebarContext.toggleWorkspaceZoneA();
       }
    },
 });

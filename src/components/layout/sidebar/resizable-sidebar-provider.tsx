@@ -65,6 +65,11 @@ type EnhancedSidebarContext = {
    // Fullscreen main content
    isMainFullscreen: boolean;
    setMainFullscreen: (fullscreen: boolean) => void;
+
+   // Workspace Zone A visibility
+   isWorkspaceZoneAVisible: boolean;
+   setWorkspaceZoneAVisible: (visible: boolean) => void;
+   toggleWorkspaceZoneA: () => void;
 };
 
 const EnhancedSidebarContext = createContext<EnhancedSidebarContext | null>(null);
@@ -126,6 +131,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
    // Center-bottom split height (0 = no split, >0 = split height)
    const [centerBottomSplit, setCenterBottomSplit] = useState(0);
+
+   // Workspace Zone A visibility state
+   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
@@ -333,6 +341,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
                const validHeight = Math.min(maxHeight, Math.max(0, splitHeight));
                setCenterBottomSplit(validHeight);
             }
+         }
+
+         // Load Workspace Zone A visibility state
+         const savedWorkspaceZoneAVisible = localStorage.getItem('ui:workspaceZoneAVisible');
+         if (savedWorkspaceZoneAVisible !== null) {
+            setIsWorkspaceZoneAVisible(savedWorkspaceZoneAVisible === 'true');
          }
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
@@ -666,6 +680,19 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       [setLeftSidebarOpen, setRightSidebarOpen, setBottomBarVisible, updateGridLayout]
    );
 
+   const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
+      setIsWorkspaceZoneAVisible(visible);
+      try {
+         localStorage.setItem('ui:workspaceZoneAVisible', visible.toString());
+      } catch (error) {
+         console.warn('Failed to save workspace zone A visibility to localStorage:', error);
+      }
+   }, []);
+
+   const toggleWorkspaceZoneA = useCallback(() => {
+      setWorkspaceZoneAVisible(!isWorkspaceZoneAVisible);
+   }, [isWorkspaceZoneAVisible, setWorkspaceZoneAVisible]);
+
    // Temporary shortcut for toggling Section D until settings wiring is in place.
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -758,6 +785,14 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          if (action === 'setMainFullscreen') {
             setMainFullscreen(fullscreen);
          }
+
+         if (action === 'setWorkspaceZoneAVisible') {
+            setWorkspaceZoneAVisible(visible);
+         }
+
+         if (action === 'toggleWorkspaceZoneA') {
+            toggleWorkspaceZoneA();
+         }
       };
 
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
@@ -773,6 +808,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       toggleLeftSidebar,
       toggleRightSidebar,
       setMainFullscreen,
+      setWorkspaceZoneAVisible,
+      toggleWorkspaceZoneA,
    ]);
 
    const contextValue = React.useMemo(
@@ -803,6 +840,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          updateGridLayout,
          isMainFullscreen,
          setMainFullscreen,
+         isWorkspaceZoneAVisible,
+         setWorkspaceZoneAVisible,
+         toggleWorkspaceZoneA,
       }),
       [
          leftSidebar,
@@ -831,6 +871,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          updateGridLayout,
          isMainFullscreen,
          setMainFullscreen,
+         isWorkspaceZoneAVisible,
+         setWorkspaceZoneAVisible,
+         toggleWorkspaceZoneA,
       ]
    );
 

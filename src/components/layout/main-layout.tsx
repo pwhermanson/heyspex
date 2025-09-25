@@ -68,6 +68,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
       setCenterBottomSplit,
       leftSidebar,
       rightSidebar,
+      isWorkspaceZoneAVisible,
    } = useResizableSidebar();
 
    // Initialize command palette keyboard shortcuts
@@ -76,252 +77,8 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
    const isTopBarEnabled = useFeatureFlag('enableTopBar');
    const isBottomSplitEnabled = useFeatureFlag('enableBottomSplit');
    const safeBottomEnabled = isHydrated && isBottomSplitEnabled;
-   const initialTopBarHeightRef = React.useRef<string | null>(null);
-
-   // Drag state for bottom bar overlay positioning
-   const [isDraggingBottomBar, setIsDraggingBottomBar] = React.useState(false);
-   const dragStartYRef = React.useRef(0);
-   const dragStartHeightRef = React.useRef(0);
-   const isDraggingRef = React.useRef(false);
-
-   // Drag state for center-bottom split
-   const [isDraggingCenterSplit, setIsDraggingCenterSplit] = React.useState(false);
-   const splitDragStartYRef = React.useRef(0);
-   const splitDragStartHeightRef = React.useRef(0);
-   const isDraggingSplitRef = React.useRef(false);
-
-   // Window height state for responsive calculations
-   const [windowHeight, setWindowHeight] = React.useState(
-      typeof window !== 'undefined' ? window.innerHeight : 1000
-   );
-
-   // Use refs to maintain consistent function references for event listener cleanup
-   const dragMoveRef = React.useRef<((e: MouseEvent) => void) | null>(null);
-   const dragEndRef = React.useRef<(() => void) | null>(null);
-
-   const height = {
-      1: 'h-[calc(100svh-40px)] lg:h-[calc(100svh-56px)]',
-      2: 'h-[calc(100svh-80px)] lg:h-[calc(100svh-96px)]',
-   };
-
-   React.useEffect(() => {
-      if (typeof document === 'undefined') {
-         return;
-      }
-
-      const root = document.documentElement;
-      const rootStyle = root.style;
-
-      if (initialTopBarHeightRef.current === null) {
-         const computed = getComputedStyle(root).getPropertyValue('--topbar-height');
-         initialTopBarHeightRef.current = computed?.trim() || '56px';
-      }
-
-      const restore = () => {
-         const fallback = initialTopBarHeightRef.current ?? '56px';
-         rootStyle.setProperty('--topbar-height', fallback);
-      };
-
-      if (!isTopBarEnabled || isMainFullscreen) {
-         rootStyle.setProperty('--topbar-height', '0px');
-         return restore;
-      }
-
-      const topBarElement = document.querySelector('[data-top-bar]') as HTMLElement | null;
-      const applyHeight = (height: number) => {
-         const safeHeight = Number.isFinite(height) ? Math.max(0, Math.round(height)) : 56;
-         rootStyle.setProperty('--topbar-height', `${safeHeight}px`);
-      };
-
-      if (!topBarElement) {
-         applyHeight(56);
-         return restore;
-      }
-
-      applyHeight(topBarElement.offsetHeight);
-
-      if (typeof ResizeObserver === 'undefined') {
-         return restore;
-      }
-
-      const observer = new ResizeObserver((entries) => {
-         for (const entry of entries) {
-            if (entry.target === topBarElement) {
-               const height = entry.contentRect?.height ?? topBarElement.offsetHeight;
-               applyHeight(height);
-            }
-         }
-      });
-
-      observer.observe(topBarElement);
-
-      return () => {
-         observer.disconnect();
-         restore();
-      };
-   }, [isTopBarEnabled, isMainFullscreen]);
-
-   // Helper function to get main container top position (same logic as BottomBar component)
-   const getMainTop = () => {
-      if (typeof window === 'undefined') return 56;
-      const el = document.querySelector('[data-main-container]') as HTMLElement | null;
-      return el ? Math.round(el.getBoundingClientRect().top) : 56;
-   };
-
-   // Drag handlers for bottom bar resizing (works for both push and overlay modes)
-   const handleBottomBarDragMove = React.useCallback(
-      (event: MouseEvent) => {
-         if (!isDraggingRef.current) return;
-
-         // Dragging up (smaller clientY) increases height; dragging down (larger clientY) decreases height
-         const deltaY = dragStartYRef.current - event.clientY; // Positive when dragging up
-         const proposedHeight = Math.max(40, dragStartHeightRef.current + deltaY);
-
-         // Calculate max height based on mode (same logic as BottomBar full screen button)
-         const pushMaxHeight = Math.max(40, Math.round(windowHeight * PUSH_MAX_HEIGHT_RATIO));
-         const maxHeight =
-            bottomBar.mode === 'overlay'
-               ? Math.max(40, windowHeight - getMainTop())
-               : pushMaxHeight;
-
-         setBottomBarHeight(Math.min(maxHeight, proposedHeight));
-      },
-      [bottomBar.mode, windowHeight, setBottomBarHeight]
-   );
-
-   const handleBottomBarDragEnd = React.useCallback(() => {
-      if (!isDraggingRef.current) return;
-
-      isDraggingRef.current = false;
-      setIsDraggingBottomBar(false);
-      document.body.classList.remove('sidebar-dragging');
-
-      // Remove global mouse event listeners using refs
-      if (dragMoveRef.current) {
-         document.removeEventListener('mousemove', dragMoveRef.current);
-         dragMoveRef.current = null;
-      }
-      if (dragEndRef.current) {
-         document.removeEventListener('mouseup', dragEndRef.current);
-         dragEndRef.current = null;
-      }
-   }, []);
-
-   const handleBottomBarDragStart = React.useCallback(
-      (event: React.MouseEvent) => {
-         event.preventDefault();
-         event.stopPropagation(); // Prevent event bubbling
-
-         isDraggingRef.current = true;
-         setIsDraggingBottomBar(true);
-         dragStartYRef.current = event.clientY;
-         dragStartHeightRef.current = bottomBar.height; // Start from current height
-
-         document.body.classList.add('sidebar-dragging');
-
-         // Store function references for cleanup
-         dragMoveRef.current = handleBottomBarDragMove;
-         dragEndRef.current = handleBottomBarDragEnd;
-
-         // Add global mouse event listeners
-         document.addEventListener('mousemove', handleBottomBarDragMove);
-         document.addEventListener('mouseup', handleBottomBarDragEnd);
-      },
-      [bottomBar.height, handleBottomBarDragMove, handleBottomBarDragEnd]
-   );
-
-   // Center-bottom split drag handlers
-   const handleCenterSplitDragMove = React.useCallback(
-      (event: MouseEvent) => {
-         if (!isDraggingSplitRef.current) return;
-
-         // Dragging up (smaller clientY) increases height; dragging down (larger clientY) decreases height
-         const deltaY = splitDragStartYRef.current - event.clientY; // Positive when dragging up
-         const proposedHeight = Math.max(0, splitDragStartHeightRef.current + deltaY);
-
-         // Max height should be around 50% of viewport height
-         const maxHeight = Math.max(100, Math.round(windowHeight * 0.5));
-
-         setCenterBottomSplit(Math.min(maxHeight, proposedHeight));
-      },
-      [windowHeight, setCenterBottomSplit]
-   );
-
-   const handleCenterSplitDragEnd = React.useCallback(() => {
-      if (!isDraggingSplitRef.current) return;
-
-      isDraggingSplitRef.current = false;
-      setIsDraggingCenterSplit(false);
-      document.body.classList.remove('sidebar-dragging');
-
-      // Remove global mouse event listeners
-      document.removeEventListener('mousemove', handleCenterSplitDragMove);
-      document.removeEventListener('mouseup', handleCenterSplitDragEnd);
-   }, [handleCenterSplitDragMove]);
-
-   const handleCenterSplitDragStart = React.useCallback(
-      (event: React.MouseEvent) => {
-         event.preventDefault();
-         event.stopPropagation();
-
-         isDraggingSplitRef.current = true;
-         setIsDraggingCenterSplit(true);
-         splitDragStartYRef.current = event.clientY;
-         splitDragStartHeightRef.current = centerBottomSplit;
-
-         document.body.classList.add('sidebar-dragging');
-
-         // Add global mouse event listeners
-         document.addEventListener('mousemove', handleCenterSplitDragMove);
-         document.addEventListener('mouseup', handleCenterSplitDragEnd);
-      },
-      [centerBottomSplit, handleCenterSplitDragMove, handleCenterSplitDragEnd]
-   );
-
-   // Handle window resize to keep bottom bar responsive
-   React.useEffect(() => {
-      const handleWindowResize = () => {
-         const newWindowHeight = window.innerHeight;
-         setWindowHeight(newWindowHeight);
-
-         // Recalculate max height based on current window size and mode (same logic as full screen button)
-         const pushMaxHeight = Math.max(40, Math.round(newWindowHeight * PUSH_MAX_HEIGHT_RATIO));
-         const maxHeight =
-            bottomBar.mode === 'overlay'
-               ? Math.max(40, newWindowHeight - getMainTop())
-               : pushMaxHeight;
-         const currentHeight = bottomBar.height;
-
-         // If current height exceeds new max height, clamp it
-         if (currentHeight > maxHeight) {
-            setBottomBarHeight(Math.max(40, maxHeight));
-         }
-      };
-
-      window.addEventListener('resize', handleWindowResize);
-      return () => window.removeEventListener('resize', handleWindowResize);
-   }, [bottomBar.mode, bottomBar.height, setBottomBarHeight]);
-
-   // Cleanup on unmount - only need to clean up if drag is in progress
-   React.useEffect(() => {
-      return () => {
-         if (dragMoveRef.current) {
-            document.removeEventListener('mousemove', dragMoveRef.current);
-         }
-         if (dragEndRef.current) {
-            document.removeEventListener('mouseup', dragEndRef.current);
-         }
-         // Cleanup center split drag listeners
-         document.removeEventListener('mousemove', handleCenterSplitDragMove);
-         document.removeEventListener('mouseup', handleCenterSplitDragEnd);
-         document.body.classList.remove('sidebar-dragging');
-         isDraggingRef.current = false;
-         isDraggingSplitRef.current = false;
-      };
-   }, [handleCenterSplitDragMove, handleCenterSplitDragEnd]);
 
    // Calculate grid rows based on bottom bar mode and visibility
-   // Leverage shared CSS variables so top/bottom rails stay in sync
    const getGridRows = () => {
       if (isMainFullscreen) {
          return '1fr';
@@ -356,173 +113,136 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden">
-            {/* Three-panel grid */}
-            <div
-               className={cn(
-                  'grid w-full h-full overflow-hidden',
-                  !isDragging &&
-                     'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
-               )}
-               style={{
-                  gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
-                  gridTemplateAreas: '"sidebar main right-sidebar"',
-               }}
-            >
-               {/* Left Sidebar Area */}
+            {/* Workspace Zone A - Three-panel grid */}
+            {isWorkspaceZoneAVisible ? (
                <div
                   className={cn(
-                     'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
-                     isMainFullscreen && 'p-0'
+                     'grid w-full h-full overflow-hidden',
+                     !isDragging &&
+                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}
-                  style={{ gridArea: 'sidebar' }}
+                  style={{
+                     gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
+                     gridTemplateAreas: '"sidebar main right-sidebar"',
+                  }}
                >
-                  <AppSidebar />
-               </div>
-
-               {/* Main Content Area */}
-               <div
-                  className={cn(
-                     'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
-                     isMainFullscreen && 'p-0'
-                  )}
-                  style={{ gridArea: 'main' }}
-               >
+                  {/* Left Sidebar Area */}
                   <div
                      className={cn(
-                        'overflow-hidden workspace-zone-a-panel h-full',
-                        !isMainFullscreen && 'lg:border lg:rounded-md',
-                        centerBottomSplit > 0 ? 'grid' : 'flex flex-col items-center justify-start'
+                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
+                        isMainFullscreen && 'p-0'
                      )}
-                     style={
-                        centerBottomSplit > 0
-                           ? {
-                                gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
-                                gridTemplateAreas: '"center" "bottom"',
-                             }
-                           : undefined
-                     }
-                     data-main-container
+                     style={{ gridArea: 'sidebar' }}
                   >
-                     {/* Center Content Area */}
+                     <AppSidebar />
+                  </div>
+
+                  {/* Main Content Area */}
+                  <div
+                     className={cn(
+                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
+                        isMainFullscreen && 'p-0'
+                     )}
+                     style={{ gridArea: 'main' }}
+                  >
                      <div
                         className={cn(
-                           'overflow-hidden',
+                           'overflow-hidden workspace-zone-a-panel h-full',
+                           !isMainFullscreen && 'lg:border lg:rounded-md',
                            centerBottomSplit > 0
-                              ? 'flex flex-col items-center justify-start w-full'
-                              : 'contents'
+                              ? 'grid'
+                              : 'flex flex-col items-center justify-start'
                         )}
-                        style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
+                        style={
+                           centerBottomSplit > 0
+                              ? {
+                                   gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
+                                   gridTemplateAreas: '"center" "bottom"',
+                                }
+                              : undefined
+                        }
+                        data-main-container
                      >
-                        {!isMainFullscreen && <PanelControlBar />}
-                        {header}
+                        {/* Center Content Area */}
                         <div
                            className={cn(
-                              'overflow-auto w-full',
-                              isMainFullscreen
-                                 ? 'h-full'
-                                 : isEmptyHeader(header)
-                                   ? 'h-full'
-                                   : centerBottomSplit > 0
-                                     ? 'h-full'
-                                     : height[headersNumber as keyof typeof height]
+                              'overflow-hidden',
+                              centerBottomSplit > 0
+                                 ? 'flex flex-col items-center justify-start w-full'
+                                 : 'contents'
                            )}
+                           style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
                         >
-                           {children}
-                        </div>
-                     </div>
-
-                     {/* Split Handle - only rendered when split is active */}
-                     {centerBottomSplit > 0 && (
-                        <div className="relative">
-                           <div className="absolute inset-x-0 -top-1 z-10">
-                              <SplitHandle
-                                 currentHeight={centerBottomSplit}
-                                 minHeight={0}
-                                 maxHeight={Math.max(100, Math.round(windowHeight * 0.5))}
-                                 onHeightChange={setCenterBottomSplit}
-                                 onDragStart={handleCenterSplitDragStart}
-                                 onDragEnd={handleCenterSplitDragEnd}
-                                 isDragging={isDraggingCenterSplit}
-                                 aria-label="Adjust center-bottom split"
-                              />
+                           {!isMainFullscreen && <PanelControlBar />}
+                           {header}
+                           <div
+                              className={cn(
+                                 'overflow-auto w-full',
+                                 isMainFullscreen
+                                    ? 'h-full'
+                                    : isEmptyHeader(header)
+                                      ? 'h-full'
+                                      : centerBottomSplit > 0
+                                        ? 'h-full'
+                                        : 'h-full'
+                              )}
+                           >
+                              {children}
                            </div>
                         </div>
-                     )}
 
-                     {/* Bottom Content Area - only rendered when split is active */}
-                     {centerBottomSplit > 0 && (
-                        <div
-                           className="overflow-hidden border-t bg-muted/30"
-                           style={{ gridArea: 'bottom' }}
-                        >
-                           <div className="h-full overflow-auto p-4">
-                              <div className="text-sm text-muted-foreground">
-                                 <p>Bottom split area</p>
-                                 <p className="mt-2">
-                                    Height: <strong>{centerBottomSplit}px</strong>
-                                 </p>
-                                 <p className="mt-1 text-xs">
-                                    This area can be used for secondary content, logs, or debugging
-                                    tools.
-                                 </p>
+                        {/* Split Handle - only rendered when split is active */}
+                        {centerBottomSplit > 0 && (
+                           <div className="relative">
+                              <div className="absolute inset-x-0 -top-1 z-10">
+                                 <SplitHandle
+                                    currentHeight={centerBottomSplit}
+                                    minHeight={0}
+                                    maxHeight={Math.max(100, Math.round(800 * 0.5))}
+                                    onHeightChange={setCenterBottomSplit}
+                                    onDragStart={() => {}}
+                                    onDragEnd={() => {}}
+                                    isDragging={false}
+                                    aria-label="Adjust center-bottom split"
+                                 />
+                              </div>
+                           </div>
+                        )}
 
-                                 {/* Dev controls for testing state changes */}
-                                 <div className="mt-4 p-3 bg-background border rounded-md">
-                                    <p className="text-xs font-medium mb-2">
-                                       Dev Controls (Phase 3.4)
+                        {/* Bottom Content Area - only rendered when split is active */}
+                        {centerBottomSplit > 0 && (
+                           <div
+                              className="overflow-hidden border-t bg-muted/30"
+                              style={{ gridArea: 'bottom' }}
+                           >
+                              <div className="h-full overflow-auto p-4">
+                                 <div className="text-sm text-muted-foreground">
+                                    <p>Bottom split area</p>
+                                    <p className="mt-2">
+                                       Height: <strong>{centerBottomSplit}px</strong>
                                     </p>
-                                    <div className="flex gap-2 flex-wrap">
-                                       <button
-                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-                                          onClick={() => setCenterBottomSplit(0)}
-                                       >
-                                          Reset (0px)
-                                       </button>
-                                       <button
-                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-                                          onClick={() => setCenterBottomSplit(200)}
-                                       >
-                                          Small (200px)
-                                       </button>
-                                       <button
-                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-                                          onClick={() => setCenterBottomSplit(300)}
-                                       >
-                                          Medium (300px)
-                                       </button>
-                                       <button
-                                          className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
-                                          onClick={() =>
-                                             setCenterBottomSplit(
-                                                Math.max(100, Math.round(windowHeight * 0.5))
-                                             )
-                                          }
-                                       >
-                                          Max (50% vh)
-                                       </button>
-                                    </div>
                                  </div>
                               </div>
                            </div>
-                        </div>
+                        )}
+                     </div>
+                  </div>
+
+                  {/* Right Sidebar Area */}
+                  <div
+                     className={cn(
+                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
+                        isMainFullscreen && 'p-0'
                      )}
+                     style={{ gridArea: 'right-sidebar' }}
+                  >
+                     <RightSidebar />
                   </div>
                </div>
-
-               {/* Right Sidebar Area */}
-               <div
-                  className={cn(
-                     'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
-                     isMainFullscreen && 'p-0'
-                  )}
-                  style={{ gridArea: 'right-sidebar' }}
-               >
-                  <RightSidebar />
-               </div>
-            </div>
+            ) : null}
 
             {/* Drag handles positioned between sections */}
-            {!isMainFullscreen && (
+            {!isMainFullscreen && isWorkspaceZoneAVisible && (
                <>
                   {/* Left drag handle - between Section A and B - only show when left sidebar is open */}
                   {leftSidebar.isOpen && (
@@ -561,8 +281,9 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                   onModeChange={isHydrated ? setBottomBarMode : () => {}}
                   height={bottomBar.height}
                   isOverlay={bottomBar.mode === 'overlay'}
-                  onDragStart={handleBottomBarDragStart}
-                  isDragging={isDraggingBottomBar}
+                  onDragStart={() => {}}
+                  isDragging={false}
+                  isWorkspaceZoneAHidden={!isWorkspaceZoneAVisible}
                />
             </WorkspaceZoneBContainer>
          )}
