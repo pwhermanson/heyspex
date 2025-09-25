@@ -101,13 +101,9 @@ registerCommand({
    keywords: ['split', 'center', 'bottom', 'close', 'hide', 'collapse'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      console.log('🚀 Executing /split center bottom close command');
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         console.log('📡 Dispatching setCenterBottomSplit event with height: 0');
          sidebarContext.setCenterBottomSplit(0);
-      } else {
-         console.error('❌ Sidebar context not available');
       }
    },
 });

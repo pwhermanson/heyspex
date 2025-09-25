@@ -659,11 +659,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    // Listen for panel command events from command palette
    useEffect(() => {
       const handlePanelCommand = (event: CustomEvent) => {
-         console.log('🎯 Panel command event received:', event.detail);
          const { action, visible, height } = event.detail;
 
          if (action === 'setBottomBarVisible') {
-            console.log('📋 Processing setBottomBarVisible:', visible);
             if (visible && !bottomBar.isVisible) {
                // When opening, ensure bottom split is enabled and set a reasonable height
                if (!enableBottomSplitRef.current) {
@@ -676,19 +674,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          }
 
          if (action === 'setCenterBottomSplit') {
-            console.log('📋 Processing setCenterBottomSplit:', height);
-            const splitHeight = height || 200;
+            const splitHeight = height ?? 200;
             const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
             const maxHeight = Math.max(100, Math.round(viewportHeight * 0.5));
             const validHeight = Math.min(maxHeight, Math.max(0, splitHeight));
-            console.log('📏 Setting center bottom split to:', validHeight);
             setCenterBottomSplit(validHeight);
          }
 
          if (action === 'toggleCenterBottomSplit') {
             // Get current value from the store instead of closure
             const currentHeight = store.getState().centerBottomSplit;
-            console.log('📋 Processing toggleCenterBottomSplit, current height:', currentHeight);
             if (currentHeight > 0) {
                setCenterBottomSplit(0);
             } else {
