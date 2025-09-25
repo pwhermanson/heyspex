@@ -124,7 +124,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    const [bottomBar, setBottomBar] = useState<BottomBarState>({
       mode: 'push',
       height: DEFAULT_BOTTOM_HEIGHT, // 40px collapsed
-      isVisible: true, // Always visible
+      isVisible: false, // Start hidden for empty state
       overlayPosition: DEFAULT_OVERLAY_POSITION, // Start at bottom
    });
 
@@ -137,11 +137,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    // Center-bottom split height (0 = no split, >0 = split height)
    const [centerBottomSplit, setCenterBottomSplit] = useState(0);
 
-   // Workspace Zone A visibility state
-   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
+   // Workspace Zone A visibility state - start with empty state by default
+   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(false);
 
-   // Top bar visibility state
-   const [isTopBarVisible, setIsTopBarVisible] = useState(true);
+   // Top bar visibility state - start hidden for empty state by default
+   const [isTopBarVisible, setIsTopBarVisible] = useState(false);
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
@@ -351,11 +351,19 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             }
          }
 
-         // Load Workspace Zone A visibility state
+         // Load Workspace Zone A visibility state - only restore if user has previously interacted
          const savedWorkspaceZoneAVisible = localStorage.getItem('ui:workspaceZoneAVisible');
          if (savedWorkspaceZoneAVisible !== null) {
             setIsWorkspaceZoneAVisible(savedWorkspaceZoneAVisible === 'true');
          }
+         // If no saved state, keep the default empty state (false)
+
+         // Load Top Bar visibility state - only restore if user has previously interacted
+         const savedTopBarVisible = localStorage.getItem('ui:topBarVisible');
+         if (savedTopBarVisible !== null) {
+            setIsTopBarVisible(savedTopBarVisible === 'true');
+         }
+         // If no saved state, keep the default empty state (false)
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }
