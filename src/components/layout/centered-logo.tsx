@@ -18,15 +18,31 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          )}
       >
          {/* Logo */}
-         <div className="mb-6">
-            <Image
-               src="/heyspex-logo-stacked.png"
-               alt="HeySpex"
-               width={300}
-               height={273}
-               className="h-auto w-auto max-w-[300px]"
-               priority
-            />
+         <div className="mb-6 group cursor-pointer">
+            <div
+               className="h-auto w-auto max-w-[300px] transition-all duration-200 group-hover:scale-105"
+               style={{
+                  filter: 'brightness(0.8)',
+                  WebkitFilter: 'brightness(0.8)',
+               }}
+               onMouseEnter={(e) => {
+                  e.currentTarget.style.filter = 'brightness(1)';
+                  e.currentTarget.style.WebkitFilter = 'brightness(1)';
+               }}
+               onMouseLeave={(e) => {
+                  e.currentTarget.style.filter = 'brightness(0.8)';
+                  e.currentTarget.style.WebkitFilter = 'brightness(0.8)';
+               }}
+            >
+               <Image
+                  src="/heyspex-logo-stacked.png"
+                  alt="HeySpex"
+                  width={300}
+                  height={273}
+                  className="h-auto w-auto max-w-[300px]"
+                  priority
+               />
+            </div>
          </div>
 
          {/* Instruction text */}

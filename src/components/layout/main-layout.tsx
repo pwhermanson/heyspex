@@ -70,6 +70,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       leftSidebar,
       rightSidebar,
       isWorkspaceZoneAVisible,
+      isTopBarVisible,
    } = useResizableSidebar();
 
    // Initialize command palette keyboard shortcuts
@@ -87,7 +88,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
 
       const rows: string[] = [];
 
-      if (isTopBarEnabled) {
+      if (isTopBarEnabled && isTopBarVisible) {
          rows.push('var(--topbar-height, 56px)');
       }
 
@@ -110,7 +111,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          data-bottom-mode={safeBottomEnabled ? bottomBar.mode : undefined}
       >
          {/* TopBar - spans full width */}
-         {!isMainFullscreen && isTopBarEnabled && <TopBar />}
+         {!isMainFullscreen && isTopBarEnabled && isTopBarVisible && <TopBar />}
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden">

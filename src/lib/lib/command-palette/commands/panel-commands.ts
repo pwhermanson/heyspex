@@ -89,6 +89,20 @@ function getResizableSidebarContext() {
             })
          );
       },
+      setTopBarVisible: (visible: boolean) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setTopBarVisible', visible },
+            })
+         );
+      },
+      toggleTopBar: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleTopBar' },
+            })
+         );
+      },
    };
 }
 
@@ -194,6 +208,52 @@ registerCommand({
       if (sidebarContext) {
          // Toggle Workspace Zone A container visibility
          sidebarContext.toggleWorkspaceZoneA();
+      }
+   },
+});
+
+// Register Top Bar Open command
+registerCommand({
+   id: 'topbar.open',
+   title: '/top bar open',
+   keywords: ['top', 'bar', 'header', 'open', 'show'],
+   shortcut: 'Ctrl+Shift+8',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Show top bar
+         sidebarContext.setTopBarVisible(true);
+      }
+   },
+});
+
+// Register Top Bar Close command
+registerCommand({
+   id: 'topbar.close',
+   title: '/top bar close',
+   keywords: ['top', 'bar', 'header', 'close', 'hide'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Hide top bar
+         sidebarContext.setTopBarVisible(false);
+      }
+   },
+});
+
+// Register Top Bar Toggle command
+registerCommand({
+   id: 'topbar.toggle',
+   title: '/top bar toggle',
+   keywords: ['top', 'bar', 'header', 'toggle'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Toggle top bar visibility
+         sidebarContext.toggleTopBar();
       }
    },
 });

@@ -70,6 +70,11 @@ type EnhancedSidebarContext = {
    isWorkspaceZoneAVisible: boolean;
    setWorkspaceZoneAVisible: (visible: boolean) => void;
    toggleWorkspaceZoneA: () => void;
+
+   // Top bar visibility
+   isTopBarVisible: boolean;
+   setTopBarVisible: (visible: boolean) => void;
+   toggleTopBar: () => void;
 };
 
 const EnhancedSidebarContext = createContext<EnhancedSidebarContext | null>(null);
@@ -134,6 +139,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
    // Workspace Zone A visibility state
    const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
+
+   // Top bar visibility state
+   const [isTopBarVisible, setIsTopBarVisible] = useState(true);
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
@@ -693,12 +701,27 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       setWorkspaceZoneAVisible(!isWorkspaceZoneAVisible);
    }, [isWorkspaceZoneAVisible, setWorkspaceZoneAVisible]);
 
+   const setTopBarVisible = useCallback((visible: boolean) => {
+      setIsTopBarVisible(visible);
+      try {
+         localStorage.setItem('ui:topBarVisible', visible.toString());
+      } catch (error) {
+         console.warn('Failed to save top bar visibility to localStorage:', error);
+      }
+   }, []);
+
+   const toggleTopBar = useCallback(() => {
+      setTopBarVisible(!isTopBarVisible);
+   }, [isTopBarVisible, setTopBarVisible]);
+
    // Temporary shortcut for toggling Section D until settings wiring is in place.
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
          const isCtrlLike = event.ctrlKey || event.metaKey;
          const isTopDigit2 = event.shiftKey && event.code === 'Digit2';
          const isNumpad2 = event.code === 'Numpad2';
+         const isTopDigit8 = event.shiftKey && event.code === 'Digit8';
+         const isNumpad8 = event.code === 'Numpad8';
          if (isCtrlLike && !event.altKey && (isTopDigit2 || isNumpad2)) {
             event.preventDefault();
 
@@ -713,6 +736,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
             toggleBottomBar();
          }
+
+         // Ctrl+Shift+8 or Ctrl+Numpad8 - Toggle top bar
+         if (isCtrlLike && !event.altKey && (isTopDigit8 || isNumpad8)) {
+            event.preventDefault();
+            toggleTopBar();
+         }
       };
 
       document.addEventListener('keydown', handleKeyDown, { capture: true });
@@ -720,7 +749,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          document.removeEventListener('keydown', handleKeyDown, {
             capture: true,
          } as AddEventListenerOptions);
-   }, [toggleBottomBar, setBottomBarHeight, setBottomBarVisible]);
+   }, [toggleBottomBar, setBottomBarHeight, setBottomBarVisible, toggleTopBar]);
 
    // Listen for panel command events from command palette
    useEffect(() => {
@@ -792,6 +821,14 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          if (action === 'toggleWorkspaceZoneA') {
             toggleWorkspaceZoneA();
          }
+
+         if (action === 'setTopBarVisible') {
+            setTopBarVisible(visible);
+         }
+
+         if (action === 'toggleTopBar') {
+            toggleTopBar();
+         }
       };
 
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
@@ -809,6 +846,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       setMainFullscreen,
       setWorkspaceZoneAVisible,
       toggleWorkspaceZoneA,
+      setTopBarVisible,
+      toggleTopBar,
    ]);
 
    const contextValue = React.useMemo(
@@ -842,6 +881,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
+         isTopBarVisible,
+         setTopBarVisible,
+         toggleTopBar,
       }),
       [
          leftSidebar,
@@ -873,6 +915,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
+         isTopBarVisible,
+         setTopBarVisible,
+         toggleTopBar,
       ]
    );
 
