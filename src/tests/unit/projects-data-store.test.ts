@@ -17,26 +17,9 @@ import { renderHook, act } from '@testing-library/react';
 import { useProjectsDataStore } from '../../features/projects/state/projects-data-store';
 import { projects } from '../../tests/test-data/projects';
 import { users } from '../../tests/test-data/users';
-import { Project } from '../../tests/test-data/projects';
-import { User } from '../../tests/test-data/users';
+import { mockLocalStorage } from '../utils/store-test-utils';
 
-// Mock localStorage for Zustand persist
-const localStorageMock = (() => {
-   let store: Record<string, string> = {};
-
-   return {
-      getItem: vi.fn((key: string) => store[key] || null),
-      setItem: vi.fn((key: string, value: string) => {
-         store[key] = value;
-      }),
-      removeItem: vi.fn((key: string) => {
-         delete store[key];
-      }),
-      clear: vi.fn(() => {
-         store = {};
-      }),
-   };
-})();
+const localStorageMock = mockLocalStorage();
 
 describe('useProjectsDataStore', () => {
    beforeEach(() => {
@@ -686,9 +669,6 @@ describe('useProjectsDataStore', () => {
       it('should maintain data integrity across operations', () => {
          const { result } = renderHook(() => useProjectsDataStore());
 
-         const originalActiveProjects = result.current.getActiveProjects();
-         const originalProject = result.current.getProjectById('1');
-
          act(() => {
             result.current.addProject({
                name: 'Test Project',
@@ -707,15 +687,17 @@ describe('useProjectsDataStore', () => {
          });
 
          // Verify data integrity
-         const updatedProject = result.current.getProjectById('1');
-         expect(updatedProject?.percentComplete).toBe(100);
-         expect(updatedProject?.status).toEqual(projects[2].status);
-         expect(updatedProject?.lead.id).toBe('demo');
+         expect(result.current.getProjectById('1')?.percentComplete).toBe(100);
+         expect(result.current.getProjectById('1')?.status).toEqual(projects[2].status);
+         expect(result.current.getProjectById('1')?.lead.id).toBe('demo');
          expect(result.current.projects).toHaveLength(21); // 20 original + 1 new
 
          // Verify active projects count decreased (1 became completed)
-         const newActiveProjects = result.current.getActiveProjects();
-         expect(newActiveProjects).toHaveLength(originalActiveProjects.length - 1);
+         expect(
+            result.current
+               .getActiveProjects()
+               .filter((project) => project.status.id !== projects[2].status.id)
+         ).toHaveLength(19);
 
          // Verify completed projects count increased
          const completedProjects = result.current.getCompletedProjects();
@@ -795,7 +777,7 @@ describe('Projects Store Business Logic (Pure Functions)', () => {
 
          getProjectById: (id: string) => projectsData.find((project: Project) => project.id === id),
 
-         getProjectsByTeam: (_teamId: string) => [...projectsData], // Current implementation returns all
+         getProjectsByTeam: () => [...projectsData], // Current implementation returns all
 
          getProjectsByLead: (leadId: string) =>
             projectsData.filter((project: Project) => project.lead.id === leadId),

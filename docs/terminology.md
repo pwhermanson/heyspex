@@ -17,11 +17,30 @@ This document defines the standardized terminology and naming conventions used t
 - **Nickname**: "App Shell"
 - **Purpose**: The outermost container that holds everything. This is where the empty state logo and "get started" text will appear when all panels are closed.
 
-### 2. Control Bar (Navigation Bar)
+### 2. Global Control Bar (Navigation Bar)
 
 - **Technical**: `control-bar` or `navigation-bar`
-- **Nickname**: "Control Bar"
-- **Purpose**: Global navigation and controls that can be hidden when panels go fullscreen.
+- **Nickname**: "Main Control Bar"
+- **Purpose**: Global app bar for navigation and universal actions. Can be mounted to any side of the viewport (top/left/right/bottom) and can be hidden when panels go fullscreen.
+
+#### 2.1 Panel Control Bar
+
+- **Technical**: `panel-control-bar`
+- **Nickname**: "Panel Control Bar"
+- **Purpose**: A header-level control bar that belongs to an entire panel (e.g., Left/Center/Right panels). It typically contains panel-scoped actions like expand/collapse to fullscreen. Appears at the top edge of a panel.
+
+#### 2.2 Screen Control Bar
+
+- **Technical**: `screen-control-bar`
+- **Nickname**: "Screen Control Bar"
+- **Purpose**: A header-level control bar inside a panel that belongs to the currently loaded screen (e.g., Issues screen). It typically contains screen-scoped actions such as Filter, Display, view mode toggles, etc. It sits beneath any Panel Control Bar if both are present.
+
+##### Fullscreen Expand Icon (Behavior Reference)
+
+- Visual: two arrows at a 45° angle
+- Default action: expands the panel to the full viewport (width and height), gracefully pushing other panels off-viewport
+- Global/Main Control Bar: remains visible by default during fullscreen
+- Visibility of Global/Main Control Bar during fullscreen is user-configurable via Command Palette, keyboard shortcut, and Settings → Views
 
 ### 3. Workspace Zone A (Primary Workspace Zone)
 

@@ -46,6 +46,8 @@
    --background: oklch(0.98 0.003 240);
    --foreground: oklch(0.25 0.008 285.823);
    --container: oklch(0.99 0.002 240);
+   --workspace-zone-a-container: 0 0% 100%;
+   --workspace-zone-b-container: 210 40% 96%;
 }
 
 .dark {
@@ -82,6 +84,8 @@
    --sidebar-border: oklch(0.274 0.006 286.033);
    --sidebar-ring: oklch(0.442 0.017 285.786);
    --container: #101011;
+   --workspace-zone-a-container: 222.2 84% 4.9%;
+   --workspace-zone-b-container: 217.2 32.6% 17.5%;
 }
 
 @theme inline {
@@ -130,6 +134,69 @@
    }
    body {
       @apply bg-background text-foreground;
+   }
+}
+
+@layer components {
+   .panel-control-bar {
+      background-color: hsl(var(--muted));
+   }
+
+   .workspace-zone-a-panel {
+      background-color: hsl(var(--card));
+   }
+
+   .workspace-zone-b {
+      background-color: hsl(var(--muted));
+      color: hsl(var(--foreground));
+   }
+
+   /* Most specific rule for overlay mode - use proper theme colors */
+   .fixed.left-0.right-0.z-\[100\].workspace-zone-b {
+      background-color: hsl(var(--muted)) !important;
+      background: hsl(var(--muted)) !important;
+      opacity: 1 !important;
+      color: hsl(var(--foreground));
+   }
+
+   .screen-control-bar {
+      background-color: hsl(var(--background));
+      border-top: 1px solid hsl(var(--border));
+      border-bottom: 1px solid hsl(var(--border));
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 3.5rem;
+      height: 3.5rem;
+      padding: 0.75rem 2rem;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      background-color: hsl(var(--muted) / 0.15);
+      transition:
+         background-color 0.2s ease-in-out,
+         box-shadow 0.2s ease-in-out;
+   }
+
+   .screen-control-bar,
+   .panel-control-bar {
+      margin-left: 0;
+      margin-right: 0;
+      align-self: stretch;
+   }
+
+   .screen-control-bar:hover {
+      background-color: hsl(var(--muted) / 0.5);
+   }
+
+   .dark .screen-control-bar {
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+      background-color: hsl(var(--muted) / 0.18);
+   }
+
+   .dark .screen-control-bar:hover {
+      background-color: hsl(var(--muted) / 0.3);
    }
 }
 

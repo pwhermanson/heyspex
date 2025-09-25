@@ -26,26 +26,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useMembersDataStore } from '../../features/members/state/members-data-store';
 import { users } from '../../tests/test-data/users';
-import { mockLocalStorage } from '../utils/store-test-utils';
 import { User } from '../../tests/test-data/users';
+import { mockLocalStorage } from '../utils/store-test-utils';
 
-// Mock localStorage for Zustand persist
-const localStorageMock = (() => {
-   let store: Record<string, string> = {};
-
-   return {
-      getItem: vi.fn((key: string) => store[key] || null),
-      setItem: vi.fn((key: string, value: string) => {
-         store[key] = value;
-      }),
-      removeItem: vi.fn((key: string) => {
-         delete store[key];
-      }),
-      clear: vi.fn(() => {
-         store = {};
-      }),
-   };
-})();
+const localStorageMock = mockLocalStorage();
 
 describe('useMembersDataStore', () => {
    beforeEach(() => {
@@ -310,14 +294,11 @@ describe('useMembersDataStore', () => {
          it('should not affect other members', () => {
             const { result } = renderHook(() => useMembersDataStore());
 
-            const originalMember = result.current.getMemberById('ln');
-
             act(() => {
                result.current.updateMember('demo', { name: 'Updated Demo User' });
             });
 
-            const unchangedMember = result.current.getMemberById('ln');
-            expect(unchangedMember).toEqual(originalMember);
+            expect(result.current.getMemberById('ln')).toEqual(users.find((u) => u.id === 'ln'));
          });
 
          it('should handle non-existent member gracefully', () => {
@@ -350,14 +331,12 @@ describe('useMembersDataStore', () => {
          it('should not affect other members', () => {
             const { result } = renderHook(() => useMembersDataStore());
 
-            const originalMembers = result.current.getAllMembers();
-
             act(() => {
                result.current.removeMember('demo');
             });
 
             const remainingMembers = result.current.getAllMembers();
-            expect(remainingMembers).toHaveLength(originalMembers.length - 1); // Should be 20 after removing 1
+            expect(remainingMembers).toHaveLength(users.length - 1); // Should be 20 after removing 1
             expect(remainingMembers.find((m) => m.id === 'demo')).toBeUndefined();
          });
 
@@ -641,7 +620,6 @@ describe('useMembersDataStore', () => {
          const { result } = renderHook(() => useMembersDataStore());
 
          const originalOnlineMembers = result.current.getOnlineMembers();
-         const originalMember = result.current.getMemberById('demo');
 
          act(() => {
             result.current.addMember({

@@ -10,7 +10,7 @@ export function RightSidebar() {
    return (
       <ResizableSidebar side="right">
          {/* Section C Header with Toggle Icon */}
-         <div className="flex items-center justify-between p-4 border-b bg-background">
+         <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted">
             <h2 className="text-lg font-semibold">Right Sidebar</h2>
             <div className="flex items-center gap-2">
                <div className="w-px h-4 bg-border" />

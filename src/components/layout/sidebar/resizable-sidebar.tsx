@@ -57,7 +57,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
       content = (
          <div
             className={cn(
-               'bg-container flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-hidden',
+               'workspace-zone-a-panel flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-hidden',
                side === 'right' && 'border-l border-r-0'
             )}
          >
@@ -66,7 +66,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
       );
    } else if (isLeft && !enableLeftRail) {
       content = (
-         <div className="flex h-full w-full flex-col bg-container border shadow-sm lg:rounded-md overflow-hidden">
+         <div className="flex h-full w-full flex-col workspace-zone-a-panel border shadow-sm lg:rounded-md overflow-hidden">
             <div className="flex items-center justify-end p-2 border-b bg-background">
                <div className="flex items-center gap-2">
                   <div className="w-px h-4 bg-border" />
@@ -77,7 +77,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
       );
    } else if (isLeft) {
       content = (
-         <div className="flex h-full w-full flex-col bg-container border shadow-sm lg:rounded-md overflow-hidden">
+         <div className="flex h-full w-full flex-col workspace-zone-a-panel border shadow-sm lg:rounded-md overflow-hidden">
             <div className="flex items-center justify-end p-2 border-b bg-background">
                <div className="flex items-center gap-2">
                   <div className="w-px h-4 bg-border" />
@@ -160,7 +160,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
       );
    } else {
       content = (
-         <div className="flex h-full w-full flex-col bg-container border shadow-sm lg:rounded-md overflow-hidden">
+         <div className="flex h-full w-full flex-col workspace-zone-a-panel border shadow-sm lg:rounded-md overflow-hidden">
             <div className="flex items-center justify-start p-2 border-b bg-background">
                <RightSidebarTrigger />
             </div>

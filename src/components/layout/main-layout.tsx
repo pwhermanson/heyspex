@@ -17,6 +17,7 @@ import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-
 import { TopBar } from '@/src/components/layout/top-bar';
 import { BottomBar } from '@/src/components/layout/bottom-bar';
 import { SplitHandle } from '@/src/components/layout/split-handle';
+import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
 import { SidebarDragHandle } from '@/src/components/layout/sidebar/sidebar-drag-handle';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
@@ -387,7 +388,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                >
                   <div
                      className={cn(
-                        'overflow-hidden bg-container h-full',
+                        'overflow-hidden workspace-zone-a-panel h-full',
                         !isMainFullscreen && 'lg:border lg:rounded-md',
                         centerBottomSplit > 0 ? 'grid' : 'flex flex-col items-center justify-start'
                      )}
@@ -406,11 +407,12 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
                         className={cn(
                            'overflow-hidden',
                            centerBottomSplit > 0
-                              ? 'flex flex-col items-center justify-start'
+                              ? 'flex flex-col items-center justify-start w-full'
                               : 'contents'
                         )}
                         style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
                      >
+                        {!isMainFullscreen && <PanelControlBar />}
                         {header}
                         <div
                            className={cn(
@@ -557,10 +559,13 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             bottomBar.isVisible &&
             bottomBar.mode === 'overlay' && (
                <div
-                  className="fixed left-0 right-0 z-[100]"
+                  className="fixed left-0 right-0 z-[100] workspace-zone-b"
                   style={{
                      bottom: `0px`,
                      height: `${bottomBar.height}px`,
+                     backgroundColor: '#1f2937',
+                     background: '#1f2937',
+                     opacity: 1,
                   }}
                >
                   {/* Bottom Bar Content */}
@@ -580,7 +585,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             safeBottomEnabled &&
             bottomBar.isVisible &&
             bottomBar.mode === 'push' && (
-               <div className="relative overflow-hidden z-[50] px-2">
+               <div className="relative overflow-hidden z-[50] px-2 workspace-zone-b">
                   <BottomBar
                      mode={bottomBar.mode}
                      onModeChange={isHydrated ? setBottomBarMode : () => {}}

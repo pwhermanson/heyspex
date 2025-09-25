@@ -51,6 +51,7 @@ Forget thrash. Loops keep you focused on steady progress with light weekly cycle
 ### 🗺️ Direction Without Overhead
 
 Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues together so you can keep shipping.
+
 ## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
@@ -66,6 +67,7 @@ Sketch what's next in Roadmaps. Hey Spex ties your specs, flows, and issues toge
 - Build UI
 
 ### Haven't Started
+
 - Connect Convex Database
 - Connect Firebase Auth
 - Connect Vercel
@@ -115,4 +117,8 @@ Hey Spex treats AI coding agents like teammates with transparency and reproducib
 
 ---
 
-*Hey Spex. Spec-driven development for solo devs.*
+_Hey Spex. Spec-driven development for solo devs._
+
+## Tooling Warnings
+
+Linting is run with `TSESTREE_NO_TS_VERSION_WARNING=1` to suppress a typescript-estree notice about TypeScript 5.9.2. Remove that env var after bumping the parser to a version that officially supports our TS release.

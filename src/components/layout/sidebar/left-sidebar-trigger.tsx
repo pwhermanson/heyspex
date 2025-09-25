@@ -24,7 +24,7 @@ export function LeftSidebarTrigger({
          data-slot="sidebar-trigger"
          variant="ghost"
          size="icon"
-         className={cn('h-7 w-7', className)}
+         className={cn('h-7 w-7 text-muted-foreground hover:!text-icon-hover', className)}
          onClick={(event) => {
             onClick?.(event);
             toggleLeftSidebar();

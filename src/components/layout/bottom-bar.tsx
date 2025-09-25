@@ -89,11 +89,7 @@ export function BottomBar({
    isDragging = false,
 }: BottomBarProps) {
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
-   const {
-      bottomBar: layoutBottomBar,
-      setBottomBarHeight,
-      setBottomBarMode,
-   } = useResizableSidebar();
+   const { bottomBar: layoutBottomBar, setBottomBarHeight } = useResizableSidebar();
 
    // Section D layout state: 'full' | '2-split' | '3-split'
    const [sectionDLayout, setSectionDLayout] = React.useState<'full' | '2-split' | '3-split'>(
@@ -120,13 +116,8 @@ export function BottomBar({
 
    const handleToggleFull = () => {
       const target = isFull ? 40 : maxHeight;
-      // For push mode, stay in push mode when toggling full screen
-      // For overlay mode, switch to push mode when expanding to full screen for consistency
-      if (!isFull && layoutBottomBar.mode === 'push') {
-         // Stay in push mode - no mode change needed
-      } else if (!isFull && layoutBottomBar.mode === 'overlay') {
-         setBottomBarMode('push');
-      }
+      // Preserve the current mode when toggling full screen
+      // Both push and overlay modes should maintain their mode when expanding/collapsing
       setBottomBarHeight(target);
    };
 
@@ -158,16 +149,20 @@ export function BottomBar({
    return (
       <div
          className={cn(
-            'relative overflow-hidden bg-background border-t flex flex-col w-full',
-            isOverlay ? 'shadow-lg border-x' : 'border-x rounded-t-lg', // Different styling for overlay vs push mode
-            'pointer-events-auto', // Ensure mouse events work
+            'relative overflow-hidden workspace-zone-b flex flex-col w-full',
+            isOverlay ? 'shadow-lg border-x' : 'border-x rounded-t-lg',
+            'pointer-events-auto',
             className
          )}
-         style={{ height: `${height}px` }}
+         style={{
+            height: `${height}px`,
+            backgroundColor: isOverlay ? '#1f2937' : undefined,
+            background: isOverlay ? '#1f2937' : undefined,
+         }}
          role="contentinfo"
       >
          {/* Bottom Bar Header with Controls */}
-         <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30 min-h-[40px]">
+         <div className="workspace-zone-control-bar flex items-center justify-between px-4 py-2 border-b min-h-[40px] bg-muted">
             <div className="flex items-center gap-3">
                <span className="text-sm font-medium text-foreground">
                   Output Panel {isOverlay && '(OVERLAY MODE)'}
@@ -189,7 +184,7 @@ export function BottomBar({
                         'h-6 w-6',
                         sectionDLayout === 'full'
                            ? 'text-primary-foreground'
-                           : 'text-muted-foreground hover:text-foreground'
+                           : 'text-muted-foreground hover:!text-icon-hover'
                      )}
                      onClick={handleFullWidthLayout}
                      aria-label="Full width layout"
@@ -204,7 +199,7 @@ export function BottomBar({
                         'h-6 w-6',
                         sectionDLayout === '2-split'
                            ? 'text-primary-foreground'
-                           : 'text-muted-foreground hover:text-foreground'
+                           : 'text-muted-foreground hover:!text-icon-hover'
                      )}
                      onClick={handle2SplitLayout}
                      aria-label="2-split layout"
@@ -219,7 +214,7 @@ export function BottomBar({
                         'h-6 w-6',
                         sectionDLayout === '3-split'
                            ? 'text-primary-foreground'
-                           : 'text-muted-foreground hover:text-foreground'
+                           : 'text-muted-foreground hover:!text-icon-hover'
                      )}
                      onClick={handle3SplitLayout}
                      aria-label="3-split layout"
@@ -237,7 +232,7 @@ export function BottomBar({
                   variant="ghost"
                   size="icon"
                   onClick={handleToggleFull}
-                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                  className="h-6 w-6 text-muted-foreground hover:!text-icon-hover"
                   aria-label={isFull ? 'Collapse panel' : 'Fullscreen panel'}
                   title={isFull ? 'Collapse' : 'Fullscreen'}
                >
@@ -250,7 +245,7 @@ export function BottomBar({
                      variant="ghost"
                      size="icon"
                      onClick={onMinimize}
-                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     className="h-6 w-6 text-muted-foreground hover:!text-icon-hover"
                      aria-label="Minimize panel"
                   >
                      <Minus className="h-3 w-3" />
@@ -263,7 +258,7 @@ export function BottomBar({
                      variant="ghost"
                      size="icon"
                      onClick={onClose}
-                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                     className="h-6 w-6 text-muted-foreground hover:!text-icon-hover"
                      aria-label="Close panel"
                   >
                      <X className="h-3 w-3" />

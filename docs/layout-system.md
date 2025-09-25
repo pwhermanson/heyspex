@@ -1,5 +1,7 @@
 # HeySpex Layout System
 
+> See also: [Layout Styling Guide](./layout-styling.md) for the companion document covering styling, classes, and theming conventions used by this system.
+
 ## Overview
 
 This document defines the complete layout system specification for the HeySpex application, including architectural hierarchy, positioning capabilities, feature specifications, and system behavior. For terminology and naming conventions, see [Layout Terminology](./terminology.md).
@@ -26,7 +28,7 @@ User Workspace (user-workspace) - Top-level application concept
 │   ├── Switch Workspace (triggered from profile dropdown)
 │   └── Workspace Settings
 ├── App Shell (layout-container)
-│   ├── Control Bar (control-bar) - can be hidden during fullscreen
+│   ├── Global Control Bar (control-bar) — nickname: Main Control Bar; can be mounted to any side and hidden during fullscreen
 │   ├── Workspace Zone A (workspace-zone-a)
 │   │   └── 1 workspace with 3 panels
 │   │       ├── Left Panel (left-viewport) - can load screens
@@ -67,6 +69,7 @@ Within each Screen:
 - Views are per-workspace (each workspace has its own set of views)
 - **Layout Flexibility**: Views can save:
    - Control Bar position (top, left, right, bottom)
+   - Global Control Bar visibility while fullscreen (persisted preference)
    - Workspace Zone positioning (A and B can be switched)
    - Panel configurations and loaded screens
    - All layout preferences and settings
@@ -80,11 +83,16 @@ Within each Screen:
 
 ## Layout Flexibility and Positioning
 
-### Control Bar Positioning
+### Global Control Bar Positioning
 
 - Can be mounted to any side of the viewport (top, left, right, bottom)
 - Position can be saved in views and any view can be set as default
 - Can be hidden when panels go fullscreen
+
+#### Panel Control Bar vs Screen Control Bar
+
+- **Panel Control Bar (`panel-control-bar`)**: Controls for the entire panel (Left/Center/Right). Lives at the top edge of the panel. Examples: panel expand/minimize, panel-level actions.
+- **Screen Control Bar (`screen-control-bar`)**: Controls for the active screen within a panel. Renders inside the panel content area just below the panel control bar. Examples: Filter, Display, screen view selectors.
 
 ### Workspace Zone Switching
 
@@ -114,8 +122,13 @@ Within each Screen:
 
 ### Fullscreen Mode
 
-- Individual panels can be expanded to fill the viewport
-- Control Bar and other sidebars hide during fullscreen
+- Individual panels can be expanded to fill the viewport via the full-screen expand icon (two arrows at 45°)
+- Default behavior: expanding a panel makes it full width and height of the viewport and gracefully pushes all other panels off-viewport
+- The Global Control Bar (Main Control Bar) remains visible by default while a panel is fullscreen
+- Users can toggle the Global Control Bar visibility during fullscreen via:
+   - Command Palette slash command
+   - Keyboard shortcut
+   - Persisted preference in Settings → Views
 - Original states are preserved and restored when exiting fullscreen
 
 ### State Management

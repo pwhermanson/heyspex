@@ -11,7 +11,7 @@ export function RightSidebarTrigger() {
       <Button
          variant="ghost"
          size="icon"
-         className="h-7 w-7"
+         className="h-7 w-7 text-muted-foreground hover:!text-icon-hover"
          onClick={() => setRightSidebarOpen(!rightSidebar.isOpen)}
          title={rightSidebar.isOpen ? 'Hide right sidebar' : 'Show right sidebar'}
          aria-label={rightSidebar.isOpen ? 'Hide right sidebar' : 'Show right sidebar'}
