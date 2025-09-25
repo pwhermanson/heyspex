@@ -559,13 +559,12 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             bottomBar.isVisible &&
             bottomBar.mode === 'overlay' && (
                <div
-                  className="fixed left-0 right-0 z-[100] workspace-zone-b"
+                  className="fixed left-0 right-0 z-[100] workspace-zone-b workspace-zone-b-overlay"
                   style={{
                      bottom: `0px`,
                      height: `${bottomBar.height}px`,
-                     backgroundColor: '#1f2937',
-                     background: '#1f2937',
-                     opacity: 1,
+                     backgroundColor: 'var(--workspace-zone-b-bg)',
+                     background: 'var(--workspace-zone-b-bg)',
                   }}
                >
                   {/* Bottom Bar Content */}
@@ -585,7 +584,7 @@ function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
             safeBottomEnabled &&
             bottomBar.isVisible &&
             bottomBar.mode === 'push' && (
-               <div className="relative overflow-hidden z-[50] px-2 workspace-zone-b">
+               <div className="relative overflow-hidden z-[50] px-2 workspace-zone-b workspace-zone-b-push">
                   <BottomBar
                      mode={bottomBar.mode}
                      onModeChange={isHydrated ? setBottomBarMode : () => {}}

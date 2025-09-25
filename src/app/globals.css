@@ -48,6 +48,7 @@
    --container: oklch(0.99 0.002 240);
    --workspace-zone-a-container: 0 0% 100%;
    --workspace-zone-b-container: 210 40% 96%;
+   --workspace-zone-b-bg: oklch(0.955 0.004 240);
 }
 
 .dark {
@@ -86,6 +87,7 @@
    --container: #101011;
    --workspace-zone-a-container: 222.2 84% 4.9%;
    --workspace-zone-b-container: 217.2 32.6% 17.5%;
+   --workspace-zone-b-bg: oklch(0.274 0.006 286.033);
 }
 
 @theme inline {
@@ -146,12 +148,27 @@
       background-color: hsl(var(--card));
    }
 
+   /* Base workspace zone b styling */
    .workspace-zone-b {
       background-color: hsl(var(--muted));
       color: hsl(var(--foreground));
    }
 
-   /* Most specific rule for overlay mode - use proper theme colors */
+   /* Overlay mode specific styling - highest specificity */
+   .workspace-zone-b-overlay {
+      background-color: var(--workspace-zone-b-bg) !important;
+      background: var(--workspace-zone-b-bg) !important;
+      opacity: 1 !important;
+      color: hsl(var(--foreground)) !important;
+   }
+
+   /* Push mode specific styling */
+   .workspace-zone-b-push {
+      background-color: hsl(var(--muted));
+      color: hsl(var(--foreground));
+   }
+
+   /* Legacy support for existing fixed positioning class */
    .fixed.left-0.right-0.z-\[100\].workspace-zone-b {
       background-color: hsl(var(--muted)) !important;
       background: hsl(var(--muted)) !important;

@@ -156,8 +156,8 @@ export function BottomBar({
          )}
          style={{
             height: `${height}px`,
-            backgroundColor: isOverlay ? '#1f2937' : undefined,
-            background: isOverlay ? '#1f2937' : undefined,
+            backgroundColor: isOverlay ? 'var(--workspace-zone-b-bg)' : undefined,
+            background: isOverlay ? 'var(--workspace-zone-b-bg)' : undefined,
          }}
          role="contentinfo"
       >
