@@ -33,14 +33,21 @@ function getResizableSidebarContext() {
             })
          );
       },
+      setBottomBarMode: (mode: 'push' | 'overlay') => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setBottomBarMode', mode },
+            })
+         );
+      },
    };
 }
 
-// Register Panel D Open command
+// Register Workspace Zone B Open command
 registerCommand({
-   id: 'panel.d.open',
-   title: '/panel D open',
-   keywords: ['panel', 'section', 'bottom', 'open', 'show'],
+   id: 'workspace.zone.b.open',
+   title: '/workspace zone B open',
+   keywords: ['workspace', 'zone', 'bottom', 'open', 'show'],
    shortcut: 'Ctrl+Shift+2',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
@@ -51,31 +58,16 @@ registerCommand({
    },
 });
 
-// Register Panel D Close command
+// Register Workspace Zone B Close command
 registerCommand({
-   id: 'panel.d.close',
-   title: '/panel D close',
-   keywords: ['panel', 'section', 'bottom', 'close', 'hide'],
+   id: 'workspace.zone.b.close',
+   title: '/workspace zone B close',
+   keywords: ['workspace', 'zone', 'bottom', 'close', 'hide'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
          sidebarContext.setBottomBarVisible(false);
-      }
-   },
-});
-
-// Register Center Bottom Split Toggle command
-registerCommand({
-   id: 'split.center.bottom.toggle',
-   title: '/split center bottom',
-   keywords: ['split', 'center', 'bottom', 'toggle', 'divide', 'section'],
-   shortcut: 'Ctrl+Shift+3',
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
-         sidebarContext.toggleCenterBottomSplit();
       }
    },
 });
@@ -89,6 +81,9 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
+         // Switch to push mode so user can see the split result
+         sidebarContext.setBottomBarMode('push');
+         // Open the center bottom split
          sidebarContext.setCenterBottomSplit(200);
       }
    },

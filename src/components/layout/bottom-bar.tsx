@@ -165,14 +165,7 @@ export function BottomBar({
          {/* Bottom Bar Header with Controls */}
          <div className="workspace-zone-control-bar flex items-center justify-between px-4 py-2 border-b min-h-[40px] bg-muted">
             <div className="flex items-center gap-3">
-               <span className="text-sm font-medium text-foreground">
-                  Output Panel {isOverlay && '(OVERLAY MODE)'}
-               </span>
-               {isOverlay && (
-                  <span className="text-xs text-muted-foreground">
-                     Pos: {layoutBottomBar?.overlayPosition || 0}px
-                  </span>
-               )}
+               <span className="text-xs text-muted-foreground">Workspace Zone B</span>
             </div>
 
             <div className="flex items-center gap-2">

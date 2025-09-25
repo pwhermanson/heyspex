@@ -541,6 +541,24 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    const setBottomBarMode = useCallback((mode: BottomBarMode) => {
       setBottomBar((prev) => {
          const newState = { ...prev, mode };
+
+         // Graceful transition from overlay to push mode
+         if (prev.mode === 'overlay' && mode === 'push') {
+            const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+            const pushMaxHeight = Math.max(40, Math.round(viewportHeight * 0.5));
+
+            // Only adjust height if current height is too large for push mode
+            if (prev.height > pushMaxHeight) {
+               // Set to maximum push mode height for best UX
+               newState.height = pushMaxHeight;
+               try {
+                  localStorage.setItem('ui:bottomBarHeight', pushMaxHeight.toString());
+               } catch (error) {
+                  console.warn('Failed to save bottom bar height to localStorage:', error);
+               }
+            }
+         }
+
          try {
             localStorage.setItem('ui:bottomBarMode', mode);
          } catch (error) {
@@ -692,11 +710,24 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
                setCenterBottomSplit(defaultHeight);
             }
          }
+
+         if (action === 'setBottomBarMode') {
+            const mode = event.detail.mode;
+            if (mode === 'push' || mode === 'overlay') {
+               setBottomBarMode(mode);
+            }
+         }
       };
 
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
       return () => window.removeEventListener('panel-command', handlePanelCommand as EventListener);
-   }, [bottomBar.isVisible, setBottomBarHeight, setBottomBarVisible, setCenterBottomSplit]);
+   }, [
+      bottomBar.isVisible,
+      setBottomBarHeight,
+      setBottomBarVisible,
+      setCenterBottomSplit,
+      setBottomBarMode,
+   ]);
 
    const contextValue = React.useMemo(
       () => ({
