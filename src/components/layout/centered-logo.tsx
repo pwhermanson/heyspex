@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 
@@ -9,6 +9,7 @@ interface CenteredLogoProps {
 }
 
 export function CenteredLogo({ className }: CenteredLogoProps) {
+   const [isMouseOver, setIsMouseOver] = useState(false);
    return (
       <div
          className={cn(
@@ -16,6 +17,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             'bg-background text-foreground relative overflow-hidden',
             className
          )}
+         onMouseMove={() => setIsMouseOver(true)}
+         onMouseLeave={() => setIsMouseOver(false)}
       >
          {/* Grid background with gradient */}
          <div
@@ -65,18 +68,12 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
             <div
                className="h-auto w-auto max-w-[300px] transition-all duration-200 relative z-10"
-               style={{
-                  filter: 'brightness(0.8)',
-                  WebkitFilter: 'brightness(0.8)',
-               }}
-               onMouseEnter={(e) => {
-                  e.currentTarget.style.filter = 'brightness(1)';
-                  e.currentTarget.style.WebkitFilter = 'brightness(1)';
-               }}
-               onMouseLeave={(e) => {
-                  e.currentTarget.style.filter = 'brightness(0.8)';
-                  e.currentTarget.style.WebkitFilter = 'brightness(0.8)';
-               }}
+               style={
+                  {
+                     filter: isMouseOver ? 'brightness(1)' : 'brightness(0.8)',
+                     WebkitFilter: isMouseOver ? 'brightness(1)' : 'brightness(0.8)',
+                  } as React.CSSProperties
+               }
             >
                <Image
                   src="/heyspex-logo-stacked.png"
