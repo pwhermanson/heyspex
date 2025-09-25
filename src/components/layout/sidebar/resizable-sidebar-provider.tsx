@@ -645,6 +645,27 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       });
    }, []);
 
+   const setMainFullscreen = useCallback(
+      (fullscreen: boolean) => {
+         setIsMainFullscreen(fullscreen);
+         try {
+            localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
+         } catch {}
+         // When entering fullscreen, close sidebars and hide bottom bar, but remember their states via existing persistence
+         if (fullscreen) {
+            setLeftSidebarOpen(false);
+            setRightSidebarOpen(false);
+            setBottomBarVisible(false);
+         } else {
+            // On exit, simply show bottom bar again; sidebars restored via persisted state on user action
+            setBottomBarVisible(true);
+         }
+         // Update CSS variables immediately
+         setTimeout(updateGridLayout, 0);
+      },
+      [setLeftSidebarOpen, setRightSidebarOpen, setBottomBarVisible, updateGridLayout]
+   );
+
    // Temporary shortcut for toggling Section D until settings wiring is in place.
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -677,7 +698,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    // Listen for panel command events from command palette
    useEffect(() => {
       const handlePanelCommand = (event: CustomEvent) => {
-         const { action, visible, height } = event.detail;
+         const { action, visible, height, open, fullscreen } = event.detail;
 
          if (action === 'setBottomBarVisible') {
             if (visible && !bottomBar.isVisible) {
@@ -717,6 +738,26 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
                setBottomBarMode(mode);
             }
          }
+
+         if (action === 'setLeftSidebarOpen') {
+            setLeftSidebarOpen(open);
+         }
+
+         if (action === 'setRightSidebarOpen') {
+            setRightSidebarOpen(open);
+         }
+
+         if (action === 'toggleLeftSidebar') {
+            toggleLeftSidebar();
+         }
+
+         if (action === 'toggleRightSidebar') {
+            toggleRightSidebar();
+         }
+
+         if (action === 'setMainFullscreen') {
+            setMainFullscreen(fullscreen);
+         }
       };
 
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
@@ -727,6 +768,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       setBottomBarVisible,
       setCenterBottomSplit,
       setBottomBarMode,
+      setLeftSidebarOpen,
+      setRightSidebarOpen,
+      toggleLeftSidebar,
+      toggleRightSidebar,
+      setMainFullscreen,
    ]);
 
    const contextValue = React.useMemo(
@@ -756,23 +802,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          isHydrated,
          updateGridLayout,
          isMainFullscreen,
-         setMainFullscreen: (fullscreen: boolean) => {
-            setIsMainFullscreen(fullscreen);
-            try {
-               localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
-            } catch {}
-            // When entering fullscreen, close sidebars and hide bottom bar, but remember their states via existing persistence
-            if (fullscreen) {
-               setLeftSidebarOpen(false);
-               setRightSidebarOpen(false);
-               setBottomBarVisible(false);
-            } else {
-               // On exit, simply show bottom bar again; sidebars restored via persisted state on user action
-               setBottomBarVisible(true);
-            }
-            // Update CSS variables immediately
-            setTimeout(updateGridLayout, 0);
-         },
+         setMainFullscreen,
       }),
       [
          leftSidebar,
@@ -800,6 +830,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          isHydrated,
          updateGridLayout,
          isMainFullscreen,
+         setMainFullscreen,
       ]
    );
 

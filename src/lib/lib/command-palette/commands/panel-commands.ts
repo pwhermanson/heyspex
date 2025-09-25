@@ -40,6 +40,41 @@ function getResizableSidebarContext() {
             })
          );
       },
+      setLeftSidebarOpen: (open: boolean) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setLeftSidebarOpen', open },
+            })
+         );
+      },
+      setRightSidebarOpen: (open: boolean) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setRightSidebarOpen', open },
+            })
+         );
+      },
+      toggleLeftSidebar: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleLeftSidebar' },
+            })
+         );
+      },
+      toggleRightSidebar: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleRightSidebar' },
+            })
+         );
+      },
+      setMainFullscreen: (fullscreen: boolean) => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setMainFullscreen', fullscreen },
+            })
+         );
+      },
    };
 }
 
@@ -99,6 +134,57 @@ registerCommand({
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
          sidebarContext.setCenterBottomSplit(0);
+      }
+   },
+});
+
+// Register Workspace Zone A Open command
+registerCommand({
+   id: 'workspace.zone.a.open',
+   title: '/workspace zone A open',
+   keywords: ['workspace', 'zone', 'main', 'content', 'open', 'show'],
+   shortcut: 'Ctrl+Shift+1',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Open left sidebar and right sidebar to show full Workspace Zone A
+         sidebarContext.setLeftSidebarOpen(true);
+         sidebarContext.setRightSidebarOpen(true);
+         // Ensure main content is not in fullscreen mode
+         sidebarContext.setMainFullscreen(false);
+      }
+   },
+});
+
+// Register Workspace Zone A Close command
+registerCommand({
+   id: 'workspace.zone.a.close',
+   title: '/workspace zone A close',
+   keywords: ['workspace', 'zone', 'main', 'content', 'close', 'hide'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Close both sidebars to hide Workspace Zone A panels
+         sidebarContext.setLeftSidebarOpen(false);
+         sidebarContext.setRightSidebarOpen(false);
+      }
+   },
+});
+
+// Register Workspace Zone A Toggle command
+registerCommand({
+   id: 'workspace.zone.a.toggle',
+   title: '/workspace zone A toggle',
+   keywords: ['workspace', 'zone', 'main', 'content', 'toggle'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const sidebarContext = getResizableSidebarContext();
+      if (sidebarContext) {
+         // Toggle both sidebars to show/hide Workspace Zone A panels
+         sidebarContext.toggleLeftSidebar();
+         sidebarContext.toggleRightSidebar();
       }
    },
 });
