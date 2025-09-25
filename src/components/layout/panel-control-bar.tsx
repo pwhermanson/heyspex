@@ -1,12 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2 } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
-import { useResizableSidebar } from '@/src/components/layout/sidebar/resizable-sidebar-provider';
 
 export function PanelControlBar() {
-   const { isMainFullscreen, setMainFullscreen } = useResizableSidebar();
+   // Fullscreen functionality removed - icon is now non-functional
 
    return (
       <div
@@ -19,15 +18,12 @@ export function PanelControlBar() {
             <Button
                size="xs"
                variant="ghost"
-               className="ml-2 text-muted-foreground hover:!text-icon-hover"
-               onClick={() => setMainFullscreen(!isMainFullscreen)}
-               aria-label={isMainFullscreen ? 'Exit full screen' : 'Enter full screen'}
+               className="ml-2 text-muted-foreground hover:!text-icon-hover opacity-50 cursor-not-allowed"
+               disabled
+               aria-label="Fullscreen (disabled)"
+               title="Fullscreen functionality has been disabled"
             >
-               {isMainFullscreen ? (
-                  <Minimize2 className="size-4" />
-               ) : (
-                  <Maximize2 className="size-4" />
-               )}
+               <Maximize2 className="size-4" />
             </Button>
          </div>
       </div>

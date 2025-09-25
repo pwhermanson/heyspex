@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@plugin "tailwindcss-animate";
+/* @plugin "tailwindcss-animate"; */ /* Disabled - causes TypeScript 5.9.2 incompatibility */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -340,12 +340,8 @@ input[type='search'] {
 }
 
 /* Optimal sidebar width transitions - CSS variables only for no layout thrashing */
-:root {
-   transition:
-      --left-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
-      --right-width var(--layout-motion-duration-medium) var(--layout-motion-easing),
-      --grid-template-columns var(--layout-motion-duration-medium) var(--layout-motion-easing);
-}
+/* NOTE: Removed :root transitions as they can cause infinite loops and server hanging */
+/* Individual elements should handle their own transitions instead */
 
 /* Text fade transitions for sidebar content with staggered timing */
 .sidebar-content-text {
