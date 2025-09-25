@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
+import { useResizableSidebar } from './sidebar/resizable-sidebar-provider';
 
 interface BottomDragHandleProps {
    onMouseDown?: (e: React.MouseEvent) => void;
@@ -16,11 +17,77 @@ export function BottomDragHandle({
    className,
    mode = 'push',
 }: BottomDragHandleProps) {
+   const { bottomBar, setBottomBarHeight, setIsDragging } = useResizableSidebar();
+
    const handleMouseDown = React.useCallback(
       (event: React.MouseEvent) => {
-         onMouseDown?.(event);
+         // If external drag start handler is provided, use it instead of internal logic
+         if (onMouseDown) {
+            onMouseDown(event);
+            return;
+         }
+
+         event.preventDefault();
+         event.stopPropagation();
+
+         setIsDragging(true);
+
+         // Add dragging class to body for transition disabling
+         document.body.classList.add('sidebar-dragging');
+         document.documentElement.classList.add('sidebar-dragging');
+
+         const startY = event.clientY;
+         const startHeight = bottomBar.height;
+
+         // Helper function to get main container top position (same logic as BottomBar component)
+         const getMainTop = () => {
+            if (typeof window === 'undefined') return 56;
+            const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+            return el ? Math.round(el.getBoundingClientRect().top) : 56;
+         };
+
+         // Calculate max height based on mode
+         const getMaxHeight = () => {
+            const viewportHeight = window.innerHeight;
+            if (mode === 'overlay') {
+               return Math.max(40, viewportHeight - getMainTop());
+            } else {
+               return Math.max(40, Math.round(viewportHeight * 0.5));
+            }
+         };
+
+         // Use throttled updates for better performance
+         let lastUpdateTime = 0;
+         const THROTTLE_MS = 16; // ~60fps
+
+         const handleMouseMove = (e: MouseEvent) => {
+            const now = performance.now();
+            if (now - lastUpdateTime < THROTTLE_MS) return;
+
+            lastUpdateTime = now;
+
+            const deltaY = startY - e.clientY; // Inverted because dragging up should increase height
+            const newHeight = startHeight + deltaY;
+            const maxHeight = getMaxHeight();
+            const clampedHeight = Math.max(40, Math.min(maxHeight, newHeight));
+
+            // Update height immediately for visual feedback
+            setBottomBarHeight(clampedHeight);
+         };
+
+         const handleMouseUp = () => {
+            setIsDragging(false);
+            document.body.classList.remove('sidebar-dragging');
+            document.documentElement.classList.remove('sidebar-dragging');
+
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+         };
+
+         document.addEventListener('mousemove', handleMouseMove);
+         document.addEventListener('mouseup', handleMouseUp);
       },
-      [onMouseDown]
+      [onMouseDown, bottomBar.height, setBottomBarHeight, setIsDragging, mode]
    );
 
    return (

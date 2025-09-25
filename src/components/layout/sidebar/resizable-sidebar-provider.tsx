@@ -748,9 +748,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          }
 
          if (action === 'toggleCenterBottomSplit') {
-            // Get current value from the store instead of closure
-            const currentHeight = store.getState().centerBottomSplit;
-            if (currentHeight > 0) {
+            // Get current value from state instead of store
+            if (centerBottomSplit > 0) {
                setCenterBottomSplit(0);
             } else {
                const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;

@@ -200,9 +200,9 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                                     minHeight={0}
                                     maxHeight={Math.max(100, Math.round(800 * 0.5))}
                                     onHeightChange={setCenterBottomSplit}
-                                    onDragStart={() => {}}
-                                    onDragEnd={() => {}}
-                                    isDragging={false}
+                                    onDragStart={undefined}
+                                    onDragEnd={undefined}
+                                    isDragging={isDragging}
                                     aria-label="Adjust center-bottom split"
                                  />
                               </div>
@@ -281,8 +281,8 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   onModeChange={isHydrated ? setBottomBarMode : () => {}}
                   height={bottomBar.height}
                   isOverlay={bottomBar.mode === 'overlay'}
-                  onDragStart={() => {}}
-                  isDragging={false}
+                  onDragStart={undefined}
+                  isDragging={isDragging}
                   isWorkspaceZoneAHidden={!isWorkspaceZoneAVisible}
                />
             </WorkspaceZoneBContainer>
