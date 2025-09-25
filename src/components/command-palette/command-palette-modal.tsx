@@ -68,7 +68,7 @@ export function CommandPaletteModal() {
 
    const handleQueryChange = useCallback(
       (value: string) => {
-         console.log('💬 Query changed to:', value);
+         // console.log('💬 Query changed to:', value);
          setQuery(value);
 
          if (debounceTimerRef.current) {
@@ -78,7 +78,7 @@ export function CommandPaletteModal() {
          // Execute query immediately for live search (autocomplete behavior)
          // Use a very short debounce to prevent excessive API calls while typing
          if (value.trim().length > 0) {
-            console.log('⚡ Executing query:', value);
+            // console.log('⚡ Executing query:', value);
             // Execute immediately for single characters, debounce for longer queries
             if (value.length === 1) {
                void executeQuery(value);
@@ -100,15 +100,15 @@ export function CommandPaletteModal() {
    const showResults = open && hasQuery && !isLoading && results.length > 0;
    const showEmpty = open && hasQuery && !isLoading && results.length === 0;
 
-   console.log('📊 Modal State:', {
-      query,
-      hasQuery,
-      results: results.length,
-      isLoading,
-      showResults,
-      showEmpty,
-      showLoadingSkeletons,
-   });
+   // console.log('📊 Modal State:', {
+   //    query,
+   //    hasQuery,
+   //    results: results.length,
+   //    isLoading,
+   //    showResults,
+   //    showEmpty,
+   //    showLoadingSkeletons,
+   // });
 
    return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -123,10 +123,7 @@ export function CommandPaletteModal() {
             >
                <CommandInput
                   placeholder="Search for commands or actions..."
-                  onValueChange={(value) => {
-                     console.log('🎯 CommandInput onValueChange triggered with:', value);
-                     handleQueryChange(value);
-                  }}
+                  onValueChange={handleQueryChange}
                />
                <CommandList>
                   {!hasQuery && (
@@ -151,17 +148,11 @@ export function CommandPaletteModal() {
                            <CommandItem
                               key={result.id}
                               onSelect={() => {
-                                 console.log(
-                                    '🚀 Executing command:',
-                                    result.title,
-                                    'with context:',
-                                    context
-                                 );
                                  try {
                                     result.onSelect(context);
                                     setOpen(false);
                                  } catch (error) {
-                                    console.error('❌ Command execution failed:', error);
+                                    console.error('Command execution failed:', error);
                                  }
                               }}
                            >

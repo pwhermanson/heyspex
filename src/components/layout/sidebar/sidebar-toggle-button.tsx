@@ -47,23 +47,23 @@ export function SidebarToggleButton({
            : 'Show right sidebar';
 
    // Handle keyboard shortcuts
-   React.useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-         // Cmd/Ctrl + B for left sidebar
-         if (side === 'left' && e.key === 'b' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
-            e.preventDefault();
-            toggle();
-         }
-         // Cmd/Ctrl + Shift + B for right sidebar
-         if (side === 'right' && e.key === 'B' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
-            e.preventDefault();
-            toggle();
-         }
-      };
+   // React.useEffect(() => {
+   //    const handleKeyDown = (e: KeyboardEvent) => {
+   //       // Cmd/Ctrl + B for left sidebar
+   //       if (side === 'left' && e.key === 'b' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+   //          e.preventDefault();
+   //          toggle();
+   //       }
+   //       // Cmd/Ctrl + Shift + B for right sidebar
+   //       if (side === 'right' && e.key === 'B' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+   //          e.preventDefault();
+   //          toggle();
+   //       }
+   //    };
 
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-   }, [side, toggle]);
+   //    document.addEventListener('keydown', handleKeyDown);
+   //    return () => document.removeEventListener('keydown', handleKeyDown);
+   // }, [side, toggle]);
 
    return (
       <Button

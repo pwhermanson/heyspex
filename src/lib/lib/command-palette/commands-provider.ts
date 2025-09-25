@@ -84,21 +84,7 @@ function buildResult(command: Command, score: number): PaletteResult {
 
 function searchCommands({ query, context, limit }: PaletteProviderSearchArgs): PaletteResult[] {
    const normalizedQuery = normalize(query);
-   console.log('🔍 Search called with query:', query, 'normalized:', normalizedQuery);
    const commands = listCommands().filter((command) => command.guard?.(context) ?? true);
-   console.log(
-      '📋 Available commands:',
-      commands.length,
-      commands.map((c) => c.title)
-   );
-
-   // Test scoring specifically for "/" query
-   if (query === '/') {
-      commands.forEach((command) => {
-         const score = computeCommandScore(normalizedQuery, command);
-         console.log(`📝 Command "${command.title}" score for "/":`, score);
-      });
-   }
 
    const resultsWithScore = commands
       .map((command) => {
@@ -122,11 +108,6 @@ function searchCommands({ query, context, limit }: PaletteProviderSearchArgs): P
       typeof limit === 'number' && limit > 0 ? resultsWithScore.slice(0, limit) : resultsWithScore;
 
    const results = limitedResults.map(({ command, score }) => buildResult(command, score));
-   console.log(
-      '📤 Returning results:',
-      results.length,
-      results.map((r) => ({ title: r.title, score: r.score }))
-   );
    return results;
 }
 
@@ -143,16 +124,5 @@ const commandsProvider: PaletteProvider = {
 };
 
 registerProvider(commandsProvider);
-
-// Debug: Log all registered commands on startup
-console.log('🚀 Commands Provider: Registering commands...');
-setTimeout(() => {
-   const allCommands = listCommands();
-   console.log(
-      '📋 All registered commands:',
-      allCommands.length,
-      allCommands.map((c) => ({ id: c.id, title: c.title }))
-   );
-}, 100);
 
 export { commandsProvider };

@@ -93,7 +93,7 @@ export function BottomBar({
    isWorkspaceZoneAHidden = false,
 }: BottomBarProps) {
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
-   const { bottomBar: layoutBottomBar, setBottomBarHeight } = useResizableSidebar();
+   const { setBottomBarHeight } = useResizableSidebar();
 
    // When Workspace Zone A is hidden, force overlay mode
    const effectiveMode = isWorkspaceZoneAHidden ? 'overlay' : mode;

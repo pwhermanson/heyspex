@@ -38,7 +38,7 @@ const DEFAULT_PALETTE_USER = {
    role: 'Admin',
 } as const;
 
-const PUSH_MAX_HEIGHT_RATIO = 0.5;
+// const PUSH_MAX_HEIGHT_RATIO = 0.5; // Unused for now
 
 const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
    if (!header) return true;
@@ -56,12 +56,12 @@ const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
    return false;
 };
 
-function LayoutGrid({ children, header, headersNumber = 2 }: MainLayoutProps) {
+function LayoutGrid({ children, header }: MainLayoutProps) {
    const {
       isDragging,
       bottomBar,
       setBottomBarMode,
-      setBottomBarHeight,
+      // setBottomBarHeight, // Unused for now
       isHydrated,
       isMainFullscreen,
       centerBottomSplit,

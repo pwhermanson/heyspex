@@ -1,9 +1,9 @@
 import React from 'react';
-import {
-   ResizablePanel,
-   ResizablePanelGroup,
-   ResizableHandle,
-} from '@/src/components/ui/resizable';
+// import {
+//    ResizablePanel,
+//    ResizablePanelGroup,
+//    ResizableHandle,
+// } from '@/src/components/ui/resizable';
 
 export function WorkspaceZoneBContent() {
    return (
