@@ -22,10 +22,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             className="absolute inset-0"
             style={{
                backgroundImage: `
-                  linear-gradient(45deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%),
-                  linear-gradient(45deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%),
                   linear-gradient(45deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%),
-                  linear-gradient(-45deg, rgba(34, 197, 94, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%)
+                  linear-gradient(45deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%),
+                  linear-gradient(45deg, rgba(34, 197, 94, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%),
+                  linear-gradient(-45deg, rgba(34, 197, 94, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%)
                `,
                backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
                backgroundPosition: '0 0, 0 0, 0 0, 0 0',
