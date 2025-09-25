@@ -13,14 +13,34 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       <div
          className={cn(
             'flex flex-col items-center justify-center h-full w-full',
-            'bg-background text-foreground',
+            'bg-background text-foreground relative overflow-hidden',
             className
          )}
       >
-         {/* Logo */}
-         <div className="mb-6 group cursor-pointer">
+         {/* Logo with Explosive Glow */}
+         <div className="mb-6 group cursor-pointer relative z-10">
+            {/* Explosive Radial Glow - Hover Only */}
             <div
-               className="h-auto w-auto max-w-[300px] transition-all duration-200 group-hover:scale-105"
+               className="radial-glow-explosion group-hover:radial-glow-explosion-active"
+               style={{
+                  width: '0px',
+                  height: '0px',
+                  background:
+                     'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.4) 30%, rgba(59, 130, 246, 0.2) 60%, rgba(59, 130, 246, 0.1) 80%, transparent 100%)',
+                  borderRadius: '50%',
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 1,
+                  transition:
+                     'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  pointerEvents: 'none',
+               }}
+            />
+
+            <div
+               className="h-auto w-auto max-w-[300px] transition-all duration-200 group-hover:scale-105 relative z-10"
                style={{
                   filter: 'brightness(0.8)',
                   WebkitFilter: 'brightness(0.8)',
@@ -46,7 +66,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          </div>
 
          {/* Instruction text */}
-         <div className="text-center">
+         <div className="text-center relative z-10">
             <p className="text-lg text-muted-foreground">
                Press{' '}
                <kbd className="px-2 py-1 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">

@@ -145,6 +145,35 @@
       background: radial-gradient(circle, var(--tw-gradient-stops));
    }
 
+   /* Explosive radial glow effect */
+   .radial-glow-explosion {
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(
+         circle,
+         rgba(255, 0, 0, 0.6) 0%,
+         rgba(255, 100, 0, 0.4) 30%,
+         rgba(255, 200, 0, 0.2) 60%,
+         rgba(255, 255, 0, 0.1) 80%,
+         transparent 100%
+      );
+      transition:
+         width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+         height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+   }
+
+   .group:hover .radial-glow-explosion-active {
+      width: 200vw !important;
+      height: 200vh !important;
+   }
+
    .panel-control-bar {
       background-color: hsl(var(--muted));
    }
