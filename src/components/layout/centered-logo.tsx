@@ -16,6 +16,16 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             'bg-background text-foreground relative overflow-hidden',
             className
          )}
+         style={{
+            backgroundImage: `
+               linear-gradient(to right, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 1px, transparent 1px, transparent 800px),
+               linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 1px, transparent 1px, transparent 800px),
+               linear-gradient(45deg, transparent 0%, transparent 200px, rgba(59, 130, 246, 0.05) 201px, rgba(59, 130, 246, 0.05) 202px, transparent 202px, transparent 400px),
+               linear-gradient(-45deg, transparent 0%, transparent 300px, rgba(59, 130, 246, 0.03) 301px, rgba(59, 130, 246, 0.03) 302px, transparent 302px, transparent 600px)
+            `,
+            backgroundSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
+            backgroundPosition: '0 0, 0 0, 50px 50px, 100px 100px',
+         }}
       >
          {/* Logo with Explosive Glow */}
          <div className="mb-6 group cursor-pointer relative z-10">
