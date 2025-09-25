@@ -31,7 +31,7 @@ export function BottomBarModeToggle({ mode, onChange, className = '' }: BottomBa
             className={cn(
                'px-1.5 py-0.5 h-6',
                isOverlay
-                  ? 'bg-muted text-foreground border border-border'
+                  ? 'bg-muted/20 text-foreground border border-border'
                   : 'text-muted-foreground hover:bg-muted/40 hover:!text-icon-hover'
             )}
             title={isOverlay ? 'Disable overlay mode' : 'Enable overlay mode'}
