@@ -9,7 +9,7 @@
    --font-mono: var(--font-geist-mono);
 }
 
-@import '../styles/tokens.css';
+/* @import '../styles/tokens.css'; */ /* Permanently disabled - causes server hanging */
 
 :root {
    --card: oklch(0.99 0.002 240);
