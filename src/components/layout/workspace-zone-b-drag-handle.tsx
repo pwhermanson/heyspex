@@ -18,7 +18,8 @@ export function WorkspaceZoneBDragHandle({
    className,
    mode = 'push',
 }: WorkspaceZoneBDragHandleProps) {
-   const { workspaceZoneB, setWorkspaceZoneBHeight, setIsDragging } = useResizableSidebar();
+   const { workspaceZoneB, setWorkspaceZoneBHeight, setIsDragging, isTopBarVisible } =
+      useResizableSidebar();
 
    const handleMouseDown = React.useCallback(
       (event: React.MouseEvent) => {
@@ -51,6 +52,8 @@ export function WorkspaceZoneBDragHandle({
          const getMaxHeight = () => {
             const viewportHeight = window.innerHeight;
             if (mode === 'overlay') {
+               // For overlay mode, calculate based on current main container position
+               // which changes when top bar visibility changes
                return Math.max(40, viewportHeight - getMainTop());
             } else {
                return Math.max(40, Math.round(viewportHeight * 0.5));
