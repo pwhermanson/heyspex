@@ -71,10 +71,10 @@ type WorkspaceZoneAPanelsContext = {
    setWorkspaceZoneAVisible: (visible: boolean) => void;
    toggleWorkspaceZoneA: () => void;
 
-   // Top bar visibility
-   isTopBarVisible: boolean;
-   setTopBarVisible: (visible: boolean) => void;
-   toggleTopBar: () => void;
+   // Control bar visibility
+   isControlBarVisible: boolean;
+   setControlBarVisible: (visible: boolean) => void;
+   toggleControlBar: () => void;
 };
 
 const WorkspaceZoneAPanelsContext = createContext<WorkspaceZoneAPanelsContext | null>(null);
@@ -144,8 +144,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Workspace Zone A visibility state - start visible by default
    const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
 
-   // Top bar visibility state - start hidden for empty state by default
-   const [isTopBarVisible, setIsTopBarVisible] = useState(false);
+   // Control bar visibility state - start hidden for empty state by default
+   const [isControlBarVisible, setIsControlBarVisible] = useState(false);
 
    // Viewport width state for breaking point calculations
    const [viewportWidth, setViewportWidth] = useState(
@@ -384,14 +384,14 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          // }
          // Keep the default empty state (false) - workspace only opens on user action
 
-         // Load Top Bar visibility state - always start hidden for empty state
+         // Load Control Bar visibility state - always start hidden for empty state
          // Don't restore from localStorage to ensure app always starts with empty state
-         // Top bar will show when workspace is opened
-         // const savedTopBarVisible = localStorage.getItem('ui:topBarVisible');
-         // if (savedTopBarVisible !== null) {
-         //    setIsTopBarVisible(savedTopBarVisible === 'true');
+         // Control bar will show when workspace is opened
+         // const savedControlBarVisible = localStorage.getItem('ui:controlBarVisible');
+         // if (savedControlBarVisible !== null) {
+         //    setIsControlBarVisible(savedControlBarVisible === 'true');
          // }
-         // Keep the default empty state (false) - top bar only shows when workspace is opened
+         // Keep the default empty state (false) - control bar only shows when workspace is opened
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }
@@ -801,18 +801,18 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setWorkspaceZoneAVisible(!isWorkspaceZoneAVisible);
    }, [isWorkspaceZoneAVisible, setWorkspaceZoneAVisible]);
 
-   const setTopBarVisible = useCallback((visible: boolean) => {
-      setIsTopBarVisible(visible);
+   const setControlBarVisible = useCallback((visible: boolean) => {
+      setIsControlBarVisible(visible);
       try {
-         localStorage.setItem('ui:topBarVisible', visible.toString());
+         localStorage.setItem('ui:controlBarVisible', visible.toString());
       } catch (error) {
-         console.warn('Failed to save top bar visibility to localStorage:', error);
+         console.warn('Failed to save control bar visibility to localStorage:', error);
       }
    }, []);
 
-   const toggleTopBar = useCallback(() => {
-      setTopBarVisible(!isTopBarVisible);
-   }, [isTopBarVisible, setTopBarVisible]);
+   const toggleControlBar = useCallback(() => {
+      setControlBarVisible(!isControlBarVisible);
+   }, [isControlBarVisible, setControlBarVisible]);
 
    // Temporary shortcut for toggling Section D until settings wiring is in place.
    useEffect(() => {
@@ -845,10 +845,10 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             toggleWorkspaceZoneB();
          }
 
-         // Ctrl+Shift+8 or Ctrl+Numpad8 - Toggle top bar
+         // Ctrl+Shift+8 or Ctrl+Numpad8 - Toggle control bar
          if (isCtrlLike && !event.altKey && (isTopDigit8 || isNumpad8)) {
             event.preventDefault();
-            toggleTopBar();
+            toggleControlBar();
          }
       };
 
@@ -861,7 +861,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       toggleWorkspaceZoneB,
       setWorkspaceZoneBHeight,
       setWorkspaceZoneBVisible,
-      toggleTopBar,
+      toggleControlBar,
       setWorkspaceZoneAVisible,
    ]);
 
@@ -936,12 +936,12 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             toggleWorkspaceZoneA();
          }
 
-         if (action === 'setTopBarVisible') {
-            setTopBarVisible(visible);
+         if (action === 'setControlBarVisible') {
+            setControlBarVisible(visible);
          }
 
-         if (action === 'toggleTopBar') {
-            toggleTopBar();
+         if (action === 'toggleControlBar') {
+            toggleControlBar();
          }
       };
 
@@ -960,8 +960,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setMainFullscreen,
       setWorkspaceZoneAVisible,
       toggleWorkspaceZoneA,
-      setTopBarVisible,
-      toggleTopBar,
+      setControlBarVisible,
+      toggleControlBar,
       centerBottomSplit,
    ]);
 
@@ -996,9 +996,9 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
-         isTopBarVisible,
-         setTopBarVisible,
-         toggleTopBar,
+         isControlBarVisible,
+         setControlBarVisible,
+         toggleControlBar,
       }),
       [
          leftSidebar,
@@ -1030,9 +1030,9 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
-         isTopBarVisible,
-         setTopBarVisible,
-         toggleTopBar,
+         isControlBarVisible,
+         setControlBarVisible,
+         toggleControlBar,
       ]
    );
 

@@ -1,9 +1,9 @@
-export type FeatureFlagName = 'enableTopBar' | 'enableLeftRail' | 'enableBottomSplit';
+export type FeatureFlagName = 'enableGlobalControlBar' | 'enableLeftRail' | 'enableBottomSplit';
 
 type FeatureFlagState = Record<FeatureFlagName, boolean>;
 
 const DEFAULT_FLAGS: FeatureFlagState = {
-   enableTopBar: true,
+   enableGlobalControlBar: true,
    enableLeftRail: false,
    enableBottomSplit: true,
 };

@@ -14,7 +14,7 @@ import {
 
 import { SidebarProvider } from '@/src/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-issue-modal-provider';
-import { TopBar } from '@/src/components/layout/top-bar';
+import { GlobalControlBar } from '@/src/components/layout/global-control-bar';
 import { WorkspaceZoneB } from '@/src/components/layout/workspace-zone-b';
 import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-b-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
@@ -75,7 +75,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       leftSidebar,
       rightSidebar,
       isWorkspaceZoneAVisible,
-      isTopBarVisible,
+      isControlBarVisible,
    } = useResizableSidebar();
 
    // Initialize workspace data
@@ -84,7 +84,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
    // Initialize command palette keyboard shortcuts
    useCommandPaletteShortcuts();
 
-   const isTopBarEnabled = useFeatureFlag('enableTopBar');
+   const isControlBarEnabled = useFeatureFlag('enableGlobalControlBar');
    const isBottomSplitEnabled = useFeatureFlag('enableBottomSplit');
    const safeBottomEnabled = isHydrated && isBottomSplitEnabled;
 
@@ -96,8 +96,8 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
 
       const rows: string[] = [];
 
-      if (isTopBarEnabled && isTopBarVisible) {
-         rows.push('var(--topbar-height, 56px)');
+      if (isControlBarEnabled && isControlBarVisible) {
+         rows.push('var(--control-bar-height, 56px)');
       }
 
       rows.push('1fr');
@@ -126,8 +126,8 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
             {shouldUseSimpleBranded() ? <AppShellBrandedSimple /> : <AppShellBranded />}
          </div>
 
-         {/* TopBar - spans full width */}
-         {!isMainFullscreen && isTopBarEnabled && isTopBarVisible && <TopBar />}
+         {/* GlobalControlBar - spans full width */}
+         {!isMainFullscreen && isControlBarEnabled && isControlBarVisible && <GlobalControlBar />}
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden z-10">

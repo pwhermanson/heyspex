@@ -32,7 +32,7 @@ This document establishes consistent file naming conventions for all components 
 components/
 ├── layout/                    # Layout components
 │   ├── main-layout.tsx
-│   ├── top-bar.tsx
+│   ├── global-control-bar.tsx
 │   └── workspace-zone-b.tsx
 ├── common/                    # Reusable business components
 │   ├── issues/
@@ -230,7 +230,7 @@ components/
 │       └── project-form.tsx
 ├── layout/
 │   ├── main-layout.tsx
-│   ├── top-bar.tsx
+│   ├── global-control-bar.tsx
 │   └── workspace-zone-b.tsx
 └── ui/
     ├── button.tsx

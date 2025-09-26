@@ -47,7 +47,7 @@ export interface WorkspaceLayoutConfig {
    };
    // Global layout settings
    global: {
-      topBarVisible: boolean;
+      controlBarVisible: boolean;
       workspaceZoneBVisible: boolean;
       controlBarPosition: 'top' | 'left' | 'right' | 'bottom';
    };

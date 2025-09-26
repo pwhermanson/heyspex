@@ -32,7 +32,7 @@ The system organizes z-index values into logical layers with clear separation:
 
 ### Control Layers (20-29)
 
-- **20**: Top bar, panel control bars, bottom bar, workspace zone B
+- **20**: Global control bar, panel control bars, bottom bar, workspace zone B
 
 ### Interactive Layers (30-39)
 
@@ -58,13 +58,13 @@ The system organizes z-index values into logical layers with clear separation:
 import { ZIndex } from '@/src/lib/z-index-management';
 
 // Get z-index value
-const topBarZIndex = ZIndex.layers.TOP_BAR; // 20
+const controlBarZIndex = ZIndex.layers.GLOBAL_CONTROL_BAR; // 20
 
 // Get Tailwind CSS class
-const topBarClass = ZIndex.utils.getTailwindClass('TOP_BAR'); // "z-[20]"
+const controlBarClass = ZIndex.utils.getTailwindClass('GLOBAL_CONTROL_BAR'); // "z-[20]"
 
 // Get inline style object
-const topBarStyle = ZIndex.utils.getStyle('TOP_BAR'); // { zIndex: 20 }
+const controlBarStyle = ZIndex.utils.getStyle('GLOBAL_CONTROL_BAR'); // { zIndex: 20 }
 ```
 
 ### In React Components
@@ -72,21 +72,24 @@ const topBarStyle = ZIndex.utils.getStyle('TOP_BAR'); // { zIndex: 20 }
 ```tsx
 import { ZIndex } from '@/src/lib/z-index-management';
 
-function TopBar() {
+function GlobalControlBar() {
    return (
-      <div className="w-full h-14 border-b bg-background" style={ZIndex.utils.getStyle('TOP_BAR')}>
-         {/* Top bar content */}
+      <div
+         className="w-full h-14 border-b bg-background"
+         style={ZIndex.utils.getStyle('GLOBAL_CONTROL_BAR')}
+      >
+         {/* Control bar content */}
       </div>
    );
 }
 
 // Or using Tailwind classes
-function TopBar() {
+function GlobalControlBar() {
    return (
       <div
-         className={`w-full h-14 border-b bg-background ${ZIndex.utils.getTailwindClass('TOP_BAR')}`}
+         className={`w-full h-14 border-b bg-background ${ZIndex.utils.getTailwindClass('GLOBAL_CONTROL_BAR')}`}
       >
-         {/* Top bar content */}
+         {/* Control bar content */}
       </div>
    );
 }
@@ -96,8 +99,8 @@ function TopBar() {
 
 ```css
 /* Using CSS custom properties */
-.top-bar {
-   z-index: var(--z-top-bar);
+.global-control-bar {
+   z-index: var(--z-global-control-bar);
 }
 
 .modal-overlay {
@@ -117,7 +120,7 @@ import { ZIndex } from '@/src/lib/z-index-management';
 
 // Access by category
 const controlLayers = ZIndex.categories.CONTROLS;
-const topBarZIndex = controlLayers.TOP_BAR; // 20
+const controlBarZIndex = controlLayers.GLOBAL_CONTROL_BAR; // 20
 
 // Get next available z-index in a category
 const nextControlZIndex = ZIndex.utils.getNextInCategory('CONTROLS');
@@ -136,7 +139,7 @@ const conflicts = ZIndex.conflictDetection.checkConflicts(usedValues);
 // Returns array of conflicting values
 
 // Get recommended z-index to avoid conflicts
-const recommended = ZIndex.conflictDetection.getRecommendedValue('TOP_BAR', usedValues);
+const recommended = ZIndex.conflictDetection.getRecommendedValue('GLOBAL_CONTROL_BAR', usedValues);
 ```
 
 ## Migration Guide
@@ -146,7 +149,7 @@ const recommended = ZIndex.conflictDetection.getRecommendedValue('TOP_BAR', used
 **Before:**
 
 ```tsx
-<div className="z-20">Top Bar</div>
+<div className="z-20">Control Bar</div>
 <div style={{ zIndex: 50 }}>Modal</div>
 ```
 
@@ -155,7 +158,7 @@ const recommended = ZIndex.conflictDetection.getRecommendedValue('TOP_BAR', used
 ```tsx
 import { ZIndex } from '@/src/lib/z-index-management';
 
-<div className={ZIndex.utils.getTailwindClass('TOP_BAR')}>Top Bar</div>
+<div className={ZIndex.utils.getTailwindClass('GLOBAL_CONTROL_BAR')}>Control Bar</div>
 <div style={ZIndex.utils.getStyle('MODALS')}>Modal</div>
 ```
 
@@ -164,7 +167,7 @@ import { ZIndex } from '@/src/lib/z-index-management';
 **Before:**
 
 ```css
-.top-bar {
+.global-control-bar {
    z-index: 20;
 }
 ```
@@ -172,8 +175,8 @@ import { ZIndex } from '@/src/lib/z-index-management';
 **After:**
 
 ```css
-.top-bar {
-   z-index: var(--z-top-bar);
+.global-control-bar {
+   z-index: var(--z-global-control-bar);
 }
 ```
 
@@ -184,7 +187,7 @@ import { ZIndex } from '@/src/lib/z-index-management';
 ```typescript
 // ✅ Good
 import { ZIndex } from '@/src/lib/z-index-management';
-const zIndex = ZIndex.layers.TOP_BAR;
+const zIndex = ZIndex.layers.GLOBAL_CONTROL_BAR;
 
 // ❌ Avoid
 const zIndex = 20;
@@ -280,9 +283,9 @@ function Tooltip({ children, content }) {
 
 ```typescript
 // Debug z-index issues
-const elementZIndex = ZIndex.layers.TOP_BAR; // 20
+const elementZIndex = ZIndex.layers.GLOBAL_CONTROL_BAR; // 20
 const otherElementZIndex = ZIndex.layers.MODALS; // 200
-// Modals should appear above top bar - this is correct
+// Modals should appear above control bar - this is correct
 ```
 
 ### Z-Index Not Working
@@ -295,7 +298,7 @@ const otherElementZIndex = ZIndex.layers.MODALS; // 200
 /* Ensure proper positioning */
 .element {
    position: relative; /* or absolute, fixed */
-   z-index: var(--z-top-bar);
+   z-index: var(--z-global-control-bar);
 }
 ```
 

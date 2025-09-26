@@ -12,7 +12,7 @@
 | Main Content             | 10            | 10                | ✅ Correct                                |
 | Screen Control Bar       | 10            | 10                | ⚠️ Should be lower than panel control bar |
 | Panel Control Bar        | 20            | 20                | ✅ Correct                                |
-| Top Bar                  | 20            | 20                | ✅ Correct                                |
+| Global Control Bar       | 20            | 20                | ✅ Correct                                |
 | Workspace Zone B         | 20            | 20                | ✅ Correct                                |
 | Drag Handles             | 50            | 50                | ✅ Correct                                |
 | Tooltips                 | 50            | 50                | ⚠️ Conflict with other overlays           |
@@ -52,7 +52,7 @@
 
 ### Control Layers (20-29)
 
-- 20: Top bar, panel control bars, workspace zone B
+- 20: Global control bar, panel control bars, workspace zone B
 - 25: Bottom bar
 
 ### Interactive Layers (30-39)

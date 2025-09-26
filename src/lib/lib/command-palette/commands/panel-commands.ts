@@ -89,17 +89,17 @@ function getResizableSidebarContext() {
             })
          );
       },
-      setTopBarVisible: (visible: boolean) => {
+      setControlBarVisible: (visible: boolean) => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setTopBarVisible', visible },
+               detail: { action: 'setControlBarVisible', visible },
             })
          );
       },
-      toggleTopBar: () => {
+      toggleControlBar: () => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'toggleTopBar' },
+               detail: { action: 'toggleControlBar' },
             })
          );
       },
@@ -212,48 +212,48 @@ registerCommand({
    },
 });
 
-// Register Top Bar Open command
+// Register Control Bar Open command
 registerCommand({
-   id: 'topbar.open',
-   title: '/top bar open',
-   keywords: ['top', 'bar', 'header', 'open', 'show'],
+   id: 'controlbar.open',
+   title: '/control bar open',
+   keywords: ['control', 'bar', 'header', 'open', 'show'],
    shortcut: 'Ctrl+Shift+8',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Show top bar
-         sidebarContext.setTopBarVisible(true);
+         // Show control bar
+         sidebarContext.setControlBarVisible(true);
       }
    },
 });
 
-// Register Top Bar Close command
+// Register Control Bar Close command
 registerCommand({
-   id: 'topbar.close',
-   title: '/top bar close',
-   keywords: ['top', 'bar', 'header', 'close', 'hide'],
+   id: 'controlbar.close',
+   title: '/control bar close',
+   keywords: ['control', 'bar', 'header', 'close', 'hide'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Hide top bar
-         sidebarContext.setTopBarVisible(false);
+         // Hide control bar
+         sidebarContext.setControlBarVisible(false);
       }
    },
 });
 
-// Register Top Bar Toggle command
+// Register Control Bar Toggle command
 registerCommand({
-   id: 'topbar.toggle',
-   title: '/top bar toggle',
-   keywords: ['top', 'bar', 'header', 'toggle'],
+   id: 'controlbar.toggle',
+   title: '/control bar toggle',
+   keywords: ['control', 'bar', 'header', 'toggle'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Toggle top bar visibility
-         sidebarContext.toggleTopBar();
+         // Toggle control bar visibility
+         sidebarContext.toggleControlBar();
       }
    },
 });

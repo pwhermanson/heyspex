@@ -10,7 +10,7 @@ export * from './split-handle-demo';
 export * from './split-handle';
 export * from './theme-provider';
 export * from './theme-toggle';
-export * from './top-bar';
+export * from './global-control-bar';
 
 // Headers
 export * from './headers/issues/filter';

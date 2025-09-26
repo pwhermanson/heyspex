@@ -45,7 +45,7 @@ export const Z_INDEX_LAYERS = {
    STICKY_HEADERS: 10,
 
    // Control layers (20-29)
-   TOP_BAR: 20,
+   GLOBAL_CONTROL_BAR: 20,
    PANEL_CONTROL_BAR: 20,
    SCREEN_CONTROL_BAR: 10, // Note: Lower than panel control bar
    BOTTOM_BAR: 20,
@@ -114,7 +114,7 @@ export const Z_INDEX_CATEGORIES = {
    },
 
    CONTROLS: {
-      TOP_BAR: Z_INDEX_LAYERS.TOP_BAR,
+      GLOBAL_CONTROL_BAR: Z_INDEX_LAYERS.GLOBAL_CONTROL_BAR,
       PANEL_CONTROL_BAR: Z_INDEX_LAYERS.PANEL_CONTROL_BAR,
       SCREEN_CONTROL_BAR: Z_INDEX_LAYERS.SCREEN_CONTROL_BAR,
       BOTTOM_BAR: Z_INDEX_LAYERS.BOTTOM_BAR,
@@ -298,7 +298,7 @@ export const Z_INDEX_CSS_VARS = {
    '--z-panel-content': Z_INDEX_LAYERS.PANEL_CONTENT,
    '--z-sidebar-content': Z_INDEX_LAYERS.SIDEBAR_CONTENT,
    '--z-sticky-headers': Z_INDEX_LAYERS.STICKY_HEADERS,
-   '--z-top-bar': Z_INDEX_LAYERS.TOP_BAR,
+   '--z-global-control-bar': Z_INDEX_LAYERS.GLOBAL_CONTROL_BAR,
    '--z-panel-control-bar': Z_INDEX_LAYERS.PANEL_CONTROL_BAR,
    '--z-screen-control-bar': Z_INDEX_LAYERS.SCREEN_CONTROL_BAR,
    '--z-bottom-bar': Z_INDEX_LAYERS.BOTTOM_BAR,

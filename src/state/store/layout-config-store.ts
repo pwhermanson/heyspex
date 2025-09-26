@@ -10,7 +10,7 @@ import {
 
 // Types for layout sections as defined in the feature requirements
 export type LayoutSection = 'A' | 'B' | 'C'; // Left sidebar, main content, right sidebar
-export type LayoutArea = 'top-bar' | LayoutSection | 'workspace-zone-b';
+export type LayoutArea = 'control-bar' | LayoutSection | 'workspace-zone-b';
 
 // Screen types that can be loaded in sections
 export type ScreenType =

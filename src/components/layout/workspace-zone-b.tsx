@@ -93,7 +93,7 @@ export function WorkspaceZoneB({
    isWorkspaceZoneAHidden = false,
 }: WorkspaceZoneBProps) {
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
-   const { setWorkspaceZoneBHeight, isTopBarVisible } = useResizableSidebar();
+   const { setWorkspaceZoneBHeight, isControlBarVisible } = useResizableSidebar();
 
    // When Workspace Zone A is hidden, force overlay mode
    const effectiveMode = isWorkspaceZoneAHidden ? 'overlay' : mode;
@@ -128,20 +128,20 @@ export function WorkspaceZoneB({
          : pushMaxHeight;
    const isFull = height >= maxHeight - 1;
 
-   // Listen for top bar visibility changes and recalculate height for overlay mode
+   // Listen for control bar visibility changes and recalculate height for overlay mode
    React.useEffect(() => {
       if (effectiveMode !== 'overlay' || !isClient) return;
 
-      // Calculate the new max height based on current top bar visibility
+      // Calculate the new max height based on current control bar visibility
       const newMaxHeight = Math.max(40, windowHeight - getMainTop());
 
       // If we're currently at full height, update to the new max height
-      // to take advantage of the additional space when top bar visibility changes
+      // to take advantage of the additional space when control bar visibility changes
       if (height >= maxHeight - 1) {
          setWorkspaceZoneBHeight(newMaxHeight);
       }
    }, [
-      isTopBarVisible,
+      isControlBarVisible,
       effectiveMode,
       isClient,
       windowHeight,

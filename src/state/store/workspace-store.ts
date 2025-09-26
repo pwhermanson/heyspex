@@ -62,7 +62,7 @@ const getDefaultLayoutConfig = (): Workspace['layoutConfig'] => ({
       ],
    },
    global: {
-      topBarVisible: false, // Start hidden for empty state
+      controlBarVisible: false, // Start hidden for empty state
       workspaceZoneBVisible: false,
       controlBarPosition: 'top',
    },
