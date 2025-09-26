@@ -11,11 +11,21 @@ interface CenteredLogoProps {
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
+   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+   const containerRef = useRef<HTMLDivElement>(null);
 
-   const handleMouseMove = useCallback(() => {
+   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       setIsMouseOver(true);
       setIsIdle(false);
+
+      // Get mouse position relative to the container
+      if (containerRef.current) {
+         const rect = containerRef.current.getBoundingClientRect();
+         const x = e.clientX - rect.left;
+         const y = e.clientY - rect.top;
+         setMousePosition({ x, y });
+      }
 
       // Clear existing timeout
       if (timeoutRef.current) {
@@ -25,7 +35,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       // Set new timeout for idle detection
       timeoutRef.current = setTimeout(() => {
          setIsIdle(true);
-      }, 1000); // 1 second idle timeout
+      }, 250); // 0.25 second idle timeout
    }, []);
 
    const handleMouseLeave = useCallback(() => {
@@ -50,6 +60,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
    return (
       <div
+         ref={containerRef}
          className={cn(
             'flex flex-col items-center justify-center h-full w-full',
             'bg-background text-foreground relative overflow-hidden',
@@ -82,8 +93,52 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                maskRepeat: 'repeat',
             }}
          />
+
+         {/* Mouse-following glow effect */}
+         {isMouseOver && !isIdle && (
+            <div
+               className="absolute inset-0 pointer-events-none"
+               style={{
+                  background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
+                     rgba(59, 130, 246, 0.15) 0px, 
+                     rgba(34, 197, 94, 0.1) 60px, 
+                     rgba(59, 130, 246, 0.05) 120px, 
+                     transparent 180px)`,
+                  mixBlendMode: 'screen',
+                  transition: 'background 0.1s ease-out',
+                  maskImage: `
+                     repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
+                     repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
+                     repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
+                     repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
+                  `,
+                  maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
+                  maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
+                  maskRepeat: 'repeat',
+               }}
+            />
+         )}
+
          {/* Logo with Explosive Glow */}
          <div className="mb-6 group cursor-pointer relative z-10">
+            {/* Solid black background logo */}
+            <div
+               className="h-auto w-auto max-w-[300px] absolute top-0 left-0 z-0"
+               style={{
+                  filter: 'brightness(0)',
+                  WebkitFilter: 'brightness(0)',
+               }}
+            >
+               <Image
+                  src="/heyspex-logo-stacked.png"
+                  alt=""
+                  width={300}
+                  height={273}
+                  className="h-auto w-auto max-w-[300px]"
+                  priority
+               />
+            </div>
+
             {/* Explosive Radial Glow - Hover Only */}
             <div
                className="radial-glow-explosion group-hover:radial-glow-explosion-active"
