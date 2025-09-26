@@ -109,6 +109,54 @@ const MASK_STYLES = {
    maskRepeat: 'repeat',
 } as const;
 
+// Style generation functions
+const STYLE_GENERATORS = {
+   // Generate radial glow gradient based on mouse position and intensity
+   getGlowRadialGradient: (x: number, y: number, intensity: number) =>
+      `radial-gradient(circle at ${x}px ${y}px, 
+         rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_1 * intensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_1}px, 
+         rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_2 * intensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_2}px, 
+         rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_3 * intensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_3}px, 
+         rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_4 * intensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_4}px, 
+         rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_5 * intensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_5}px, 
+         transparent ${VISUAL_CONSTANTS.GLOW_RADIUS_6}px)`,
+
+   // Generate explosive glow background for hover effect
+   getExplosiveGlowBackground: () =>
+      'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.4) 30%, rgba(59, 130, 246, 0.2) 60%, rgba(59, 130, 246, 0.1) 80%, transparent 100%)',
+
+   // Generate grid background gradients
+   getGridBackgroundImage: (baseOpacity: number) => `
+      linear-gradient(45deg, rgba(34, 197, 94, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 0%, rgba(59, 130, 246, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 100%),
+      linear-gradient(45deg, rgba(147, 51, 234, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 0%, rgba(236, 72, 153, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 100%),
+      linear-gradient(45deg, rgba(249, 115, 22, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_2 * baseOpacity}) 0%, rgba(234, 179, 8, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_2 * baseOpacity}) 100%),
+      linear-gradient(-45deg, rgba(59, 130, 246, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 0%, rgba(147, 51, 234, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 100%)
+   `,
+
+   // Generate logo filter styles
+   getLogoFilter: (
+      isFading: boolean,
+      isMouseOver: boolean,
+      isIdle: boolean,
+      shadowData: { x: number; y: number; blur: number; color: string },
+      colorData: string
+   ) => {
+      if (isFading) {
+         return VISUAL_CONSTANTS.BRIGHTNESS_INVERT;
+      } else if (isMouseOver && !isIdle) {
+         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${colorData}) brightness(${VISUAL_CONSTANTS.BRIGHTNESS_NORMAL})`;
+      } else {
+         return `brightness(${VISUAL_CONSTANTS.BRIGHTNESS_DIM})`;
+      }
+   },
+
+   // Generate transition styles
+   getTransitionStyle: (isFading: boolean) =>
+      isFading
+         ? `filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out`
+         : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
+} as const;
+
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isMouseMoving, setIsMouseMoving] = useState(false);
@@ -305,12 +353,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const gridOpacity = isMouseOver ? baseOpacity : 0;
 
       return {
-         backgroundImage: `
-            linear-gradient(45deg, rgba(34, 197, 94, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 0%, rgba(59, 130, 246, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 100%),
-            linear-gradient(45deg, rgba(147, 51, 234, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 0%, rgba(236, 72, 153, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_1 * baseOpacity}) 100%),
-            linear-gradient(45deg, rgba(249, 115, 22, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_2 * baseOpacity}) 0%, rgba(234, 179, 8, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_2 * baseOpacity}) 100%),
-            linear-gradient(-45deg, rgba(59, 130, 246, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 0%, rgba(147, 51, 234, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 100%)
-         `,
+         backgroundImage: STYLE_GENERATORS.getGridBackgroundImage(baseOpacity),
          ...MASK_STYLES,
          transition: isFading
             ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
@@ -321,22 +364,16 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
    // Memoized filter and transition values for logo
    const logoStyle = useMemo(() => {
-      let filterValue;
-
-      if (isFading) {
-         // Fading state: white logo (like the clean state)
-         filterValue = VISUAL_CONSTANTS.BRIGHTNESS_INVERT; // Black to white
-      } else if (isMouseOver && !isIdle) {
-         // Active state: full effects
-         filterValue = `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(${VISUAL_CONSTANTS.BRIGHTNESS_NORMAL})`;
-      } else {
-         // Default state: dimmed
-         filterValue = `brightness(${VISUAL_CONSTANTS.BRIGHTNESS_DIM})`;
-      }
-
-      const transitionValue = isFading
-         ? `filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out`
-         : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`;
+      const shadowData = getShadowOffset();
+      const colorData = getSwirlingColor();
+      const filterValue = STYLE_GENERATORS.getLogoFilter(
+         isFading,
+         isMouseOver,
+         isIdle,
+         shadowData,
+         colorData
+      );
+      const transitionValue = STYLE_GENERATORS.getTransitionStyle(isFading);
 
       return {
          filter: filterValue,
@@ -386,13 +423,11 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                className="absolute inset-0 pointer-events-none"
                style={{
                   zIndex: VISUAL_CONSTANTS.GLOW_Z_INDEX,
-                  background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
-                     rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_1 * glowIntensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_1}px, 
-                     rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_2 * glowIntensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_2}px, 
-                     rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_3 * glowIntensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_3}px, 
-                     rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_4 * glowIntensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_4}px, 
-                     rgba(255, 255, 255, ${VISUAL_CONSTANTS.GLOW_OPACITY_5 * glowIntensity}) ${VISUAL_CONSTANTS.GLOW_RADIUS_5}px, 
-                     transparent ${VISUAL_CONSTANTS.GLOW_RADIUS_6}px)`,
+                  background: STYLE_GENERATORS.getGlowRadialGradient(
+                     mousePosition.x,
+                     mousePosition.y,
+                     glowIntensity
+                  ),
                   mixBlendMode: 'screen',
                   transition: isFading
                      ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
@@ -440,8 +475,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                style={{
                   width: '0px',
                   height: '0px',
-                  background:
-                     'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.4) 30%, rgba(59, 130, 246, 0.2) 60%, rgba(59, 130, 246, 0.1) 80%, transparent 100%)',
+                  background: STYLE_GENERATORS.getExplosiveGlowBackground(),
                   borderRadius: '50%',
                   position: 'absolute',
                   top: '50%',
