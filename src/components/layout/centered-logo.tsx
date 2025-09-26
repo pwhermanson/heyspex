@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 
@@ -98,9 +98,31 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const maxDistance = 3000; // Much larger radius for sharp shadow
       const blur = Math.min(Math.pow(distance / maxDistance, 2) * 15, 15); // Quadratic curve, max 15px blur
 
-      // Calculate opacity based on distance (closer = darker, farther = lighter)
+      // Calculate distance-based opacity (closer = darker, farther = lighter)
       const opacityDistance = 400; // Start fading opacity at 400px
-      const opacity = Math.max(1 - distance / opacityDistance, 0.1); // Min 10% opacity
+      const distanceOpacity = Math.max(1 - distance / opacityDistance, 0.1); // Min 10% opacity
+
+      // Calculate viewport edge opacity (fade to 0 as mouse approaches edges)
+      if (!containerRef.current) return { x: offsetX, y: offsetY, blur, opacity: distanceOpacity };
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const edgeFadeDistance = 100; // Start fading at 100px from edge
+
+      const distanceToLeft = mousePosition.x;
+      const distanceToRight = containerRect.width - mousePosition.x;
+      const distanceToTop = mousePosition.y;
+      const distanceToBottom = containerRect.height - mousePosition.y;
+
+      const minDistanceToEdge = Math.min(
+         distanceToLeft,
+         distanceToRight,
+         distanceToTop,
+         distanceToBottom
+      );
+      const edgeOpacity = Math.min(minDistanceToEdge / edgeFadeDistance, 1);
+
+      // Combine both opacity factors
+      const opacity = Math.max(distanceOpacity * edgeOpacity, 0);
 
       return { x: offsetX, y: offsetY, blur, opacity };
    }, [getLogoCenterAndDistance, mousePosition.x, mousePosition.y]);
@@ -168,10 +190,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       return Math.max(opacity, 0.1); // Minimum 10% opacity
    }, [getLogoCenterAndDistance]);
 
-   // Memoized glow intensity for performance
-   const glowIntensity = useMemo(() => {
-      return getGlowIntensity();
-   }, [getGlowIntensity]);
+   // Get glow intensity (already memoized via useCallback)
+   const glowIntensity = getGlowIntensity();
 
    // Memoized grid background style with smooth fade-in
    const gridBackgroundStyle = useMemo(() => {
@@ -242,15 +262,22 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    }, []);
 
    const handleMouseLeave = useCallback(() => {
-      setIsMouseOver(false);
-      setIsMouseMoving(false);
-      setIsIdle(false);
-      setIsFading(false);
-      clearAllTimeouts();
-   }, [clearAllTimeouts]);
+      // Clear existing timeouts
+      clearTimeoutsOnly();
+
+      // Set new timeout for idle detection (same as mouse stop)
+      timeoutRef.current = setTimeout(() => {
+         setIsIdle(true);
+         setIsMouseMoving(false);
+         // Start fade immediately after idle (total delay = 0.5 seconds)
+         fadeTimeoutRef.current = setTimeout(() => {
+            setIsFading(true);
+         }, 0); // No additional delay - fade starts immediately after idle
+      }, 500); // 0.5 second idle timeout
+   }, [clearTimeoutsOnly]);
 
    // Cleanup timeouts on unmount
-   React.useEffect(() => {
+   useEffect(() => {
       return clearAllTimeouts;
    }, [clearAllTimeouts]);
 
