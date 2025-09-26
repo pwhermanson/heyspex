@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 
@@ -18,40 +18,48 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    const containerRef = useRef<HTMLDivElement>(null);
    const logoRef = useRef<HTMLDivElement>(null);
 
-   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-      setIsMouseOver(true);
-      setIsIdle(false);
-      setIsFading(false);
-
-      // Get mouse position relative to the container
-      if (containerRef.current) {
-         const rect = containerRef.current.getBoundingClientRect();
-         const x = e.clientX - rect.left;
-         const y = e.clientY - rect.top;
-         setMousePosition({ x, y });
-      }
-
-      // Clear existing timeouts
+   // Helper function to clear timeouts without nullifying refs (for reuse)
+   const clearTimeoutsOnly = useCallback(() => {
       if (timeoutRef.current) {
          clearTimeout(timeoutRef.current);
       }
       if (fadeTimeoutRef.current) {
          clearTimeout(fadeTimeoutRef.current);
       }
-
-      // Set new timeout for idle detection
-      timeoutRef.current = setTimeout(() => {
-         setIsIdle(true);
-         // Start fade after idle
-         fadeTimeoutRef.current = setTimeout(() => {
-            setIsFading(true);
-         }, 100); // Small delay before starting fade
-      }, 250); // 0.25 second idle timeout
    }, []);
 
-   // Calculate shadow offset, blur, and opacity based on logo's actual center
-   const getShadowOffset = () => {
-      if (!logoRef.current || !containerRef.current) return { x: 0, y: 0, blur: 0, opacity: 1 };
+   const handleMouseMove = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+         setIsMouseOver(true);
+         setIsIdle(false);
+         setIsFading(false);
+
+         // Get mouse position relative to the container
+         if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            setMousePosition({ x, y });
+         }
+
+         // Clear existing timeouts
+         clearTimeoutsOnly();
+
+         // Set new timeout for idle detection
+         timeoutRef.current = setTimeout(() => {
+            setIsIdle(true);
+            // Start fade immediately after idle (total delay = 0.5 seconds)
+            fadeTimeoutRef.current = setTimeout(() => {
+               setIsFading(true);
+            }, 0); // No additional delay - fade starts immediately after idle
+         }, 500); // 0.5 second idle timeout
+      },
+      [clearTimeoutsOnly]
+   );
+
+   // Helper function to get logo center and distance from mouse (memoized)
+   const getLogoCenterAndDistance = useCallback(() => {
+      if (!logoRef.current || !containerRef.current) return null;
 
       const logoRect = logoRef.current.getBoundingClientRect();
       const containerRect = containerRef.current.getBoundingClientRect();
@@ -64,6 +72,16 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const distance = Math.sqrt(
          Math.pow(mousePosition.x - logoCenterX, 2) + Math.pow(mousePosition.y - logoCenterY, 2)
       );
+
+      return { logoCenterX, logoCenterY, distance };
+   }, [mousePosition.x, mousePosition.y]);
+
+   // Calculate shadow offset, blur, and opacity based on logo's actual center (memoized)
+   const getShadowOffset = useCallback(() => {
+      const logoData = getLogoCenterAndDistance();
+      if (!logoData) return { x: 0, y: 0, blur: 0, opacity: 1 };
+
+      const { logoCenterX, logoCenterY, distance } = logoData;
 
       // Calculate offset from logo center (inverted for realistic shadow direction)
       const offsetX = -(mousePosition.x - logoCenterX) / 20;
@@ -78,56 +96,134 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const opacity = Math.max(1 - distance / opacityDistance, 0.1); // Min 10% opacity
 
       return { x: offsetX, y: offsetY, blur, opacity };
-   };
+   }, [getLogoCenterAndDistance, mousePosition.x, mousePosition.y]);
 
-   // Calculate swirling color based on time and position
-   const getSwirlingColor = () => {
+   // Calculate swirling color based on time and position (memoized)
+   const getSwirlingColor = useCallback(() => {
       const time = Date.now() / 1000; // Current time in seconds
-      const angle = (time * 2) % (Math.PI * 2); // Rotating angle
+      const angle = (time * 0.3) % (Math.PI * 2); // Much slower rotation for gentle color transitions
 
       // Create a swirling effect based on time and mouse position
       const swirlPhase = Math.sin(angle) * 0.5 + 0.5; // 0 to 1
 
-      // Interpolate between blue and green
-      const blue = [59, 130, 246];
-      const green = [34, 197, 94];
+      // Define color palette: blue, green, purple, pink, orange, yellow
+      const colors = [
+         [59, 130, 246], // Blue
+         [34, 197, 94], // Green
+         [147, 51, 234], // Purple
+         [236, 72, 153], // Pink
+         [249, 115, 22], // Orange
+         [234, 179, 8], // Yellow
+      ];
 
-      const r = Math.round(blue[0] * (1 - swirlPhase) + green[0] * swirlPhase);
-      const g = Math.round(blue[1] * (1 - swirlPhase) + green[1] * swirlPhase);
-      const b = Math.round(blue[2] * (1 - swirlPhase) + green[2] * swirlPhase);
+      // Create a smooth color cycle through all colors
+      const colorIndex = (swirlPhase * (colors.length - 1)) % colors.length;
+      const currentColorIndex = Math.floor(colorIndex);
+      const nextColorIndex = (currentColorIndex + 1) % colors.length;
+      const blendFactor = colorIndex - currentColorIndex;
+
+      const currentColor = colors[currentColorIndex];
+      const nextColor = colors[nextColorIndex];
+
+      // Interpolate between current and next color
+      const r = Math.round(currentColor[0] * (1 - blendFactor) + nextColor[0] * blendFactor);
+      const g = Math.round(currentColor[1] * (1 - blendFactor) + nextColor[1] * blendFactor);
+      const b = Math.round(currentColor[2] * (1 - blendFactor) + nextColor[2] * blendFactor);
 
       return `rgba(${r}, ${g}, ${b}, ${getShadowOffset().opacity})`;
-   };
+   }, [getShadowOffset]);
 
-   // Calculate glow intensity based on distance from logo
-   const getGlowIntensity = () => {
-      if (!logoRef.current || !containerRef.current) return 1;
+   // Calculate glow intensity based on distance from logo (memoized)
+   const getGlowIntensity = useCallback(() => {
+      const logoData = getLogoCenterAndDistance();
+      if (!logoData) return 1;
 
-      const logoRect = logoRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
-
-      // Get logo center relative to container
-      const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
-      const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
-
-      // Calculate distance from mouse to logo center
-      const distance = Math.sqrt(
-         Math.pow(mousePosition.x - logoCenterX, 2) + Math.pow(mousePosition.y - logoCenterY, 2)
-      );
+      const { distance } = logoData;
 
       // Dim the glow as mouse gets closer (max distance of 200px for full glow)
       const maxDistance = 200;
       const intensity = Math.min(distance / maxDistance, 1);
 
       return Math.max(intensity, 0.1); // Minimum 10% intensity
-   };
+   }, [getLogoCenterAndDistance]);
 
-   const handleMouseLeave = useCallback(() => {
-      setIsMouseOver(false);
-      setIsIdle(false);
-      setIsFading(false);
+   // Calculate grid line opacity based on distance from logo (memoized)
+   const getGridLineOpacity = useCallback(() => {
+      const logoData = getLogoCenterAndDistance();
+      if (!logoData) return 1;
 
-      // Clear timeouts when mouse leaves
+      const { distance } = logoData;
+
+      // Lower opacity as mouse gets closer (max distance of 300px for full opacity)
+      const maxDistance = 300;
+      const opacity = Math.min(distance / maxDistance, 1);
+
+      return Math.max(opacity, 0.1); // Minimum 10% opacity
+   }, [getLogoCenterAndDistance]);
+
+   // Memoized glow intensity for performance
+   const glowIntensity = useMemo(() => {
+      return getGlowIntensity();
+   }, [getGlowIntensity]);
+
+   // Memoized grid background style with smooth fade-in
+   const gridBackgroundStyle = useMemo(() => {
+      const baseOpacity = getGridLineOpacity();
+      const gridOpacity = isMouseOver ? baseOpacity : 0;
+
+      return {
+         backgroundImage: `
+            linear-gradient(45deg, rgba(34, 197, 94, ${0.05 * baseOpacity}) 0%, rgba(59, 130, 246, ${0.05 * baseOpacity}) 100%),
+            linear-gradient(45deg, rgba(147, 51, 234, ${0.05 * baseOpacity}) 0%, rgba(236, 72, 153, ${0.05 * baseOpacity}) 100%),
+            linear-gradient(45deg, rgba(249, 115, 22, ${0.03 * baseOpacity}) 0%, rgba(234, 179, 8, ${0.03 * baseOpacity}) 100%),
+            linear-gradient(-45deg, rgba(59, 130, 246, ${0.02 * baseOpacity}) 0%, rgba(147, 51, 234, ${0.02 * baseOpacity}) 100%)
+         `,
+         backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
+         backgroundPosition: '0 0, 0 0, 0 0, 0 0',
+         backgroundRepeat: 'repeat',
+         maskImage: `
+            repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
+            repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
+            repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
+            repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
+         `,
+         maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
+         maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
+         maskRepeat: 'repeat',
+         transition: isFading ? 'opacity 2s ease-out' : 'opacity 0.2s ease-out',
+         opacity: isFading ? 0 : gridOpacity,
+      };
+   }, [isMouseOver, isFading, getGridLineOpacity]);
+
+   // Memoized filter and transition values for logo
+   const logoStyle = useMemo(() => {
+      let filterValue;
+
+      if (isFading) {
+         // Fading state: white logo (like the clean state)
+         filterValue = 'brightness(0) invert(1)'; // Black to white
+      } else if (isMouseOver && !isIdle) {
+         // Active state: full effects
+         filterValue = `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(1)`;
+      } else {
+         // Default state: dimmed
+         filterValue = 'brightness(0.7)';
+      }
+
+      const transitionValue = isFading
+         ? 'filter 0.7s ease-out, -webkit-filter 0.7s ease-out'
+         : 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out';
+
+      return {
+         filter: filterValue,
+         WebkitFilter: filterValue,
+         transition: transitionValue,
+         opacity: 1, // Always visible, just changes color
+      } as React.CSSProperties;
+   }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
+
+   // Helper function to clear all timeouts
+   const clearAllTimeouts = useCallback(() => {
       if (timeoutRef.current) {
          clearTimeout(timeoutRef.current);
          timeoutRef.current = null;
@@ -138,17 +234,17 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       }
    }, []);
 
+   const handleMouseLeave = useCallback(() => {
+      setIsMouseOver(false);
+      setIsIdle(false);
+      setIsFading(false);
+      clearAllTimeouts();
+   }, [clearAllTimeouts]);
+
    // Cleanup timeouts on unmount
    React.useEffect(() => {
-      return () => {
-         if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-         }
-         if (fadeTimeoutRef.current) {
-            clearTimeout(fadeTimeoutRef.current);
-         }
-      };
-   }, []);
+      return clearAllTimeouts;
+   }, [clearAllTimeouts]);
 
    return (
       <div
@@ -162,42 +258,20 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          onMouseLeave={handleMouseLeave}
       >
          {/* Grid background with gradient */}
-         <div
-            className="absolute inset-0"
-            style={{
-               backgroundImage: `
-                  linear-gradient(45deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%),
-                  linear-gradient(45deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%),
-                  linear-gradient(45deg, rgba(34, 197, 94, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%),
-                  linear-gradient(-45deg, rgba(34, 197, 94, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%)
-               `,
-               backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
-               backgroundPosition: '0 0, 0 0, 0 0, 0 0',
-               backgroundRepeat: 'repeat',
-               maskImage: `
-                  repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
-                  repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
-                  repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
-                  repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
-               `,
-               maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
-               maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
-               maskRepeat: 'repeat',
-            }}
-         />
+         <div className="absolute inset-0" style={gridBackgroundStyle} />
 
          {/* Mouse-following glow effect */}
-         {isMouseOver && !isIdle && (
+         {isMouseOver && (
             <div
                className="absolute inset-0 pointer-events-none"
                style={{
                   zIndex: 2,
                   background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
-                     rgba(255, 255, 255, ${0.4 * getGlowIntensity()}) 0px, 
-                     rgba(255, 255, 255, ${0.3 * getGlowIntensity()}) 80px, 
-                     rgba(255, 255, 255, ${0.2 * getGlowIntensity()}) 160px, 
-                     rgba(255, 255, 255, ${0.1 * getGlowIntensity()}) 240px, 
-                     rgba(255, 255, 255, ${0.05 * getGlowIntensity()}) 320px, 
+                     rgba(255, 255, 255, ${0.4 * glowIntensity}) 0px, 
+                     rgba(255, 255, 255, ${0.3 * glowIntensity}) 80px, 
+                     rgba(255, 255, 255, ${0.2 * glowIntensity}) 160px, 
+                     rgba(255, 255, 255, ${0.1 * glowIntensity}) 240px, 
+                     rgba(255, 255, 255, ${0.05 * glowIntensity}) 320px, 
                      transparent 400px)`,
                   mixBlendMode: 'screen',
                   transition: isFading ? 'opacity 2s ease-out' : 'background 0.1s ease-out',
@@ -258,21 +332,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             <div
                ref={logoRef}
                className="h-auto w-auto max-w-[300px] relative z-10"
-               style={
-                  {
-                     filter:
-                        isMouseOver && !isIdle
-                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(1)`
-                           : 'brightness(0.7)',
-                     WebkitFilter:
-                        isMouseOver && !isIdle
-                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(1)`
-                           : 'brightness(0.7)',
-                     transition: isFading
-                        ? 'filter 2s ease-out, -webkit-filter 2s ease-out'
-                        : 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out',
-                  } as React.CSSProperties
-               }
+               style={logoStyle}
             >
                <Image
                   src="/heyspex-logo-stacked.png"
