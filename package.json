@@ -4,7 +4,10 @@
    "private": true,
    "scripts": {
       "dev": "next dev --turbopack --port 3000",
+      "dev:legacy": "next dev --port 3000",
       "dev:fast": "next dev --turbopack --port 3000 --experimental-https",
+      "dev:simple": "cross-env NEXT_PUBLIC_BRANDED_COMPONENT=simple next dev --turbopack --port 3000",
+      "dev:full": "cross-env NEXT_PUBLIC_BRANDED_COMPONENT=full next dev --turbopack --port 3000",
       "build": "next build",
       "build:analyze": "ANALYZE=true next build",
       "start": "next start",

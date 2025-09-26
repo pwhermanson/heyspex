@@ -25,7 +25,9 @@ import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
 import { AppShellBranded } from '@/src/components/layout/app-shell-branded';
+import { AppShellBrandedSimple } from '@/src/components/layout/app-shell-branded-simple';
 import { useWorkspaceInitialization } from '@/src/lib/hooks/use-workspace-initialization';
+import { shouldUseSimpleBranded } from '@/src/lib/config/branded-component-config';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
 // Import workspace commands to register them
@@ -247,8 +249,10 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      <RightSidebar />
                   </div>
                </div>
+            ) : /* Centered Logo when Workspace Zone A is closed */
+            shouldUseSimpleBranded() ? (
+               <AppShellBrandedSimple />
             ) : (
-               /* Centered Logo when Workspace Zone A is closed */
                <AppShellBranded />
             )}
 

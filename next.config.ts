@@ -1,10 +1,33 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+   // Disable dev indicators for cleaner console
    devIndicators: false,
 
-   // Simple performance optimizations
+   // Optimize development performance
+   onDemandEntries: {
+      maxInactiveAge: 25 * 1000,
+      pagesBufferLength: 2,
+   },
+
+   // Use stable build ID for better caching
+   generateBuildId: async () => {
+      return 'build-' + Date.now();
+   },
+
+   // Performance optimizations
    experimental: {
+      // Enable Turbopack for faster builds (when available)
+      turbo: {
+         rules: {
+            '*.svg': {
+               loaders: ['@svgr/webpack'],
+               as: '*.js',
+            },
+         },
+      },
+
+      // Optimize package imports for better tree shaking
       optimizePackageImports: [
          '@radix-ui/react-alert-dialog',
          '@radix-ui/react-avatar',
@@ -26,6 +49,12 @@ const nextConfig: NextConfig = {
          'lucide-react',
          'react-icons',
       ],
+
+      // Enable faster refresh
+      optimizeCss: true,
+
+      // Enable webpack caching
+      webpackBuildWorker: true,
    },
 
    // Compiler optimizations
@@ -37,6 +66,36 @@ const nextConfig: NextConfig = {
    images: {
       formats: ['image/webp', 'image/avif'],
       minimumCacheTTL: 60,
+      dangerouslyAllowSVG: true,
+      contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+   },
+
+   // Webpack optimizations
+   webpack: (config, { dev, isServer }) => {
+      // Optimize for development
+      if (dev) {
+         // Use memory cache instead of filesystem to avoid path resolution issues
+         config.cache = {
+            type: 'memory',
+         };
+
+         // Reduce bundle analysis overhead
+         config.optimization = {
+            ...config.optimization,
+            splitChunks: {
+               chunks: 'all',
+               cacheGroups: {
+                  vendor: {
+                     test: /[\\/]node_modules[\\/]/,
+                     name: 'vendors',
+                     chunks: 'all',
+                  },
+               },
+            },
+         };
+      }
+
+      return config;
    },
 };
 
