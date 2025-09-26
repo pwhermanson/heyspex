@@ -59,9 +59,6 @@ type WorkspaceZoneAPanelsContext = {
    // Hydration state
    isHydrated: boolean;
 
-   // Grid CSS custom properties
-   updateGridLayout: () => void;
-
    // Fullscreen main content
    isMainFullscreen: boolean;
    setMainFullscreen: (fullscreen: boolean) => void;
@@ -179,117 +176,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Debounced save to localStorage
    const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-   // Update CSS Grid layout
-   const updateGridLayout = useCallback(() => {
-      if (typeof document === 'undefined') {
-         return;
-      }
-
-      const updateStartTime = performance.now();
-      console.log('🔧 updateGridLayout started at:', updateStartTime);
-
-      const rootElement = document.documentElement;
-      const rootStyle = rootElement.style;
-
-      // Use requestAnimationFrame to batch CSS updates and avoid layout thrashing
-      requestAnimationFrame(() => {
-         const rafStartTime = performance.now();
-         console.log(
-            '🎬 requestAnimationFrame CSS update started at:',
-            rafStartTime - updateStartTime,
-            'ms'
-         );
-
-         // Use a second requestAnimationFrame to ensure we're on the next paint cycle
-         requestAnimationFrame(() => {
-            const paintStartTime = performance.now();
-            console.log(
-               '🎨 Paint cycle CSS update started at:',
-               paintStartTime - updateStartTime,
-               'ms'
-            );
-
-            const leftCollapsedWidth = LEFT_COLLAPSED_WIDTH;
-            const rightCollapsedWidth = RIGHT_COLLAPSED_WIDTH;
-
-            const leftWidth =
-               !isWorkspaceZoneAVisible || isMainFullscreen
-                  ? 0
-                  : enableLeftRail
-                    ? leftState === 'open'
-                       ? leftSidebar.width
-                       : LEFT_COLLAPSED_WIDTH
-                    : leftSidebar.isOpen
-                      ? leftSidebar.width
-                      : leftCollapsedWidth;
-
-            const rightWidth =
-               !isWorkspaceZoneAVisible || isMainFullscreen
-                  ? 0
-                  : rightSidebar.isOpen
-                    ? rightSidebar.width
-                    : rightCollapsedWidth;
-
-            // Batch all CSS property updates to avoid layout thrashing
-            rootStyle.setProperty('--left-width', `${leftWidth}px`);
-            rootStyle.setProperty('--right-width', `${rightWidth}px`);
-            rootStyle.setProperty('--sidebar-left-width', `${leftWidth}px`);
-            rootStyle.setProperty('--sidebar-right-width', `${rightWidth}px`);
-            rootStyle.setProperty('--grid-template-columns', `${leftWidth}px 1fr ${rightWidth}px`);
-
-            if (enableLeftRail) {
-               rootStyle.setProperty('--left-open', `${leftSidebar.width}px`);
-               rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
-            }
-
-            const shouldShowWorkspaceZoneB =
-               enableBottomSplit &&
-               !isMainFullscreen &&
-               workspaceZoneB.isVisible &&
-               workspaceZoneB.mode === 'push';
-
-            const effectiveBottomHeight = shouldShowWorkspaceZoneB ? workspaceZoneB.height : 0;
-
-            rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
-            rootStyle.setProperty(
-               '--bottombar-mode',
-               enableBottomSplit ? workspaceZoneB.mode : 'push'
-            );
-            rootStyle.setProperty('--center-bottom-split', `${centerBottomSplit}px`);
-
-            const paintEndTime = performance.now();
-            console.log(
-               '🎨 Paint cycle CSS update completed at:',
-               paintEndTime - updateStartTime,
-               'ms'
-            );
-         });
-
-         const rafEndTime = performance.now();
-         console.log(
-            '🎬 requestAnimationFrame CSS update completed at:',
-            rafEndTime - updateStartTime,
-            'ms'
-         );
-      });
-
-      const updateEndTime = performance.now();
-      console.log('🔧 updateGridLayout completed at:', updateEndTime - updateStartTime, 'ms');
-   }, [
-      enableLeftRail,
-      enableBottomSplit,
-      leftState,
-      leftSidebar.isOpen,
-      leftSidebar.width,
-      rightSidebar.isOpen,
-      rightSidebar.width,
-      workspaceZoneB.height,
-      workspaceZoneB.isVisible,
-      workspaceZoneB.mode,
-      isMainFullscreen,
-      centerBottomSplit,
-      isWorkspaceZoneAVisible,
-   ]);
+   // CSS classes now handle layout - no need for updateGridLayout function
 
    const updateLeftRailState = useCallback(
       (state: WorkspaceZoneAPanelAState) => {
@@ -478,18 +365,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       }
    }, [centerBottomSplit, isHydrated]);
 
-   // Update grid layout whenever sidebar states change
-   useEffect(() => {
-      const effectStartTime = performance.now();
-      console.log('⚡ useEffect updateGridLayout triggered at:', effectStartTime);
-      updateGridLayout();
-      const effectEndTime = performance.now();
-      console.log(
-         '⚡ useEffect updateGridLayout completed at:',
-         effectEndTime - effectStartTime,
-         'ms'
-      );
-   }, [updateGridLayout]);
+   // CSS classes now handle layout automatically - no useEffect needed
 
    // Cleanup timeout on unmount
    useEffect(() => {
@@ -841,10 +717,9 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             // On exit, simply show workspace zone B again; sidebars restored via persisted state on user action
             setWorkspaceZoneBVisible(true);
          }
-         // Update CSS variables immediately
-         setTimeout(updateGridLayout, 0);
+         // CSS classes now handle layout automatically
       },
-      [setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible, updateGridLayout]
+      [setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible]
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
@@ -1060,7 +935,6 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          dragSide,
          setDragSide,
          isHydrated,
-         updateGridLayout,
          isMainFullscreen,
          setMainFullscreen,
          isWorkspaceZoneAVisible,
@@ -1095,7 +969,6 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          dragSide,
          setDragSide,
          isHydrated,
-         updateGridLayout,
          isMainFullscreen,
          setMainFullscreen,
          isWorkspaceZoneAVisible,

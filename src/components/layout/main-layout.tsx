@@ -17,6 +17,7 @@ import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-
 import { GlobalControlBar } from '@/src/components/layout/global-control-bar';
 import { WorkspaceZoneB } from '@/src/components/layout/workspace-zone-b';
 import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-b-container';
+import { WorkspaceZoneAContainer } from '@/src/components/layout/workspace-zone-a-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
 import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
 import { WorkspaceZoneAPanelsDragHandle } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-drag-handle';
@@ -132,10 +133,10 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden z-10">
             {/* Workspace Zone A - Three-panel grid */}
-            {isWorkspaceZoneAVisible ? (
+            <WorkspaceZoneAContainer isVisible={isWorkspaceZoneAVisible}>
                <div
                   className={cn(
-                     'grid w-full h-full overflow-hidden relative workspace-zone-a',
+                     'grid w-full h-full overflow-hidden relative',
                      !isDragging &&
                         'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}
@@ -257,7 +258,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      <WorkspaceZoneAPanelC />
                   </div>
                </div>
-            ) : null}
+            </WorkspaceZoneAContainer>
 
             {/* Drag handles positioned between sections */}
             {!isMainFullscreen && isWorkspaceZoneAVisible && (
