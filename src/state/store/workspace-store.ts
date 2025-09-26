@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Workspace, CreateWorkspaceRequest, UpdateWorkspaceRequest } from '@/src/types/workspace';
+import { Workspace, CreateWorkspaceRequest } from '@/src/types/workspace';
 
 interface WorkspaceState {
    // Current workspace

@@ -734,6 +734,14 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          const isNumpad2 = event.code === 'Numpad2';
          const isTopDigit8 = event.shiftKey && event.code === 'Digit8';
          const isNumpad8 = event.code === 'Numpad8';
+         const isComma = event.shiftKey && event.key === ',';
+
+         // Ctrl+Shift+, - Toggle workspace zone A
+         if (isCtrlLike && !event.altKey && isComma) {
+            event.preventDefault();
+            setWorkspaceZoneAVisible(true);
+         }
+
          if (isCtrlLike && !event.altKey && (isTopDigit2 || isNumpad2)) {
             event.preventDefault();
 
@@ -761,7 +769,13 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          document.removeEventListener('keydown', handleKeyDown, {
             capture: true,
          } as AddEventListenerOptions);
-   }, [toggleBottomBar, setBottomBarHeight, setBottomBarVisible, toggleTopBar]);
+   }, [
+      toggleBottomBar,
+      setBottomBarHeight,
+      setBottomBarVisible,
+      toggleTopBar,
+      setWorkspaceZoneAVisible,
+   ]);
 
    // Listen for panel command events from command palette
    useEffect(() => {

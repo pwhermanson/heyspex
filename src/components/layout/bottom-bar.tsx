@@ -163,7 +163,7 @@ export function BottomBar({
    return (
       <div
          className={cn(
-            'relative overflow-hidden workspace-zone-b flex flex-col w-full',
+            'relative overflow-hidden workspace-zone-b flex flex-col w-full z-20',
             isOverlay ? 'shadow-lg border-x' : 'border-x rounded-t-lg',
             'pointer-events-auto',
             className

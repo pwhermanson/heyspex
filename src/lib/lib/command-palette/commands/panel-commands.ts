@@ -171,7 +171,7 @@ registerCommand({
    id: 'workspace.zone.a.open',
    title: '/workspace zone A open',
    keywords: ['workspace', 'zone', 'main', 'content', 'open', 'show'],
-   shortcut: 'Ctrl+Shift+1',
+   shortcut: 'Ctrl+Shift+,',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();

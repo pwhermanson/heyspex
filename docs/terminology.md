@@ -60,6 +60,7 @@ This document defines the standardized terminology and naming conventions used t
 - **Center Panel**: `center-viewport` (nickname: "Center Panel")
 - **Right Panel**: `right-viewport` (nickname: "Right Panel")
 - **Purpose**: Areas where users can load different screens
+- **Panel Empty State**: When a panel has no screen loaded, it displays the panel's background and empty state content. This is distinct from screen backgrounds which are only shown when a screen is actively loaded.
 
 ### 5. Workspace Zone B (Secondary Workspace Zone)
 

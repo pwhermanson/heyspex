@@ -58,7 +58,7 @@ export interface PanelConfig {
    screenId?: string; // Currently loaded screen
    isVisible: boolean;
    width?: number; // For resizable panels
-   settings: Record<string, any>; // Panel-specific settings
+   settings: Record<string, unknown>; // Panel-specific settings
 }
 
 export interface WorkspaceMember {

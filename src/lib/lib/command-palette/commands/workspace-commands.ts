@@ -38,7 +38,7 @@ registerCommand({
    id: 'workspace.settings',
    title: '/workspace settings',
    keywords: ['workspace', 'settings', 'configure', 'preferences'],
-   shortcut: 'Ctrl+Shift+,',
+   shortcut: 'Ctrl+Shift+;',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       // This will open workspace settings

@@ -9,7 +9,7 @@ export function PanelControlBar() {
 
    return (
       <div
-         className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted"
+         className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted relative z-20"
          role="toolbar"
          data-panel-control-bar
       >

@@ -114,20 +114,25 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
 
    return (
       <div
-         className="h-svh w-full grid"
+         className="h-svh w-full grid relative"
          style={{ gridTemplateRows: getGridRows() }}
          data-bottom-mode={safeBottomEnabled ? bottomBar.mode : undefined}
       >
+         {/* App Shell - Background layer that everything renders on top of */}
+         <div className="absolute inset-0 z-0">
+            {shouldUseSimpleBranded() ? <AppShellBrandedSimple /> : <AppShellBranded />}
+         </div>
+
          {/* TopBar - spans full width */}
          {!isMainFullscreen && isTopBarEnabled && isTopBarVisible && <TopBar />}
 
          {/* Main Area - contains the three-panel layout */}
-         <div className="relative overflow-hidden">
+         <div className="relative overflow-hidden z-10">
             {/* Workspace Zone A - Three-panel grid */}
             {isWorkspaceZoneAVisible ? (
                <div
                   className={cn(
-                     'grid w-full h-full overflow-hidden',
+                     'grid w-full h-full overflow-hidden relative z-10',
                      !isDragging &&
                         'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}
@@ -249,12 +254,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      <RightSidebar />
                   </div>
                </div>
-            ) : /* Centered Logo when Workspace Zone A is closed */
-            shouldUseSimpleBranded() ? (
-               <AppShellBrandedSimple />
-            ) : (
-               <AppShellBranded />
-            )}
+            ) : null}
 
             {/* Drag handles positioned between sections */}
             {!isMainFullscreen && isWorkspaceZoneAVisible && (

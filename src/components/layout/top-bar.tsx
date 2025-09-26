@@ -15,7 +15,7 @@ export function TopBar() {
 
    return (
       <div
-         className="w-full h-14 border-b bg-background flex items-center justify-between px-4 gap-4"
+         className="w-full h-14 border-b bg-background flex items-center justify-between px-4 gap-4 relative z-20"
          role="banner"
          data-top-bar
       >

@@ -179,7 +179,12 @@
    }
 
    .workspace-zone-a-panel {
-      background-color: hsl(var(--card));
+      background-color: hsl(var(--card)) !important;
+      background: hsl(var(--card)) !important;
+   }
+
+   .bg-container {
+      background-color: hsl(var(--container));
    }
 
    /* Base workspace zone b styling */

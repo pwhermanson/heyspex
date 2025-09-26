@@ -16,7 +16,7 @@ import {
 } from '@/src/components/ui/dropdown-menu';
 import { Button } from '@/src/components/ui/button';
 import { Badge } from '@/src/components/ui/badge';
-import { ChevronDown, Plus, Settings, Users, Building2, Check, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, Plus, Settings, Users, Building2, Check } from 'lucide-react';
 import { useWorkspaceStore } from '@/src/state/store/workspace-store';
 import { useUserStore } from '@/src/state/store/user-store';
 import { Workspace } from '@/src/types/workspace';
