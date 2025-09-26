@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 
@@ -10,6 +10,44 @@ interface CenteredLogoProps {
 
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
+   const [isIdle, setIsIdle] = useState(false);
+   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+   const handleMouseMove = useCallback(() => {
+      setIsMouseOver(true);
+      setIsIdle(false);
+
+      // Clear existing timeout
+      if (timeoutRef.current) {
+         clearTimeout(timeoutRef.current);
+      }
+
+      // Set new timeout for idle detection
+      timeoutRef.current = setTimeout(() => {
+         setIsIdle(true);
+      }, 1000); // 1 second idle timeout
+   }, []);
+
+   const handleMouseLeave = useCallback(() => {
+      setIsMouseOver(false);
+      setIsIdle(false);
+
+      // Clear timeout when mouse leaves
+      if (timeoutRef.current) {
+         clearTimeout(timeoutRef.current);
+         timeoutRef.current = null;
+      }
+   }, []);
+
+   // Cleanup timeout on unmount
+   React.useEffect(() => {
+      return () => {
+         if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+         }
+      };
+   }, []);
+
    return (
       <div
          className={cn(
@@ -17,8 +55,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             'bg-background text-foreground relative overflow-hidden',
             className
          )}
-         onMouseMove={() => setIsMouseOver(true)}
-         onMouseLeave={() => setIsMouseOver(false)}
+         onMouseMove={handleMouseMove}
+         onMouseLeave={handleMouseLeave}
       >
          {/* Grid background with gradient */}
          <div
@@ -34,10 +72,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                backgroundPosition: '0 0, 0 0, 0 0, 0 0',
                backgroundRepeat: 'repeat',
                maskImage: `
-                  linear-gradient(to right, black 0%, black 1px, transparent 1px, transparent 800px),
-                  linear-gradient(to bottom, black 0%, black 1px, transparent 1px, transparent 800px),
-                  linear-gradient(45deg, transparent 0%, transparent 200px, black 201px, black 202px, transparent 202px, transparent 400px),
-                  linear-gradient(-45deg, transparent 0%, transparent 300px, black 301px, black 302px, transparent 302px, transparent 600px)
+                  repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
+                  repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
+                  repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
+                  repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
                `,
                maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
                maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
@@ -67,11 +105,11 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             />
 
             <div
-               className="h-auto w-auto max-w-[300px] transition-all duration-200 relative z-10"
+               className="h-auto w-auto max-w-[300px] transition-all duration-500 relative z-10"
                style={
                   {
-                     filter: isMouseOver ? 'brightness(1)' : 'brightness(0.8)',
-                     WebkitFilter: isMouseOver ? 'brightness(1)' : 'brightness(0.8)',
+                     filter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
+                     WebkitFilter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
                   } as React.CSSProperties
                }
             >
