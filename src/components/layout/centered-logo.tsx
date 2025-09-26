@@ -11,14 +11,17 @@ interface CenteredLogoProps {
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
+   const [isFading, setIsFading] = useState(false);
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+   const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const logoRef = useRef<HTMLDivElement>(null);
 
    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       setIsMouseOver(true);
       setIsIdle(false);
+      setIsFading(false);
 
       // Get mouse position relative to the container
       if (containerRef.current) {
@@ -28,20 +31,27 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          setMousePosition({ x, y });
       }
 
-      // Clear existing timeout
+      // Clear existing timeouts
       if (timeoutRef.current) {
          clearTimeout(timeoutRef.current);
+      }
+      if (fadeTimeoutRef.current) {
+         clearTimeout(fadeTimeoutRef.current);
       }
 
       // Set new timeout for idle detection
       timeoutRef.current = setTimeout(() => {
          setIsIdle(true);
+         // Start fade after idle
+         fadeTimeoutRef.current = setTimeout(() => {
+            setIsFading(true);
+         }, 100); // Small delay before starting fade
       }, 250); // 0.25 second idle timeout
    }, []);
 
-   // Calculate shadow offset based on logo's actual center
+   // Calculate shadow offset, blur, and opacity based on logo's actual center
    const getShadowOffset = () => {
-      if (!logoRef.current || !containerRef.current) return { x: 0, y: 0 };
+      if (!logoRef.current || !containerRef.current) return { x: 0, y: 0, blur: 0, opacity: 1 };
 
       const logoRect = logoRef.current.getBoundingClientRect();
       const containerRect = containerRef.current.getBoundingClientRect();
@@ -50,11 +60,43 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
       const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
 
-      // Calculate offset from logo center
-      const offsetX = (mousePosition.x - logoCenterX) / 20;
-      const offsetY = (mousePosition.y - logoCenterY) / 20;
+      // Calculate distance from mouse to logo center
+      const distance = Math.sqrt(
+         Math.pow(mousePosition.x - logoCenterX, 2) + Math.pow(mousePosition.y - logoCenterY, 2)
+      );
 
-      return { x: offsetX, y: offsetY };
+      // Calculate offset from logo center (inverted for realistic shadow direction)
+      const offsetX = -(mousePosition.x - logoCenterX) / 20;
+      const offsetY = -(mousePosition.y - logoCenterY) / 20;
+
+      // Calculate blur based on distance (closer = sharper, farther = blurrier)
+      const maxDistance = 3000; // Much larger radius for sharp shadow
+      const blur = Math.min(Math.pow(distance / maxDistance, 2) * 15, 15); // Quadratic curve, max 15px blur
+
+      // Calculate opacity based on distance (closer = darker, farther = lighter)
+      const opacityDistance = 400; // Start fading opacity at 400px
+      const opacity = Math.max(1 - distance / opacityDistance, 0.1); // Min 10% opacity
+
+      return { x: offsetX, y: offsetY, blur, opacity };
+   };
+
+   // Calculate swirling color based on time and position
+   const getSwirlingColor = () => {
+      const time = Date.now() / 1000; // Current time in seconds
+      const angle = (time * 2) % (Math.PI * 2); // Rotating angle
+
+      // Create a swirling effect based on time and mouse position
+      const swirlPhase = Math.sin(angle) * 0.5 + 0.5; // 0 to 1
+
+      // Interpolate between blue and green
+      const blue = [59, 130, 246];
+      const green = [34, 197, 94];
+
+      const r = Math.round(blue[0] * (1 - swirlPhase) + green[0] * swirlPhase);
+      const g = Math.round(blue[1] * (1 - swirlPhase) + green[1] * swirlPhase);
+      const b = Math.round(blue[2] * (1 - swirlPhase) + green[2] * swirlPhase);
+
+      return `rgba(${r}, ${g}, ${b}, ${getShadowOffset().opacity})`;
    };
 
    // Calculate glow intensity based on distance from logo
@@ -83,19 +125,27 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    const handleMouseLeave = useCallback(() => {
       setIsMouseOver(false);
       setIsIdle(false);
+      setIsFading(false);
 
-      // Clear timeout when mouse leaves
+      // Clear timeouts when mouse leaves
       if (timeoutRef.current) {
          clearTimeout(timeoutRef.current);
          timeoutRef.current = null;
       }
+      if (fadeTimeoutRef.current) {
+         clearTimeout(fadeTimeoutRef.current);
+         fadeTimeoutRef.current = null;
+      }
    }, []);
 
-   // Cleanup timeout on unmount
+   // Cleanup timeouts on unmount
    React.useEffect(() => {
       return () => {
          if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
+         }
+         if (fadeTimeoutRef.current) {
+            clearTimeout(fadeTimeoutRef.current);
          }
       };
    }, []);
@@ -141,6 +191,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             <div
                className="absolute inset-0 pointer-events-none"
                style={{
+                  zIndex: 2,
                   background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
                      rgba(255, 255, 255, ${0.4 * getGlowIntensity()}) 0px, 
                      rgba(255, 255, 255, ${0.3 * getGlowIntensity()}) 80px, 
@@ -149,7 +200,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                      rgba(255, 255, 255, ${0.05 * getGlowIntensity()}) 320px, 
                      transparent 400px)`,
                   mixBlendMode: 'screen',
-                  transition: 'background 0.1s ease-out',
+                  transition: isFading ? 'opacity 2s ease-out' : 'background 0.1s ease-out',
+                  opacity: isFading ? 0 : 1,
                   maskImage: `
                      repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
                      repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
@@ -210,13 +262,15 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                   {
                      filter:
                         isMouseOver && !isIdle
-                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px 0px rgba(255, 0, 0, 1)) brightness(1)`
+                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(1)`
                            : 'brightness(0.7)',
                      WebkitFilter:
                         isMouseOver && !isIdle
-                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px 0px rgba(255, 0, 0, 1)) brightness(1)`
+                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()}) brightness(1)`
                            : 'brightness(0.7)',
-                     transition: 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out',
+                     transition: isFading
+                        ? 'filter 2s ease-out, -webkit-filter 2s ease-out'
+                        : 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out',
                   } as React.CSSProperties
                }
             >
