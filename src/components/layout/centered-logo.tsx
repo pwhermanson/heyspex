@@ -8,6 +8,53 @@ interface CenteredLogoProps {
    className?: string;
 }
 
+// Visual effect constants
+const VISUAL_CONSTANTS = {
+   // Shadow effects
+   SHADOW_OFFSET_DIVISOR: 20,
+   MAX_SHADOW_DISTANCE: 3000,
+   MAX_SHADOW_BLUR: 15,
+   OPACITY_FADE_DISTANCE: 400,
+   MIN_OPACITY: 0.1,
+
+   // Edge effects
+   EDGE_FADE_DISTANCE: 100,
+
+   // Glow effects
+   GLOW_MAX_DISTANCE: 200,
+   GLOW_MIN_INTENSITY: 0.1,
+
+   // Grid effects
+   GRID_MAX_DISTANCE: 300,
+
+   // Timing
+   IDLE_TIMEOUT: 500,
+   FADE_DELAY: 0,
+
+   // Color animation
+   COLOR_ROTATION_SPEED: 0.3,
+
+   // Logo dimensions
+   LOGO_WIDTH: 300,
+   LOGO_HEIGHT: 273,
+} as const;
+
+// Reusable mask styles
+const MASK_STYLES = {
+   backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
+   backgroundPosition: '0 0, 0 0, 0 0, 0 0',
+   backgroundRepeat: 'repeat',
+   maskImage: `
+      repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
+      repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
+      repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
+      repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 202px, transparent 320px)
+   `,
+   maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
+   maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
+   maskRepeat: 'repeat',
+} as const;
+
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isMouseMoving, setIsMouseMoving] = useState(false);
@@ -19,13 +66,15 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    const containerRef = useRef<HTMLDivElement>(null);
    const logoRef = useRef<HTMLDivElement>(null);
 
-   // Helper function to clear timeouts without nullifying refs (for reuse)
-   const clearTimeoutsOnly = useCallback(() => {
+   // Helper function to clear all timeouts
+   const clearAllTimeouts = useCallback(() => {
       if (timeoutRef.current) {
          clearTimeout(timeoutRef.current);
+         timeoutRef.current = null;
       }
       if (fadeTimeoutRef.current) {
          clearTimeout(fadeTimeoutRef.current);
+         fadeTimeoutRef.current = null;
       }
    }, []);
 
@@ -43,7 +92,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          setIsMouseMoving(true);
 
          // Clear existing timeouts
-         clearTimeoutsOnly();
+         clearAllTimeouts();
 
          // Activate effects immediately - no delay
          setIsMouseOver(true);
@@ -58,10 +107,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             // Start fade immediately after idle (total delay = 0.5 seconds)
             fadeTimeoutRef.current = setTimeout(() => {
                setIsFading(true);
-            }, 0); // No additional delay - fade starts immediately after idle
-         }, 500); // 0.5 second idle timeout
+            }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
+         }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
       },
-      [clearTimeoutsOnly]
+      [clearAllTimeouts]
    );
 
    // Helper function to get logo center and distance from mouse (memoized)
@@ -91,22 +140,28 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const { logoCenterX, logoCenterY, distance } = logoData;
 
       // Calculate offset from logo center (inverted for realistic shadow direction)
-      const offsetX = -(mousePosition.x - logoCenterX) / 20;
-      const offsetY = -(mousePosition.y - logoCenterY) / 20;
+      const offsetX = -(mousePosition.x - logoCenterX) / VISUAL_CONSTANTS.SHADOW_OFFSET_DIVISOR;
+      const offsetY = -(mousePosition.y - logoCenterY) / VISUAL_CONSTANTS.SHADOW_OFFSET_DIVISOR;
 
       // Calculate blur based on distance (closer = sharper, farther = blurrier)
-      const maxDistance = 3000; // Much larger radius for sharp shadow
-      const blur = Math.min(Math.pow(distance / maxDistance, 2) * 15, 15); // Quadratic curve, max 15px blur
+      const maxDistance = VISUAL_CONSTANTS.MAX_SHADOW_DISTANCE; // Much larger radius for sharp shadow
+      const blur = Math.min(
+         Math.pow(distance / maxDistance, 2) * VISUAL_CONSTANTS.MAX_SHADOW_BLUR,
+         VISUAL_CONSTANTS.MAX_SHADOW_BLUR
+      ); // Quadratic curve, max 15px blur
 
       // Calculate distance-based opacity (closer = darker, farther = lighter)
-      const opacityDistance = 400; // Start fading opacity at 400px
-      const distanceOpacity = Math.max(1 - distance / opacityDistance, 0.1); // Min 10% opacity
+      const opacityDistance = VISUAL_CONSTANTS.OPACITY_FADE_DISTANCE; // Start fading opacity at 400px
+      const distanceOpacity = Math.max(
+         1 - distance / opacityDistance,
+         VISUAL_CONSTANTS.MIN_OPACITY
+      ); // Min 10% opacity
 
       // Calculate viewport edge opacity (fade to 0 as mouse approaches edges)
       if (!containerRef.current) return { x: offsetX, y: offsetY, blur, opacity: distanceOpacity };
 
       const containerRect = containerRef.current.getBoundingClientRect();
-      const edgeFadeDistance = 100; // Start fading at 100px from edge
+      const edgeFadeDistance = VISUAL_CONSTANTS.EDGE_FADE_DISTANCE; // Start fading at 100px from edge
 
       const distanceToLeft = mousePosition.x;
       const distanceToRight = containerRect.width - mousePosition.x;
@@ -130,7 +185,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    // Calculate swirling color based on time and position (memoized)
    const getSwirlingColor = useCallback(() => {
       const time = Date.now() / 1000; // Current time in seconds
-      const angle = (time * 0.3) % (Math.PI * 2); // Much slower rotation for gentle color transitions
+      const angle = (time * VISUAL_CONSTANTS.COLOR_ROTATION_SPEED) % (Math.PI * 2); // Much slower rotation for gentle color transitions
 
       // Create a swirling effect based on time and mouse position
       const swirlPhase = Math.sin(angle) * 0.5 + 0.5; // 0 to 1
@@ -170,10 +225,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const { distance } = logoData;
 
       // Dim the glow as mouse gets closer (max distance of 200px for full glow)
-      const maxDistance = 200;
+      const maxDistance = VISUAL_CONSTANTS.GLOW_MAX_DISTANCE;
       const intensity = Math.min(distance / maxDistance, 1);
 
-      return Math.max(intensity, 0.1); // Minimum 10% intensity
+      return Math.max(intensity, VISUAL_CONSTANTS.GLOW_MIN_INTENSITY); // Minimum 10% intensity
    }, [getLogoCenterAndDistance]);
 
    // Calculate grid line opacity based on distance from logo (memoized)
@@ -184,10 +239,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       const { distance } = logoData;
 
       // Lower opacity as mouse gets closer (max distance of 300px for full opacity)
-      const maxDistance = 300;
+      const maxDistance = VISUAL_CONSTANTS.GRID_MAX_DISTANCE;
       const opacity = Math.min(distance / maxDistance, 1);
 
-      return Math.max(opacity, 0.1); // Minimum 10% opacity
+      return Math.max(opacity, VISUAL_CONSTANTS.MIN_OPACITY); // Minimum 10% opacity
    }, [getLogoCenterAndDistance]);
 
    // Get glow intensity (already memoized via useCallback)
@@ -205,18 +260,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             linear-gradient(45deg, rgba(249, 115, 22, ${0.02 * baseOpacity}) 0%, rgba(234, 179, 8, ${0.02 * baseOpacity}) 100%),
             linear-gradient(-45deg, rgba(59, 130, 246, ${0.015 * baseOpacity}) 0%, rgba(147, 51, 234, ${0.015 * baseOpacity}) 100%)
          `,
-         backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
-         backgroundPosition: '0 0, 0 0, 0 0, 0 0',
-         backgroundRepeat: 'repeat',
-         maskImage: `
-            repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
-            repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
-            repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
-            repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
-         `,
-         maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
-         maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
-         maskRepeat: 'repeat',
+         ...MASK_STYLES,
          transition: isFading ? 'opacity 2.5s ease-out' : 'opacity 0.4s ease-out',
          opacity: isFading ? 0 : gridOpacity,
       };
@@ -249,21 +293,9 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       } as React.CSSProperties;
    }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
 
-   // Helper function to clear all timeouts
-   const clearAllTimeouts = useCallback(() => {
-      if (timeoutRef.current) {
-         clearTimeout(timeoutRef.current);
-         timeoutRef.current = null;
-      }
-      if (fadeTimeoutRef.current) {
-         clearTimeout(fadeTimeoutRef.current);
-         fadeTimeoutRef.current = null;
-      }
-   }, []);
-
    const handleMouseLeave = useCallback(() => {
       // Clear existing timeouts
-      clearTimeoutsOnly();
+      clearAllTimeouts();
 
       // Set new timeout for idle detection (same as mouse stop)
       timeoutRef.current = setTimeout(() => {
@@ -272,9 +304,9 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          // Start fade immediately after idle (total delay = 0.5 seconds)
          fadeTimeoutRef.current = setTimeout(() => {
             setIsFading(true);
-         }, 0); // No additional delay - fade starts immediately after idle
-      }, 500); // 0.5 second idle timeout
-   }, [clearTimeoutsOnly]);
+         }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
+      }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
+   }, [clearAllTimeouts]);
 
    // Cleanup timeouts on unmount
    useEffect(() => {
@@ -339,8 +371,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                <Image
                   src="/heyspex-logo-stacked.png"
                   alt=""
-                  width={300}
-                  height={273}
+                  width={VISUAL_CONSTANTS.LOGO_WIDTH}
+                  height={VISUAL_CONSTANTS.LOGO_HEIGHT}
                   className="h-auto w-auto max-w-[300px]"
                   priority
                />
@@ -374,8 +406,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                <Image
                   src="/heyspex-logo-stacked.png"
                   alt="HeySpex"
-                  width={300}
-                  height={273}
+                  width={VISUAL_CONSTANTS.LOGO_WIDTH}
+                  height={VISUAL_CONSTANTS.LOGO_HEIGHT}
                   className="h-auto w-auto max-w-[300px]"
                   priority
                />
