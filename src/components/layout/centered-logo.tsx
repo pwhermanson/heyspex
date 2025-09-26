@@ -10,6 +10,7 @@ interface CenteredLogoProps {
 
 export function CenteredLogo({ className }: CenteredLogoProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
+   const [isMouseMoving, setIsMouseMoving] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
    const [isFading, setIsFading] = useState(false);
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -30,11 +31,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
    const handleMouseMove = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-         setIsMouseOver(true);
-         setIsIdle(false);
-         setIsFading(false);
-
-         // Get mouse position relative to the container
+         // Always update mouse position immediately for smooth tracking
          if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -42,12 +39,22 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             setMousePosition({ x, y });
          }
 
+         // Set mouse moving state immediately
+         setIsMouseMoving(true);
+
          // Clear existing timeouts
          clearTimeoutsOnly();
+
+         // Activate effects immediately - no delay
+         setIsMouseOver(true);
+
+         setIsIdle(false);
+         setIsFading(false);
 
          // Set new timeout for idle detection
          timeoutRef.current = setTimeout(() => {
             setIsIdle(true);
+            setIsMouseMoving(false);
             // Start fade immediately after idle (total delay = 0.5 seconds)
             fadeTimeoutRef.current = setTimeout(() => {
                setIsFading(true);
@@ -173,10 +180,10 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
       return {
          backgroundImage: `
-            linear-gradient(45deg, rgba(34, 197, 94, ${0.05 * baseOpacity}) 0%, rgba(59, 130, 246, ${0.05 * baseOpacity}) 100%),
-            linear-gradient(45deg, rgba(147, 51, 234, ${0.05 * baseOpacity}) 0%, rgba(236, 72, 153, ${0.05 * baseOpacity}) 100%),
-            linear-gradient(45deg, rgba(249, 115, 22, ${0.03 * baseOpacity}) 0%, rgba(234, 179, 8, ${0.03 * baseOpacity}) 100%),
-            linear-gradient(-45deg, rgba(59, 130, 246, ${0.02 * baseOpacity}) 0%, rgba(147, 51, 234, ${0.02 * baseOpacity}) 100%)
+            linear-gradient(45deg, rgba(34, 197, 94, ${0.03 * baseOpacity}) 0%, rgba(59, 130, 246, ${0.03 * baseOpacity}) 100%),
+            linear-gradient(45deg, rgba(147, 51, 234, ${0.03 * baseOpacity}) 0%, rgba(236, 72, 153, ${0.03 * baseOpacity}) 100%),
+            linear-gradient(45deg, rgba(249, 115, 22, ${0.02 * baseOpacity}) 0%, rgba(234, 179, 8, ${0.02 * baseOpacity}) 100%),
+            linear-gradient(-45deg, rgba(59, 130, 246, ${0.015 * baseOpacity}) 0%, rgba(147, 51, 234, ${0.015 * baseOpacity}) 100%)
          `,
          backgroundSize: '100vw 100vh, 100vw 100vh, 100vw 100vh, 100vw 100vh',
          backgroundPosition: '0 0, 0 0, 0 0, 0 0',
@@ -190,7 +197,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
          maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
          maskRepeat: 'repeat',
-         transition: isFading ? 'opacity 2s ease-out' : 'opacity 0.2s ease-out',
+         transition: isFading ? 'opacity 2.5s ease-out' : 'opacity 0.4s ease-out',
          opacity: isFading ? 0 : gridOpacity,
       };
    }, [isMouseOver, isFading, getGridLineOpacity]);
@@ -211,8 +218,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       }
 
       const transitionValue = isFading
-         ? 'filter 0.7s ease-out, -webkit-filter 0.7s ease-out'
-         : 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out';
+         ? 'filter 0.875s ease-out, -webkit-filter 0.875s ease-out'
+         : 'filter 0.125s ease-out, -webkit-filter 0.125s ease-out';
 
       return {
          filter: filterValue,
@@ -236,6 +243,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
 
    const handleMouseLeave = useCallback(() => {
       setIsMouseOver(false);
+      setIsMouseMoving(false);
       setIsIdle(false);
       setIsFading(false);
       clearAllTimeouts();
@@ -267,15 +275,17 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                style={{
                   zIndex: 2,
                   background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
-                     rgba(255, 255, 255, ${0.4 * glowIntensity}) 0px, 
-                     rgba(255, 255, 255, ${0.3 * glowIntensity}) 80px, 
-                     rgba(255, 255, 255, ${0.2 * glowIntensity}) 160px, 
-                     rgba(255, 255, 255, ${0.1 * glowIntensity}) 240px, 
-                     rgba(255, 255, 255, ${0.05 * glowIntensity}) 320px, 
+                     rgba(255, 255, 255, ${0.25 * glowIntensity}) 0px, 
+                     rgba(255, 255, 255, ${0.2 * glowIntensity}) 80px, 
+                     rgba(255, 255, 255, ${0.15 * glowIntensity}) 160px, 
+                     rgba(255, 255, 255, ${0.08 * glowIntensity}) 240px, 
+                     rgba(255, 255, 255, ${0.04 * glowIntensity}) 320px, 
                      transparent 400px)`,
                   mixBlendMode: 'screen',
-                  transition: isFading ? 'opacity 2s ease-out' : 'background 0.1s ease-out',
-                  opacity: isFading ? 0 : 1,
+                  transition: isFading
+                     ? 'opacity 2.5s ease-out'
+                     : 'background 0.125s ease-out, opacity 0.4s ease-out',
+                  opacity: isFading ? 0 : isMouseMoving ? 0.7 : 0.4,
                   maskImage: `
                      repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
                      repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
@@ -324,7 +334,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                   transform: 'translate(-50%, -50%)',
                   zIndex: 1,
                   transition:
-                     'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                     'width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   pointerEvents: 'none',
                }}
             />
