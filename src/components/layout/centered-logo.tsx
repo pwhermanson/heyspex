@@ -14,6 +14,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
    const containerRef = useRef<HTMLDivElement>(null);
+   const logoRef = useRef<HTMLDivElement>(null);
 
    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       setIsMouseOver(true);
@@ -37,6 +38,47 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          setIsIdle(true);
       }, 250); // 0.25 second idle timeout
    }, []);
+
+   // Calculate shadow offset based on logo's actual center
+   const getShadowOffset = () => {
+      if (!logoRef.current || !containerRef.current) return { x: 0, y: 0 };
+
+      const logoRect = logoRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      // Get logo center relative to container
+      const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
+      const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
+
+      // Calculate offset from logo center
+      const offsetX = (mousePosition.x - logoCenterX) / 20;
+      const offsetY = (mousePosition.y - logoCenterY) / 20;
+
+      return { x: offsetX, y: offsetY };
+   };
+
+   // Calculate glow intensity based on distance from logo
+   const getGlowIntensity = () => {
+      if (!logoRef.current || !containerRef.current) return 1;
+
+      const logoRect = logoRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      // Get logo center relative to container
+      const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
+      const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
+
+      // Calculate distance from mouse to logo center
+      const distance = Math.sqrt(
+         Math.pow(mousePosition.x - logoCenterX, 2) + Math.pow(mousePosition.y - logoCenterY, 2)
+      );
+
+      // Dim the glow as mouse gets closer (max distance of 200px for full glow)
+      const maxDistance = 200;
+      const intensity = Math.min(distance / maxDistance, 1);
+
+      return Math.max(intensity, 0.1); // Minimum 10% intensity
+   };
 
    const handleMouseLeave = useCallback(() => {
       setIsMouseOver(false);
@@ -100,10 +142,12 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                className="absolute inset-0 pointer-events-none"
                style={{
                   background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
-                     rgba(59, 130, 246, 0.15) 0px, 
-                     rgba(34, 197, 94, 0.1) 60px, 
-                     rgba(59, 130, 246, 0.05) 120px, 
-                     transparent 180px)`,
+                     rgba(255, 255, 255, ${0.4 * getGlowIntensity()}) 0px, 
+                     rgba(255, 255, 255, ${0.3 * getGlowIntensity()}) 80px, 
+                     rgba(255, 255, 255, ${0.2 * getGlowIntensity()}) 160px, 
+                     rgba(255, 255, 255, ${0.1 * getGlowIntensity()}) 240px, 
+                     rgba(255, 255, 255, ${0.05 * getGlowIntensity()}) 320px, 
+                     transparent 400px)`,
                   mixBlendMode: 'screen',
                   transition: 'background 0.1s ease-out',
                   maskImage: `
@@ -160,11 +204,19 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             />
 
             <div
-               className="h-auto w-auto max-w-[300px] transition-all duration-500 relative z-10"
+               ref={logoRef}
+               className="h-auto w-auto max-w-[300px] relative z-10"
                style={
                   {
-                     filter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
-                     WebkitFilter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
+                     filter:
+                        isMouseOver && !isIdle
+                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px 0px rgba(255, 0, 0, 1)) brightness(1)`
+                           : 'brightness(0.7)',
+                     WebkitFilter:
+                        isMouseOver && !isIdle
+                           ? `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px 0px rgba(255, 0, 0, 1)) brightness(1)`
+                           : 'brightness(0.7)',
+                     transition: 'filter 0.1s ease-out, -webkit-filter 0.1s ease-out',
                   } as React.CSSProperties
                }
             >
