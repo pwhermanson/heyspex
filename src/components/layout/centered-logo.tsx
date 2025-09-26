@@ -109,6 +109,41 @@ const MASK_STYLES = {
    maskRepeat: 'repeat',
 } as const;
 
+// Reusable component styles
+const COMPONENT_STYLES = {
+   // Glow effect base styles
+   glowEffect: {
+      zIndex: VISUAL_CONSTANTS.GLOW_Z_INDEX,
+      mixBlendMode: 'screen' as const,
+      ...MASK_STYLES,
+   },
+
+   // Solid black background logo styles
+   solidBlackLogo: {
+      filter: 'brightness(0)',
+      WebkitFilter: 'brightness(0)',
+   },
+
+   // Explosive radial glow styles
+   explosiveGlow: {
+      width: '0px',
+      height: '0px',
+      borderRadius: '50%',
+      position: 'absolute' as const,
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 1,
+      transition:
+         'width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      pointerEvents: 'none' as const,
+   },
+
+   // KBD button styles
+   kbdButton:
+      'px-2 py-1 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500',
+} as const;
+
 // Style generation functions
 const STYLE_GENERATORS = {
    // Generate radial glow gradient based on mouse position and intensity
@@ -138,13 +173,12 @@ const STYLE_GENERATORS = {
       isFading: boolean,
       isMouseOver: boolean,
       isIdle: boolean,
-      shadowData: { x: number; y: number; blur: number; color: string },
-      colorData: string
+      shadowData: { x: number; y: number; blur: number; color: string }
    ) => {
       if (isFading) {
          return VISUAL_CONSTANTS.BRIGHTNESS_INVERT;
       } else if (isMouseOver && !isIdle) {
-         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${colorData}) brightness(${VISUAL_CONSTANTS.BRIGHTNESS_NORMAL})`;
+         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${shadowData.color}) brightness(${VISUAL_CONSTANTS.BRIGHTNESS_NORMAL})`;
       } else {
          return `brightness(${VISUAL_CONSTANTS.BRIGHTNESS_DIM})`;
       }
@@ -239,7 +273,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    // Calculate shadow offset, blur, and opacity based on logo's actual center (memoized)
    const getShadowOffset = useCallback(() => {
       const logoData = getLogoCenterAndDistance();
-      if (!logoData) return { x: 0, y: 0, blur: 0, opacity: VISUAL_CONSTANTS.DEFAULT_OPACITY };
+      if (!logoData) return { x: 0, y: 0, blur: 0, color: 'rgba(0, 0, 0, 0)' };
 
       const { logoCenterX, logoCenterY, distance } = logoData;
 
@@ -262,7 +296,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       ); // Min 10% opacity
 
       // Calculate viewport edge opacity (fade to 0 as mouse approaches edges)
-      if (!containerRef.current) return { x: offsetX, y: offsetY, blur, opacity: distanceOpacity };
+      if (!containerRef.current)
+         return { x: offsetX, y: offsetY, blur, color: `rgba(0, 0, 0, ${distanceOpacity})` };
 
       const containerRect = containerRef.current.getBoundingClientRect();
       const edgeFadeDistance = VISUAL_CONSTANTS.EDGE_FADE_DISTANCE; // Start fading at 100px from edge
@@ -283,38 +318,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
       // Combine both opacity factors
       const opacity = Math.max(distanceOpacity * edgeOpacity, 0);
 
-      return { x: offsetX, y: offsetY, blur, opacity };
+      return { x: offsetX, y: offsetY, blur, color: `rgba(0, 0, 0, ${opacity})` };
    }, [getLogoCenterAndDistance, mousePosition.x, mousePosition.y]);
-
-   // Calculate swirling color based on time and position (memoized)
-   const getSwirlingColor = useCallback(() => {
-      const time = Date.now() / VISUAL_CONSTANTS.TIME_DIVISOR; // Current time in seconds
-      const angle = (time * VISUAL_CONSTANTS.COLOR_ROTATION_SPEED) % VISUAL_CONSTANTS.MATH_PI_2; // Much slower rotation for gentle color transitions
-
-      // Create a swirling effect based on time and mouse position
-      const swirlPhase =
-         Math.sin(angle) * VISUAL_CONSTANTS.SWIRL_PHASE_MULTIPLIER +
-         VISUAL_CONSTANTS.SWIRL_PHASE_OFFSET; // 0 to 1
-
-      // Define color palette: blue, green, purple, pink, orange, yellow
-      const colors = VISUAL_CONSTANTS.COLOR_PALETTE;
-
-      // Create a smooth color cycle through all colors
-      const colorIndex = (swirlPhase * (colors.length - 1)) % colors.length;
-      const currentColorIndex = Math.floor(colorIndex);
-      const nextColorIndex = (currentColorIndex + 1) % colors.length;
-      const blendFactor = colorIndex - currentColorIndex;
-
-      const currentColor = colors[currentColorIndex];
-      const nextColor = colors[nextColorIndex];
-
-      // Interpolate between current and next color
-      const r = Math.round(currentColor[0] * (1 - blendFactor) + nextColor[0] * blendFactor);
-      const g = Math.round(currentColor[1] * (1 - blendFactor) + nextColor[1] * blendFactor);
-      const b = Math.round(currentColor[2] * (1 - blendFactor) + nextColor[2] * blendFactor);
-
-      return `rgba(${r}, ${g}, ${b}, ${getShadowOffset().opacity})`;
-   }, [getShadowOffset]);
 
    // Calculate glow intensity based on distance from logo (memoized)
    const getGlowIntensity = useCallback(() => {
@@ -365,14 +370,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    // Memoized filter and transition values for logo
    const logoStyle = useMemo(() => {
       const shadowData = getShadowOffset();
-      const colorData = getSwirlingColor();
-      const filterValue = STYLE_GENERATORS.getLogoFilter(
-         isFading,
-         isMouseOver,
-         isIdle,
-         shadowData,
-         colorData
-      );
+      const filterValue = STYLE_GENERATORS.getLogoFilter(isFading, isMouseOver, isIdle, shadowData);
       const transitionValue = STYLE_GENERATORS.getTransitionStyle(isFading);
 
       return {
@@ -381,7 +379,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          transition: transitionValue,
          opacity: 1, // Always visible, just changes color
       } as React.CSSProperties;
-   }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
+   }, [isMouseOver, isIdle, isFading, getShadowOffset]);
 
    const handleMouseLeave = useCallback(() => {
       // Clear existing timeouts
@@ -422,26 +420,16 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             <div
                className="absolute inset-0 pointer-events-none"
                style={{
-                  zIndex: VISUAL_CONSTANTS.GLOW_Z_INDEX,
+                  ...COMPONENT_STYLES.glowEffect,
                   background: STYLE_GENERATORS.getGlowRadialGradient(
                      mousePosition.x,
                      mousePosition.y,
                      glowIntensity
                   ),
-                  mixBlendMode: 'screen',
                   transition: isFading
                      ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
                      : `background ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, opacity ${VISUAL_CONSTANTS.QUICK_TRANSITION_DURATION} ease-out`,
                   opacity: isFading ? 0 : isMouseMoving ? 0.7 : 0.4,
-                  maskImage: `
-                     repeating-linear-gradient(to right, black 0px, black 1px, transparent 1px, transparent 20px),
-                     repeating-linear-gradient(to bottom, black 0px, black 1px, transparent 1px, transparent 20px),
-                     repeating-linear-gradient(45deg, transparent 0px, transparent 200px, black 201px, black 202px, transparent 202px, transparent 220px),
-                     repeating-linear-gradient(-45deg, transparent 0px, transparent 300px, black 301px, black 302px, transparent 302px, transparent 320px)
-                  `,
-                  maskSize: '800px 800px, 800px 800px, 400px 400px, 600px 600px',
-                  maskPosition: '0 0, 0 0, 50px 50px, 100px 100px',
-                  maskRepeat: 'repeat',
                }}
             />
          )}
@@ -454,10 +442,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             {/* Solid black background logo */}
             <div
                className="h-auto w-auto max-w-[300px] absolute top-0 left-0 z-0"
-               style={{
-                  filter: 'brightness(0)',
-                  WebkitFilter: 'brightness(0)',
-               }}
+               style={COMPONENT_STYLES.solidBlackLogo}
             >
                <Image
                   src="/heyspex-logo-stacked.png"
@@ -473,18 +458,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             <div
                className="radial-glow-explosion group-hover:radial-glow-explosion-active"
                style={{
-                  width: '0px',
-                  height: '0px',
+                  ...COMPONENT_STYLES.explosiveGlow,
                   background: STYLE_GENERATORS.getExplosiveGlowBackground(),
-                  borderRadius: '50%',
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 1,
-                  transition:
-                     'width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  pointerEvents: 'none',
                }}
             />
 
@@ -507,15 +482,8 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          {/* Instruction text */}
          <div className="text-center relative z-10">
             <p className="text-lg text-muted-foreground">
-               Press{' '}
-               <kbd className="px-2 py-1 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
-                  Ctrl
-               </kbd>{' '}
-               +{' '}
-               <kbd className="px-2 py-1 text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
-                  /
-               </kbd>{' '}
-               to get started
+               Press <kbd className={COMPONENT_STYLES.kbdButton}>Ctrl</kbd> +{' '}
+               <kbd className={COMPONENT_STYLES.kbdButton}>/</kbd> to get started
             </p>
          </div>
       </div>
