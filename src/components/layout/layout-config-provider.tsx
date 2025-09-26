@@ -8,7 +8,10 @@ import {
    ScreenTab,
    LayoutSettings,
 } from '@/src/state';
-import { useResizableSidebar, type LeftSidebarState } from './sidebar/resizable-sidebar-provider';
+import {
+   useResizableSidebar,
+   type WorkspaceZoneAPanelAState,
+} from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
 import {
    useLayoutCompatibility,
    useVercelPerformance,
@@ -26,8 +29,8 @@ interface LayoutConfigContextType {
    sectionVisibility: Record<LayoutSection, boolean>;
    toggleSection: (section: LayoutSection) => void;
    setSectionVisible: (section: LayoutSection, visible: boolean) => void;
-   leftState: LeftSidebarState;
-   setLeftState: (state: LeftSidebarState) => void;
+   leftState: WorkspaceZoneAPanelAState;
+   setLeftState: (state: WorkspaceZoneAPanelAState) => void;
 
    // Tab management within sections
    getActiveTab: (section: LayoutSection) => ScreenTab | null;
@@ -327,7 +330,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
    );
 
    const setLeftSidebarState = useCallback(
-      (state: LeftSidebarState) => {
+      (state: WorkspaceZoneAPanelAState) => {
          if (!isHydrated) return;
 
          setLeftRailState(state);

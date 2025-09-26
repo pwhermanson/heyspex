@@ -6,7 +6,7 @@ import { WorkspaceZoneBContent } from './workspace-zone-b-content';
 import { Button } from '@/src/components/ui/button';
 import { X, Minus, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from '@/src/components/layout/sidebar/resizable-sidebar-provider';
+import { useResizableSidebar } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
 import { WorkspaceZoneBDragHandle } from '@/src/components/layout/workspace-zone-b-drag-handle';
 import {
    ResizablePanelGroup,

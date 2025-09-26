@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './sidebar/resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
 
 interface WorkspaceZoneBDragHandleProps {
    onMouseDown?: (e: React.MouseEvent) => void;

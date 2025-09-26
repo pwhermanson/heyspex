@@ -2,11 +2,11 @@
 
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import { LeftSidebarTrigger } from '@/src/components/layout/sidebar/left-sidebar-trigger';
-import { RightSidebarTrigger } from '@/src/components/layout/sidebar/right-sidebar-trigger';
+import { WorkspaceZoneAPanelATrigger } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a-trigger';
+import { WorkspaceZoneAPanelCTrigger } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c-trigger';
 import Notifications from '@/src/components/layout/headers/issues/notifications';
-import { OrgSwitcher } from '@/src/components/layout/sidebar/org-switcher';
-import { BackToApp } from '@/src/components/layout/sidebar/back-to-app';
+import { OrgSwitcher } from '@/src/components/layout/workspace-zone-a-panels/org-switcher';
+import { BackToApp } from '@/src/components/layout/workspace-zone-a-panels/back-to-app';
 import { ProfileDropdown } from '@/src/components/layout/profile-dropdown';
 
 export function TopBar() {
@@ -21,7 +21,7 @@ export function TopBar() {
       >
          {/* Left Section - Sidebar Toggle + Org/Back */}
          <div className="flex items-center gap-2 sm:gap-3">
-            <LeftSidebarTrigger className="" />
+            <WorkspaceZoneAPanelATrigger className="" />
 
             {/* Org Switcher or Back to App */}
             <div className="flex items-center">{isSettings ? <BackToApp /> : <OrgSwitcher />}</div>
@@ -30,7 +30,7 @@ export function TopBar() {
          {/* Right Section - Notifications + Profile */}
          <div className="flex items-center gap-1 sm:gap-2">
             <Notifications />
-            <RightSidebarTrigger />
+            <WorkspaceZoneAPanelCTrigger />
 
             {/* Profile Dropdown */}
             <ProfileDropdown />

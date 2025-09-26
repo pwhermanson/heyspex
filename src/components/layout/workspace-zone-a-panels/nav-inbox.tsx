@@ -1,26 +1,23 @@
 'use client';
 
-import Link from 'next/link';
-
 import {
    SidebarGroup,
-   SidebarGroupLabel,
    SidebarMenu,
    SidebarMenuButton,
    SidebarMenuItem,
 } from '@/src/components/ui/sidebar';
-import { featuresItems } from '@/src/tests/test-data/side-bar-nav';
+import Link from 'next/link';
+import { inboxItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 
-export function NavFeatures() {
+export function NavInbox() {
    return (
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-         <SidebarGroupLabel>Features</SidebarGroupLabel>
          <SidebarMenu>
-            {featuresItems.map((item) => (
+            {inboxItems.map((item) => (
                <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
-                        <item.icon className="size-4" />
+                        <item.icon />
                         <span>{item.name}</span>
                      </Link>
                   </SidebarMenuButton>

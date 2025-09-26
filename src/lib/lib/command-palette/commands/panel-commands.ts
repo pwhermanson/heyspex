@@ -40,31 +40,31 @@ function getResizableSidebarContext() {
             })
          );
       },
-      setLeftSidebarOpen: (open: boolean) => {
+      setWorkspaceZoneAPanelAOpen: (open: boolean) => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setLeftSidebarOpen', open },
+               detail: { action: 'setWorkspaceZoneAPanelAOpen', open },
             })
          );
       },
-      setRightSidebarOpen: (open: boolean) => {
+      setWorkspaceZoneAPanelCOpen: (open: boolean) => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setRightSidebarOpen', open },
+               detail: { action: 'setWorkspaceZoneAPanelCOpen', open },
             })
          );
       },
-      toggleLeftSidebar: () => {
+      toggleWorkspaceZoneAPanelA: () => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'toggleLeftSidebar' },
+               detail: { action: 'toggleWorkspaceZoneAPanelA' },
             })
          );
       },
-      toggleRightSidebar: () => {
+      toggleWorkspaceZoneAPanelC: () => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'toggleRightSidebar' },
+               detail: { action: 'toggleWorkspaceZoneAPanelC' },
             })
          );
       },

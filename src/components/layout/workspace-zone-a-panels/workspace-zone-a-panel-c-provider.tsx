@@ -3,23 +3,23 @@
 import * as React from 'react';
 import { createContext, useContext, useState, useCallback } from 'react';
 
-type RightSidebarContext = {
+type WorkspaceZoneAPanelCContext = {
    isOpen: boolean;
    toggleSidebar: () => void;
    setOpen: (open: boolean) => void;
 };
 
-const RightSidebarContext = createContext<RightSidebarContext | null>(null);
+const WorkspaceZoneAPanelCContext = createContext<WorkspaceZoneAPanelCContext | null>(null);
 
 export function useRightSidebar() {
-   const context = useContext(RightSidebarContext);
+   const context = useContext(WorkspaceZoneAPanelCContext);
    if (!context) {
-      throw new Error('useRightSidebar must be used within a RightSidebarProvider');
+      throw new Error('useRightSidebar must be used within a WorkspaceZoneAPanelCProvider');
    }
    return context;
 }
 
-export function RightSidebarProvider({ children }: { children: React.ReactNode }) {
+export function WorkspaceZoneAPanelCProvider({ children }: { children: React.ReactNode }) {
    const [isOpen, setIsOpen] = useState(false);
 
    const toggleSidebar = useCallback(() => {
@@ -40,6 +40,8 @@ export function RightSidebarProvider({ children }: { children: React.ReactNode }
    );
 
    return (
-      <RightSidebarContext.Provider value={contextValue}>{children}</RightSidebarContext.Provider>
+      <WorkspaceZoneAPanelCContext.Provider value={contextValue}>
+         {children}
+      </WorkspaceZoneAPanelCContext.Provider>
    );
 }

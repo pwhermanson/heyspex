@@ -3,10 +3,10 @@
 import * as React from 'react';
 import { Button } from '@/src/components/ui/button';
 import { PanelLeft, PanelRight, PanelLeftClose, PanelRightClose } from 'lucide-react';
-import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 import { cn } from '@/src/lib/lib/utils';
 
-interface SidebarToggleButtonProps {
+interface WorkspaceZoneAPanelsToggleButtonProps {
    side: 'left' | 'right';
    variant?: 'default' | 'ghost' | 'outline';
    size?: 'default' | 'sm' | 'lg' | 'icon';
@@ -14,13 +14,13 @@ interface SidebarToggleButtonProps {
    showLabel?: boolean;
 }
 
-export function SidebarToggleButton({
+export function WorkspaceZoneAPanelsToggleButton({
    side,
    variant = 'ghost',
    size = 'icon',
    className,
    showLabel = false,
-}: SidebarToggleButtonProps) {
+}: WorkspaceZoneAPanelsToggleButtonProps) {
    const { leftSidebar, rightSidebar, toggleLeftSidebar, toggleRightSidebar } =
       useResizableSidebar();
 
@@ -40,11 +40,11 @@ export function SidebarToggleButton({
    const label =
       side === 'left'
          ? sidebarState.isOpen
-            ? 'Hide left sidebar'
-            : 'Show left sidebar'
+            ? 'Hide Workspace Zone A Panel A'
+            : 'Show Workspace Zone A Panel A'
          : sidebarState.isOpen
-           ? 'Hide right sidebar'
-           : 'Show right sidebar';
+           ? 'Hide Workspace Zone A Panel C'
+           : 'Show Workspace Zone A Panel C';
 
    // Handle keyboard shortcuts
    // React.useEffect(() => {

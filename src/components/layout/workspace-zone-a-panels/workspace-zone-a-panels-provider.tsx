@@ -5,13 +5,13 @@ import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { setFeatureFlag } from '@/src/lib/lib/feature-flags';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
-type SidebarState = {
+type WorkspaceZoneAPanelState = {
    isOpen: boolean;
    width: number;
    preferredWidth: number;
 };
 
-export type LeftSidebarState = 'open' | 'collapsed';
+export type WorkspaceZoneAPanelAState = 'open' | 'collapsed';
 
 type WorkspaceZoneBMode = 'push' | 'overlay';
 
@@ -23,17 +23,17 @@ type WorkspaceZoneBState = {
    overlayPosition: number;
 };
 
-type EnhancedSidebarContext = {
-   // Left sidebar
-   leftSidebar: SidebarState;
+type WorkspaceZoneAPanelsContext = {
+   // Workspace Zone A Panel A (left panel)
+   leftSidebar: WorkspaceZoneAPanelState;
    toggleLeftSidebar: () => void;
    setLeftSidebarWidth: (width: number) => void;
    setLeftSidebarOpen: (open: boolean) => void;
-   leftState: LeftSidebarState;
-   setLeftState: (state: LeftSidebarState) => void;
+   leftState: WorkspaceZoneAPanelAState;
+   setLeftState: (state: WorkspaceZoneAPanelAState) => void;
 
-   // Right sidebar
-   rightSidebar: SidebarState;
+   // Workspace Zone A Panel C (right panel)
+   rightSidebar: WorkspaceZoneAPanelState;
    toggleRightSidebar: () => void;
    setRightSidebarWidth: (width: number) => void;
    setRightSidebarOpen: (open: boolean) => void;
@@ -77,10 +77,10 @@ type EnhancedSidebarContext = {
    toggleTopBar: () => void;
 };
 
-const EnhancedSidebarContext = createContext<EnhancedSidebarContext | null>(null);
+const WorkspaceZoneAPanelsContext = createContext<WorkspaceZoneAPanelsContext | null>(null);
 
-const MIN_SIDEBAR_WIDTH = 200;
-const MAX_SIDEBAR_WIDTH = 500;
+const MIN_WORKSPACE_ZONE_A_PANEL_WIDTH = 200;
+const MAX_WORKSPACE_ZONE_A_PANEL_WIDTH = 500;
 const DEFAULT_LEFT_WIDTH = 244;
 const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
@@ -100,22 +100,22 @@ const getPushModeMaxHeight = (viewportHeight?: number) => {
 };
 
 export function useResizableSidebar() {
-   const context = useContext(EnhancedSidebarContext);
+   const context = useContext(WorkspaceZoneAPanelsContext);
    if (!context) {
-      throw new Error('useResizableSidebar must be used within a ResizableSidebarProvider');
+      throw new Error('useResizableSidebar must be used within a WorkspaceZoneAPanelsProvider');
    }
    return context;
 }
 
-export function ResizableSidebarProvider({ children }: { children: React.ReactNode }) {
-   const [leftSidebar, setLeftSidebar] = useState<SidebarState>({
+export function WorkspaceZoneAPanelsProvider({ children }: { children: React.ReactNode }) {
+   const [leftSidebar, setLeftSidebar] = useState<WorkspaceZoneAPanelState>({
       isOpen: true,
       width: DEFAULT_LEFT_WIDTH,
       preferredWidth: DEFAULT_LEFT_WIDTH,
    });
-   const [leftState, setLeftState] = useState<LeftSidebarState>('open');
+   const [leftState, setLeftState] = useState<WorkspaceZoneAPanelAState>('open');
 
-   const [rightSidebar, setRightSidebar] = useState<SidebarState>({
+   const [rightSidebar, setRightSidebar] = useState<WorkspaceZoneAPanelState>({
       isOpen: true,
       width: DEFAULT_RIGHT_WIDTH,
       preferredWidth: DEFAULT_RIGHT_WIDTH,
@@ -224,7 +224,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    ]);
 
    const updateLeftRailState = useCallback(
-      (state: LeftSidebarState) => {
+      (state: WorkspaceZoneAPanelAState) => {
          setLeftState((prev) => (prev === state ? prev : state));
       },
       [setLeftState]
@@ -246,13 +246,15 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             const preferredWidth = savedLeftPreferred ? parseInt(savedLeftPreferred, 10) : width;
 
             const validWidth =
-               !isNaN(width) && width >= MIN_SIDEBAR_WIDTH && width <= MAX_SIDEBAR_WIDTH
+               !isNaN(width) &&
+               width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
+               width <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? width
                   : DEFAULT_LEFT_WIDTH;
             const validPreferred =
                !isNaN(preferredWidth) &&
-               preferredWidth >= MIN_SIDEBAR_WIDTH &&
-               preferredWidth <= MAX_SIDEBAR_WIDTH
+               preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
+               preferredWidth <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? preferredWidth
                   : validWidth;
 
@@ -279,13 +281,15 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             const preferredWidth = savedRightPreferred ? parseInt(savedRightPreferred, 10) : width;
 
             const validWidth =
-               !isNaN(width) && width >= MIN_SIDEBAR_WIDTH && width <= MAX_SIDEBAR_WIDTH
+               !isNaN(width) &&
+               width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
+               width <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? width
                   : DEFAULT_RIGHT_WIDTH;
             const validPreferred =
                !isNaN(preferredWidth) &&
-               preferredWidth >= MIN_SIDEBAR_WIDTH &&
-               preferredWidth <= MAX_SIDEBAR_WIDTH
+               preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
+               preferredWidth <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? preferredWidth
                   : validWidth;
 
@@ -421,24 +425,27 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    }, []);
 
    // Save state to localStorage with debouncing
-   const saveToLocalStorage = useCallback((side: 'left' | 'right', state: SidebarState) => {
-      if (saveTimeoutRef.current) {
-         clearTimeout(saveTimeoutRef.current);
-      }
-
-      saveTimeoutRef.current = setTimeout(() => {
-         try {
-            localStorage.setItem(`sidebar-${side}-open`, state.isOpen.toString());
-            localStorage.setItem(`sidebar-${side}-width`, state.width.toString());
-            localStorage.setItem(
-               `sidebar-${side}-preferred-width`,
-               state.preferredWidth.toString()
-            );
-         } catch (error) {
-            console.warn(`Failed to save ${side} sidebar state to localStorage:`, error);
+   const saveToLocalStorage = useCallback(
+      (side: 'left' | 'right', state: WorkspaceZoneAPanelState) => {
+         if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
          }
-      }, 500);
-   }, []);
+
+         saveTimeoutRef.current = setTimeout(() => {
+            try {
+               localStorage.setItem(`sidebar-${side}-open`, state.isOpen.toString());
+               localStorage.setItem(`sidebar-${side}-width`, state.width.toString());
+               localStorage.setItem(
+                  `sidebar-${side}-preferred-width`,
+                  state.preferredWidth.toString()
+               );
+            } catch (error) {
+               console.warn(`Failed to save ${side} sidebar state to localStorage:`, error);
+            }
+         }, 500);
+      },
+      []
+   );
 
    const toggleLeftSidebar = useCallback(() => {
       if (enableLeftRail) {
@@ -508,7 +515,10 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
    const setLeftSidebarWidth = useCallback(
       (width: number) => {
-         const clampedWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, width));
+         const clampedWidth = Math.max(
+            MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
+            Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
+         );
 
          setLeftSidebar((prev) => {
             if (clampedWidth !== prev.width && prev.isOpen) {
@@ -557,7 +567,10 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
    const setRightSidebarWidth = useCallback(
       (width: number) => {
-         const clampedWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, width));
+         const clampedWidth = Math.max(
+            MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
+            Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
+         );
 
          setRightSidebar((prev) => {
             if (clampedWidth !== prev.width && prev.isOpen) {
@@ -955,8 +968,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    );
 
    return (
-      <EnhancedSidebarContext.Provider value={contextValue}>
+      <WorkspaceZoneAPanelsContext.Provider value={contextValue}>
          {children}
-      </EnhancedSidebarContext.Provider>
+      </WorkspaceZoneAPanelsContext.Provider>
    );
 }

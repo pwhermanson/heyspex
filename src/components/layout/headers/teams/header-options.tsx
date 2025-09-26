@@ -2,7 +2,7 @@
 
 import { Button } from '@/src/components/ui/button';
 import { ListFilter, SlidersHorizontal, Maximize2, Minimize2 } from 'lucide-react';
-import { useResizableSidebar } from '@/src/components/layout/sidebar/resizable-sidebar-provider';
+import { useResizableSidebar } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
 
 export default function HeaderOptions() {
    const { isMainFullscreen, setMainFullscreen } = useResizableSidebar();

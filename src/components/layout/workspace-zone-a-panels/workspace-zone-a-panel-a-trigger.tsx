@@ -2,12 +2,12 @@
 
 import { Button } from '@/src/components/ui/button';
 import { SidebarClosedIcon, SidebarOpenIcon } from '@/src/components/ui/sidebar-icons';
-import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 import { cn } from '@/src/lib/lib/utils';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import * as React from 'react';
 
-export function LeftSidebarTrigger({
+export function WorkspaceZoneAPanelATrigger({
    className,
    onClick,
    ...props
@@ -20,8 +20,8 @@ export function LeftSidebarTrigger({
 
    return (
       <Button
-         data-sidebar="trigger"
-         data-slot="sidebar-trigger"
+         data-workspace-zone-a-panel-a="trigger"
+         data-slot="workspace-zone-a-panel-a-trigger"
          variant="ghost"
          size="icon"
          className={cn('h-7 w-7 text-muted-foreground hover:!text-icon-hover', className)}
@@ -36,7 +36,7 @@ export function LeftSidebarTrigger({
          ) : (
             <SidebarOpenIcon size={16} color="currentColor" />
          )}
-         <span className="sr-only">Toggle Left Sidebar</span>
+         <span className="sr-only">Toggle Workspace Zone A Panel A</span>
       </Button>
    );
 }

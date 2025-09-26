@@ -2,14 +2,17 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 
-interface SidebarDragHandleProps {
+interface WorkspaceZoneAPanelsDragHandleProps {
    side: 'left' | 'right';
    className?: string;
 }
 
-export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
+export function WorkspaceZoneAPanelsDragHandle({
+   side,
+   className,
+}: WorkspaceZoneAPanelsDragHandleProps) {
    const {
       leftSidebar,
       rightSidebar,
@@ -27,8 +30,8 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
    React.useEffect(() => {
       return () => {
          // Clean up any pending animation frames and both classes
-         document.body.classList.remove('sidebar-dragging');
-         document.documentElement.classList.remove('sidebar-dragging');
+         document.body.classList.remove('workspace-zone-a-panels-dragging');
+         document.documentElement.classList.remove('workspace-zone-a-panels-dragging');
       };
    }, []);
 
@@ -56,8 +59,8 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
          }
 
          // Add dragging class to both body and root for comprehensive transition disabling
-         document.body.classList.add('sidebar-dragging');
-         document.documentElement.classList.add('sidebar-dragging');
+         document.body.classList.add('workspace-zone-a-panels-dragging');
+         document.documentElement.classList.add('workspace-zone-a-panels-dragging');
 
          const startX = e.clientX;
          const startWidth = currentSidebar.width;
@@ -99,8 +102,8 @@ export function SidebarDragHandle({ side, className }: SidebarDragHandleProps) {
          const handleMouseUp = () => {
             setIsDragging(false);
             setDragSide(null);
-            document.body.classList.remove('sidebar-dragging');
-            document.documentElement.classList.remove('sidebar-dragging');
+            document.body.classList.remove('workspace-zone-a-panels-dragging');
+            document.documentElement.classList.remove('workspace-zone-a-panels-dragging');
 
             // Get final width from CSS custom property and update state
             const rootStyle = document.documentElement.style;

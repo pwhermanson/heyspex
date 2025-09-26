@@ -9,14 +9,14 @@ import {
    SidebarMenuButton,
    SidebarMenuItem,
 } from '@/src/components/ui/sidebar';
-import { accountItems } from '@/src/tests/test-data/side-bar-nav';
+import { featuresItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 
-export function NavAccount() {
+export function NavFeatures() {
    return (
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-         <SidebarGroupLabel>Account</SidebarGroupLabel>
+         <SidebarGroupLabel>Features</SidebarGroupLabel>
          <SidebarMenu>
-            {accountItems.map((item) => (
+            {featuresItems.map((item) => (
                <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>

@@ -17,7 +17,7 @@ import {
    SidebarMenuItem,
 } from '@/src/components/ui/sidebar';
 import Link from 'next/link';
-import { workspaceItems } from '@/src/tests/test-data/side-bar-nav';
+import { workspaceItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 import { RiPresentationLine } from '@remixicon/react';
 
 export function NavWorkspace() {

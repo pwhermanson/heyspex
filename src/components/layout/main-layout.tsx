@@ -4,13 +4,13 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import type { CommandContext } from '@/src/lib/lib/command-palette/registry';
 import { PaletteProvider } from '@/src/components/command-palette/palette-provider';
-import { AppSidebar } from '@/src/components/layout/sidebar/app-sidebar';
-import { RightSidebar } from '@/src/components/layout/sidebar/right-sidebar';
-import { RightSidebarProvider } from '@/src/components/layout/sidebar/right-sidebar-provider';
+import { WorkspaceZoneAPanelA } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a';
+import { WorkspaceZoneAPanelC } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c';
+import { WorkspaceZoneAPanelCProvider } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c-provider';
 import {
-   ResizableSidebarProvider,
+   WorkspaceZoneAPanelsProvider,
    useResizableSidebar,
-} from '@/src/components/layout/sidebar/resizable-sidebar-provider';
+} from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
 
 import { SidebarProvider } from '@/src/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-issue-modal-provider';
@@ -19,7 +19,7 @@ import { WorkspaceZoneB } from '@/src/components/layout/workspace-zone-b';
 import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-b-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
 import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
-import { SidebarDragHandle } from '@/src/components/layout/sidebar/sidebar-drag-handle';
+import { WorkspaceZoneAPanelsDragHandle } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-drag-handle';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
@@ -152,7 +152,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      )}
                      style={{ gridArea: 'sidebar' }}
                   >
-                     <AppSidebar />
+                     <WorkspaceZoneAPanelA />
                   </div>
 
                   {/* Main Content Area */}
@@ -254,7 +254,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                      )}
                      style={{ gridArea: 'right-sidebar' }}
                   >
-                     <RightSidebar />
+                     <WorkspaceZoneAPanelC />
                   </div>
                </div>
             ) : null}
@@ -271,7 +271,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                            transform: 'translateX(-50%)',
                         }}
                      >
-                        <SidebarDragHandle side="left" />
+                        <WorkspaceZoneAPanelsDragHandle side="left" />
                      </div>
                   )}
 
@@ -283,7 +283,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                         transform: 'translateX(50%)',
                      }}
                   >
-                     <SidebarDragHandle side="right" />
+                     <WorkspaceZoneAPanelsDragHandle side="right" />
                   </div>
                </>
             )}
@@ -322,16 +322,16 @@ export default function MainLayout({ children, header, headersNumber = 2 }: Main
 
    return (
       <PaletteProvider context={paletteContext}>
-         <ResizableSidebarProvider>
+         <WorkspaceZoneAPanelsProvider>
             <SidebarProvider>
-               <RightSidebarProvider>
+               <WorkspaceZoneAPanelCProvider>
                   <CreateIssueModalProvider />
                   <LayoutGrid header={header} headersNumber={headersNumber}>
                      {children}
                   </LayoutGrid>
-               </RightSidebarProvider>
+               </WorkspaceZoneAPanelCProvider>
             </SidebarProvider>
-         </ResizableSidebarProvider>
+         </WorkspaceZoneAPanelsProvider>
       </PaletteProvider>
    );
 }

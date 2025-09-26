@@ -16,7 +16,7 @@ import { Input } from '@/src/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 import Link from 'next/link';
 import { RiBox3Fill, RiLinkedinFill } from '@remixicon/react';
-import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 
 export function HelpButton() {

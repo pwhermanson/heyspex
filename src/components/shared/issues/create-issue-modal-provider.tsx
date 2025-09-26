@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateNewIssue } from '@/src/components/layout/sidebar/create-new-issue';
+import { CreateNewIssue } from '@/src/components/layout/workspace-zone-a-panels/create-new-issue';
 
 export function CreateIssueModalProvider() {
    return (

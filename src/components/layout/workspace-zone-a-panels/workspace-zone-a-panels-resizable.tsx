@@ -2,15 +2,15 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './resizable-sidebar-provider';
-import { LeftSidebarTrigger } from './left-sidebar-trigger';
-import { RightSidebarTrigger } from './right-sidebar-trigger';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { WorkspaceZoneAPanelATrigger } from './workspace-zone-a-panel-a-trigger';
+import { WorkspaceZoneAPanelCTrigger } from './workspace-zone-a-panel-c-trigger';
 import {
    inboxItems,
    workspaceItems,
    accountItems,
    featuresItems,
-} from '@/src/tests/test-data/side-bar-nav';
+} from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/src/components/ui/button';
@@ -22,13 +22,17 @@ import {
 } from '@/src/components/ui/tooltip';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 
-interface ResizableSidebarProps {
+interface WorkspaceZoneAPanelsResizableProps {
    side: 'left' | 'right';
    children: React.ReactNode;
    className?: string;
 }
 
-export function ResizableSidebar({ side, children, className }: ResizableSidebarProps) {
+export function ResizableSidebar({
+   side,
+   children,
+   className,
+}: WorkspaceZoneAPanelsResizableProps) {
    const { leftSidebar, rightSidebar, leftState } = useResizableSidebar();
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
@@ -70,7 +74,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
             <div className="flex items-center justify-end p-2 border-b bg-background">
                <div className="flex items-center gap-2">
                   <div className="w-px h-4 bg-border" />
-                  <LeftSidebarTrigger className="h-6 w-6" />
+                  <WorkspaceZoneAPanelATrigger className="h-6 w-6" />
                </div>
             </div>
          </div>
@@ -81,7 +85,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
             <div className="flex items-center justify-end p-2 border-b bg-background">
                <div className="flex items-center gap-2">
                   <div className="w-px h-4 bg-border" />
-                  <LeftSidebarTrigger className="h-6 w-6" />
+                  <WorkspaceZoneAPanelATrigger className="h-6 w-6" />
                </div>
             </div>
 
@@ -162,7 +166,7 @@ export function ResizableSidebar({ side, children, className }: ResizableSidebar
       content = (
          <div className="flex h-full w-full flex-col workspace-zone-a-panel border shadow-sm lg:rounded-md overflow-hidden">
             <div className="flex items-center justify-start p-2 border-b bg-background">
-               <RightSidebarTrigger />
+               <WorkspaceZoneAPanelCTrigger />
             </div>
          </div>
       );

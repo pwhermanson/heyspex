@@ -3,24 +3,24 @@
 import { RiGithubLine } from '@remixicon/react';
 import * as React from 'react';
 
-import { HelpButton } from '@/src/components/layout/sidebar/help-button';
-import { NavInbox } from '@/src/components/layout/sidebar/nav-inbox';
-import { NavTeams } from '@/src/components/layout/sidebar/nav-teams';
-import { NavWorkspace } from '@/src/components/layout/sidebar/nav-workspace';
-import { NavAccount } from '@/src/components/layout/sidebar/nav-account';
-import { NavFeatures } from '@/src/components/layout/sidebar/nav-features';
-import { NavTeamsSettings } from '@/src/components/layout/sidebar/nav-teams-settings';
+import { HelpButton } from '@/src/components/layout/workspace-zone-a-panels/help-button';
+import { NavInbox } from '@/src/components/layout/workspace-zone-a-panels/nav-inbox';
+import { NavTeams } from '@/src/components/layout/workspace-zone-a-panels/nav-teams';
+import { NavWorkspace } from '@/src/components/layout/workspace-zone-a-panels/nav-workspace';
+import { NavAccount } from '@/src/components/layout/workspace-zone-a-panels/nav-account';
+import { NavFeatures } from '@/src/components/layout/workspace-zone-a-panels/nav-features';
+import { NavTeamsSettings } from '@/src/components/layout/workspace-zone-a-panels/nav-teams-settings';
 import { Button } from '@/src/components/ui/button';
-import { ResizableSidebar } from '@/src/components/layout/sidebar/resizable-sidebar';
-import { LeftSidebarTrigger } from '@/src/components/layout/sidebar/left-sidebar-trigger';
+import { ResizableSidebar } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-resizable';
+import { WorkspaceZoneAPanelATrigger } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a-trigger';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useResizableSidebar } from './resizable-sidebar-provider';
+import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 
-export function AppSidebar() {
+export function WorkspaceZoneAPanelA() {
    const [open, setOpen] = React.useState(true);
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
@@ -32,16 +32,16 @@ export function AppSidebar() {
 
    return (
       <ResizableSidebar side="left">
-         {/* Section A Header with Toggle Icon */}
+         {/* Workspace Zone A Panel A Header with Toggle Icon */}
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted">
             <div className="flex-1" />
             <div className="flex items-center gap-2">
                <div className="w-px h-4 bg-border" />
-               <LeftSidebarTrigger className="h-6 w-6" />
+               <WorkspaceZoneAPanelATrigger className="h-6 w-6" />
             </div>
          </div>
 
-         {/* Sidebar Content */}
+         {/* Workspace Zone A Panel A Content */}
          <div className="flex-1 overflow-y-auto pt-4">
             {isSettings ? (
                <>
@@ -58,12 +58,12 @@ export function AppSidebar() {
             )}
          </div>
 
-         {/* Sidebar Footer */}
+         {/* Workspace Zone A Panel A Footer */}
          <div className="p-4 border-t">
             <div className="w-full flex flex-col gap-2">
                {open && showText && (
                   <div
-                     className={`group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full sidebar-content-text ${showText ? 'opacity-100' : 'opacity-0'}`}
+                     className={`group/workspace-zone-a-panel-a relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full workspace-zone-a-panel-a-content-text ${showText ? 'opacity-100' : 'opacity-0'}`}
                   >
                      <div
                         className="absolute top-2.5 right-2 z-10 cursor-pointer"
@@ -72,7 +72,7 @@ export function AppSidebar() {
                      >
                         <X className="size-4" />
                      </div>
-                     <div className="text-balance text-lg font-semibold leading-tight group-hover/sidebar:underline">
+                     <div className="text-balance text-lg font-semibold leading-tight group-hover/workspace-zone-a-panel-a:underline">
                         Welcome to HeySpex!
                      </div>
                      <div>
@@ -99,7 +99,7 @@ export function AppSidebar() {
                   </div>
                )}
                <div
-                  className={`w-full flex items-center sidebar-content-text ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full flex items-center workspace-zone-a-panel-a-content-text ${showText ? 'justify-between' : 'justify-center'} ${showText ? 'opacity-100' : 'opacity-0'}`}
                >
                   <HelpButton />
                   {showText ? (
