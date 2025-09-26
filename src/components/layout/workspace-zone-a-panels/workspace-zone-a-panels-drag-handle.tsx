@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels-provider';
 
 interface WorkspaceZoneAPanelsDragHandleProps {
    side: 'left' | 'right';
@@ -14,17 +14,17 @@ export function WorkspaceZoneAPanelsDragHandle({
    className,
 }: WorkspaceZoneAPanelsDragHandleProps) {
    const {
-      leftSidebar,
-      rightSidebar,
-      setLeftSidebarWidth,
+      leftPanel,
+      rightPanel,
+      setLeftPanelWidth,
       setWorkspaceZoneAPanelCWidth,
-      setLeftSidebarOpen,
+      setLeftPanelOpen,
       setWorkspaceZoneAPanelCOpen,
       isDragging,
       setIsDragging,
       dragSide,
       setDragSide,
-   } = useResizableSidebar();
+   } = useResizablePanel();
 
    // Cleanup on unmount
    React.useEffect(() => {
@@ -39,12 +39,12 @@ export function WorkspaceZoneAPanelsDragHandle({
       (e: React.MouseEvent) => {
          e.preventDefault();
 
-         const currentSidebar = side === 'left' ? leftSidebar : rightSidebar;
+         const currentSidebar = side === 'left' ? leftPanel : rightPanel;
 
          // If sidebar is closed, open it first before allowing drag
          if (!currentSidebar.isOpen) {
             if (side === 'left') {
-               setLeftSidebarOpen(true);
+               setLeftPanelOpen(true);
             } else {
                setWorkspaceZoneAPanelCOpen(true);
             }
@@ -82,11 +82,11 @@ export function WorkspaceZoneAPanelsDragHandle({
             const clampedWidth = Math.max(200, Math.min(500, newWidth));
 
             // Update CSS custom properties directly for immediate visual feedback
-            const leftWidth = side === 'left' ? clampedWidth : leftSidebar.width;
-            const rightWidth = side === 'right' ? clampedWidth : rightSidebar.width;
+            const leftWidth = side === 'left' ? clampedWidth : leftPanel.width;
+            const rightWidth = side === 'right' ? clampedWidth : rightPanel.width;
             const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
-            const effectiveLeftWidth = leftSidebar.isOpen ? leftWidth : COLLAPSED_SPACING;
-            const effectiveRightWidth = rightSidebar.isOpen ? rightWidth : COLLAPSED_SPACING;
+            const effectiveLeftWidth = leftPanel.isOpen ? leftWidth : COLLAPSED_SPACING;
+            const effectiveRightWidth = rightPanel.isOpen ? rightWidth : COLLAPSED_SPACING;
 
             const rootStyle = document.documentElement.style;
             rootStyle.setProperty('--left-width', `${effectiveLeftWidth}px`);
@@ -120,17 +120,17 @@ export function WorkspaceZoneAPanelsDragHandle({
             const finalLeftWidth = readWidth(
                '--left-width',
                '--sidebar-left-width',
-               leftSidebar.width
+               leftPanel.width
             );
             const finalRightWidth = readWidth(
                '--right-width',
                '--sidebar-right-width',
-               rightSidebar.width
+               rightPanel.width
             );
 
             const COLLAPSED_SPACING = 8; // 8px spacing when collapsed
-            const nextLeftWidth = leftSidebar.isOpen ? finalLeftWidth : COLLAPSED_SPACING;
-            const nextRightWidth = rightSidebar.isOpen ? finalRightWidth : COLLAPSED_SPACING;
+            const nextLeftWidth = leftPanel.isOpen ? finalLeftWidth : COLLAPSED_SPACING;
+            const nextRightWidth = rightPanel.isOpen ? finalRightWidth : COLLAPSED_SPACING;
 
             rootStyle.setProperty('--left-width', `${nextLeftWidth}px`);
             rootStyle.setProperty('--right-width', `${nextRightWidth}px`);
@@ -141,9 +141,9 @@ export function WorkspaceZoneAPanelsDragHandle({
                `${nextLeftWidth}px 1fr ${nextRightWidth}px`
             );
 
-            if (side === 'left' && leftSidebar.isOpen) {
-               setLeftSidebarWidth(nextLeftWidth);
-            } else if (side === 'right' && rightSidebar.isOpen) {
+            if (side === 'left' && leftPanel.isOpen) {
+               setLeftPanelWidth(nextLeftWidth);
+            } else if (side === 'right' && rightPanel.isOpen) {
                setWorkspaceZoneAPanelCWidth(nextRightWidth);
             }
 
@@ -156,11 +156,11 @@ export function WorkspaceZoneAPanelsDragHandle({
       },
       [
          side,
-         leftSidebar,
-         rightSidebar,
-         setLeftSidebarWidth,
+         leftPanel,
+         rightPanel,
+         setLeftPanelWidth,
          setWorkspaceZoneAPanelCWidth,
-         setLeftSidebarOpen,
+         setLeftPanelOpen,
          setWorkspaceZoneAPanelCOpen,
          setIsDragging,
          setDragSide,
@@ -168,7 +168,7 @@ export function WorkspaceZoneAPanelsDragHandle({
    );
 
    const isActive = isDragging && dragSide === side;
-   const currentSidebar = side === 'left' ? leftSidebar : rightSidebar;
+   const currentSidebar = side === 'left' ? leftPanel : rightPanel;
    const isSidebarClosed = !currentSidebar.isOpen;
 
    return (

@@ -3,30 +3,30 @@
 import Link from 'next/link';
 
 import {
-   SidebarGroup,
-   SidebarGroupLabel,
-   SidebarMenu,
-   SidebarMenuButton,
-   SidebarMenuItem,
+   PanelGroup,
+   PanelGroupLabel,
+   PanelMenu,
+   PanelMenuButton,
+   PanelMenuItem,
 } from '@/src/components/ui/sidebar';
 import { featuresItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 
 export function NavFeatures() {
    return (
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-         <SidebarGroupLabel>Features</SidebarGroupLabel>
-         <SidebarMenu>
+      <PanelGroup className="group-data-[collapsible=icon]:hidden">
+         <PanelGroupLabel>Features</PanelGroupLabel>
+         <PanelMenu>
             {featuresItems.map((item) => (
-               <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild tooltip={item.name}>
+               <PanelMenuItem key={item.name}>
+                  <PanelMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon className="size-4" />
                         <span>{item.name}</span>
                      </Link>
-                  </SidebarMenuButton>
-               </SidebarMenuItem>
+                  </PanelMenuButton>
+               </PanelMenuItem>
             ))}
-         </SidebarMenu>
-      </SidebarGroup>
+         </PanelMenu>
+      </PanelGroup>
    );
 }

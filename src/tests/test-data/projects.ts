@@ -129,7 +129,7 @@ export const projects: Project[] = [
    },
    {
       id: '6',
-      name: 'HeySpex - Sidebar',
+      name: 'HeySpex - Panel',
       status: status[5],
       icon: TrafficCone,
       percentComplete: 0,

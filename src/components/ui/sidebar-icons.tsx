@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface SidebarIconProps {
+interface PanelIconProps {
    size?: number;
    color?: string;
 }
 
-export const SidebarClosedIcon = ({ size = 24, color = 'white' }: SidebarIconProps) => (
+export const PanelClosedIcon = ({ size = 24, color = 'white' }: PanelIconProps) => (
    <svg
       width={size}
       height={size}
@@ -20,7 +20,7 @@ export const SidebarClosedIcon = ({ size = 24, color = 'white' }: SidebarIconPro
    </svg>
 );
 
-export const SidebarOpenIcon = ({ size = 24, color = 'white' }: SidebarIconProps) => (
+export const PanelOpenIcon = ({ size = 24, color = 'white' }: PanelIconProps) => (
    <svg
       width={size}
       height={size}
@@ -37,7 +37,7 @@ export const SidebarOpenIcon = ({ size = 24, color = 'white' }: SidebarIconProps
    </svg>
 );
 
-export const SidebarRightOpenIcon = ({ size = 24, color = 'white' }: SidebarIconProps) => (
+export const PanelRightOpenIcon = ({ size = 24, color = 'white' }: PanelIconProps) => (
    <svg
       width={size}
       height={size}

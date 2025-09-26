@@ -9,10 +9,10 @@ import { WorkspaceZoneAPanelC } from '@/src/components/layout/workspace-zone-a-p
 import { WorkspaceZoneAPanelCProvider } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c-provider';
 import {
    WorkspaceZoneAPanelsProvider,
-   useResizableSidebar,
+   useResizablePanel,
 } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
 
-import { SidebarProvider } from '@/src/components/ui/sidebar';
+import { PanelProvider } from '@/src/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-issue-modal-provider';
 import { GlobalControlBar } from '@/src/components/layout/global-control-bar';
 import { WorkspaceZoneB } from '@/src/components/layout/workspace-zone-b';
@@ -73,11 +73,11 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       isMainFullscreen,
       centerBottomSplit,
       setCenterBottomSplit,
-      leftSidebar,
-      rightSidebar,
+      leftPanel,
+      rightPanel,
       isWorkspaceZoneAVisible,
       isControlBarVisible,
-   } = useResizableSidebar();
+   } = useResizablePanel();
 
    // Initialize workspace data
    useWorkspaceInitialization();
@@ -264,7 +264,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
             {!isMainFullscreen && isWorkspaceZoneAVisible && (
                <>
                   {/* Left drag handle - between Section A and B - only show when left sidebar is open */}
-                  {leftSidebar.isOpen && (
+                  {leftPanel.isOpen && (
                      <div
                         className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
                         style={{
@@ -280,7 +280,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   <div
                      className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
                      style={{
-                        right: rightSidebar.isOpen ? 'var(--right-width, 0px)' : '0px',
+                        right: rightPanel.isOpen ? 'var(--right-width, 0px)' : '0px',
                         transform: 'translateX(50%)',
                      }}
                   >
@@ -324,14 +324,14 @@ export default function MainLayout({ children, header, headersNumber = 2 }: Main
    return (
       <PaletteProvider context={paletteContext}>
          <WorkspaceZoneAPanelsProvider>
-            <SidebarProvider>
+            <PanelProvider>
                <WorkspaceZoneAPanelCProvider>
                   <CreateIssueModalProvider />
                   <LayoutGrid header={header} headersNumber={headersNumber}>
                      {children}
                   </LayoutGrid>
                </WorkspaceZoneAPanelCProvider>
-            </SidebarProvider>
+            </PanelProvider>
          </WorkspaceZoneAPanelsProvider>
       </PaletteProvider>
    );

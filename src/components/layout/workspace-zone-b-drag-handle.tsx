@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
 import { ZIndex } from '@/src/lib/z-index-management';
 
 interface WorkspaceZoneBDragHandleProps {
@@ -18,8 +18,8 @@ export function WorkspaceZoneBDragHandle({
    className,
    mode = 'push',
 }: WorkspaceZoneBDragHandleProps) {
-   const { workspaceZoneB, setWorkspaceZoneBHeight, setIsDragging, isControlBarVisible } =
-      useResizableSidebar();
+   const { workspaceZoneB, setWorkspaceZoneBHeight, dragState, setDragState, uiState } =
+      useResizablePanel();
 
    const handleMouseDown = React.useCallback(
       (event: React.MouseEvent) => {
@@ -32,7 +32,7 @@ export function WorkspaceZoneBDragHandle({
          event.preventDefault();
          event.stopPropagation();
 
-         setIsDragging(true);
+         setDragState((prev) => ({ ...prev, isDragging: true }));
 
          // Add dragging class to body for transition disabling
          document.body.classList.add('sidebar-dragging');
@@ -80,7 +80,7 @@ export function WorkspaceZoneBDragHandle({
          };
 
          const handleMouseUp = () => {
-            setIsDragging(false);
+            setDragState((prev) => ({ ...prev, isDragging: false }));
             document.body.classList.remove('sidebar-dragging');
             document.documentElement.classList.remove('sidebar-dragging');
 
@@ -91,7 +91,7 @@ export function WorkspaceZoneBDragHandle({
          document.addEventListener('mousemove', handleMouseMove);
          document.addEventListener('mouseup', handleMouseUp);
       },
-      [onMouseDown, workspaceZoneB.height, setWorkspaceZoneBHeight, setIsDragging, mode]
+      [onMouseDown, workspaceZoneB.height, setWorkspaceZoneBHeight, setDragState, mode]
    );
 
    return (
@@ -100,7 +100,7 @@ export function WorkspaceZoneBDragHandle({
             'absolute inset-x-0 top-0 h-2 cursor-grab active:cursor-grabbing group select-none touch-none pointer-events-auto',
             'transition-all layout-transition-short motion-reduce:transition-none',
             mode === 'overlay' && 'hover:bg-blue-500/30',
-            mode === 'overlay' && isDragging && 'bg-blue-500/30',
+            mode === 'overlay' && (dragState.isDragging || isDragging) && 'bg-blue-500/30',
             className
          )}
          style={ZIndex.utils.getStyle('DRAG_HANDLES')}
@@ -113,7 +113,7 @@ export function WorkspaceZoneBDragHandle({
             className={cn(
                'absolute inset-x-0 top-0 h-0.5 bg-transparent transition-colors layout-transition-short motion-reduce:transition-none',
                'group-hover:bg-blue-500',
-               isDragging && 'bg-blue-500'
+               (dragState.isDragging || isDragging) && 'bg-blue-500'
             )}
          />
 

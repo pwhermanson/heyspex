@@ -3,13 +3,13 @@
 import { registerCommand } from '../registry';
 import type { CommandContext } from '../registry';
 
-// Function to get the resizable sidebar provider functions
-function getResizableSidebarContext() {
+// Function to get the resizable panel provider functions
+function getResizablePanelContext() {
    // This will be called at runtime when the command is executed
    // We need to access the context from the React component tree
    if (typeof window === 'undefined') return null;
 
-   // Access the global store or context that holds the sidebar controls
+   // Access the global store or context that holds the panel controls
    // For now, we'll dispatch custom events that the provider can listen to
    return {
       setWorkspaceZoneBVisible: (visible: boolean) => {
@@ -43,7 +43,7 @@ function getResizableSidebarContext() {
       setWorkspaceZoneAPanelAOpen: (open: boolean) => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setWorkspaceZoneAPanelAOpen', open },
+               detail: { action: 'setLeftPanelOpen', open },
             })
          );
       },
@@ -57,14 +57,14 @@ function getResizableSidebarContext() {
       toggleWorkspaceZoneAPanelA: () => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'toggleWorkspaceZoneAPanelA' },
+               detail: { action: 'toggleLeftPanel' },
             })
          );
       },
       toggleWorkspaceZoneAPanelC: () => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'toggleWorkspaceZoneAPanelC' },
+               detail: { action: 'toggleRightPanel' },
             })
          );
       },
@@ -114,9 +114,9 @@ registerCommand({
    shortcut: 'Ctrl+Shift+2',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
-         sidebarContext.setWorkspaceZoneBVisible(true);
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneBVisible(true);
       }
    },
 });
@@ -128,9 +128,9 @@ registerCommand({
    keywords: ['workspace', 'zone', 'bottom', 'close', 'hide'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
-         sidebarContext.setWorkspaceZoneBVisible(false);
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneBVisible(false);
       }
    },
 });
@@ -142,12 +142,12 @@ registerCommand({
    keywords: ['split', 'center', 'bottom', 'open', 'show', '200px'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Switch to push mode so user can see the split result
-         sidebarContext.setWorkspaceZoneBMode('push');
+         panelContext.setWorkspaceZoneBMode('push');
          // Open the center bottom split
-         sidebarContext.setCenterBottomSplit(200);
+         panelContext.setCenterBottomSplit(200);
       }
    },
 });
@@ -159,9 +159,9 @@ registerCommand({
    keywords: ['split', 'center', 'bottom', 'close', 'hide', 'collapse'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
-         sidebarContext.setCenterBottomSplit(0);
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setCenterBottomSplit(0);
       }
    },
 });
@@ -174,10 +174,10 @@ registerCommand({
    shortcut: 'Ctrl+Shift+,',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Toggle Workspace Zone A container (panels A, B, C)
-         sidebarContext.toggleWorkspaceZoneA();
+         panelContext.toggleWorkspaceZoneA();
       }
    },
 });
@@ -190,10 +190,10 @@ registerCommand({
    shortcut: 'Ctrl+Shift+1',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Toggle Workspace Zone A container (panels A, B, C)
-         sidebarContext.toggleWorkspaceZoneA();
+         panelContext.toggleWorkspaceZoneA();
       }
    },
 });
@@ -205,10 +205,10 @@ registerCommand({
    keywords: ['workspace', 'zone', 'main', 'content', 'toggle'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Toggle Workspace Zone A container visibility
-         sidebarContext.toggleWorkspaceZoneA();
+         panelContext.toggleWorkspaceZoneA();
       }
    },
 });
@@ -221,10 +221,10 @@ registerCommand({
    shortcut: 'Ctrl+Shift+8',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Show control bar
-         sidebarContext.setControlBarVisible(true);
+         panelContext.setControlBarVisible(true);
       }
    },
 });
@@ -236,10 +236,10 @@ registerCommand({
    keywords: ['control', 'bar', 'header', 'close', 'hide'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Hide control bar
-         sidebarContext.setControlBarVisible(false);
+         panelContext.setControlBarVisible(false);
       }
    },
 });
@@ -251,10 +251,10 @@ registerCommand({
    keywords: ['control', 'bar', 'header', 'toggle'],
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
-      const sidebarContext = getResizableSidebarContext();
-      if (sidebarContext) {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
          // Toggle control bar visibility
-         sidebarContext.toggleControlBar();
+         panelContext.toggleControlBar();
       }
    },
 });

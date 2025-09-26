@@ -5,7 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDefaultLayoutView, createPredefinedViews } from '@/lib/lib/layout-utils';
 
 // Types for layout sections as defined in the feature requirements
-export type LayoutSection = 'A' | 'B' | 'C'; // Left sidebar, main content, right sidebar
+export type LayoutSection = 'A' | 'B' | 'C'; // Left panel, main content, right panel
 
 // Screen types that can be loaded in sections
 export type ScreenType =

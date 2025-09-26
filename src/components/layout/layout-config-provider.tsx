@@ -9,7 +9,7 @@ import {
    LayoutSettings,
 } from '@/src/state';
 import {
-   useResizableSidebar,
+   useResizablePanel,
    type WorkspaceZoneAPanelAState,
 } from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
 import {
@@ -97,14 +97,14 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
    } = useLayoutConfigStore();
 
    const {
-      leftSidebar,
-      rightSidebar,
-      setLeftSidebarOpen,
+      leftPanel,
+      rightPanel,
+      setLeftPanelOpen,
       setWorkspaceZoneAPanelCOpen,
       leftState,
       setLeftState: setLeftRailState,
-      isHydrated: sidebarHydrated,
-   } = useResizableSidebar();
+      isHydrated: panelHydrated,
+   } = useResizablePanel();
 
    const layoutCompatibility = useLayoutCompatibility();
    const compatibility = useMemo<LayoutConfigContextType['compatibility']>(
@@ -152,36 +152,36 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
       return () => clearTimeout(timer);
    }, []);
 
-   // Sync section visibility with sidebar states
+   // Sync section visibility with panel states
    useEffect(() => {
       if (!isHydrated) return;
 
-      // Sync left sidebar (Section A)
-      if (sectionVisibility.A !== leftSidebar.isOpen) {
-         setLeftSidebarOpen(sectionVisibility.A);
+      // Sync left panel (Section A)
+      if (sectionVisibility.A !== leftPanel.isOpen) {
+         setLeftPanelOpen(sectionVisibility.A);
       }
 
-      // Sync right sidebar (Section C)
-      if (sectionVisibility.C !== rightSidebar.isOpen) {
+      // Sync right panel (Section C)
+      if (sectionVisibility.C !== rightPanel.isOpen) {
          setWorkspaceZoneAPanelCOpen(sectionVisibility.C);
       }
    }, [
       sectionVisibility,
-      leftSidebar.isOpen,
-      rightSidebar.isOpen,
+      leftPanel.isOpen,
+      rightPanel.isOpen,
       isHydrated,
-      setLeftSidebarOpen,
+      setLeftPanelOpen,
       setWorkspaceZoneAPanelCOpen,
    ]);
 
-   // Sync width changes from sidebar system back to layout config
+   // Sync width changes from panel system back to layout config
    useEffect(() => {
       if (!isHydrated) return;
 
       // This would sync width changes back to the layout config store
-      // For now, we'll keep the existing sidebar system as the source of truth
+      // For now, we'll keep the existing panel system as the source of truth
       // and sync layout config to match it
-   }, [leftSidebar.width, rightSidebar.width, isHydrated]);
+   }, [leftPanel.width, rightPanel.width, isHydrated]);
 
    // View switching function
    const switchToView = useCallback(
@@ -244,19 +244,19 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
 
          toggleSection(section);
 
-         // Also update the sidebar system
+         // Also update the panel system
          if (section === 'A') {
-            setLeftSidebarOpen(!leftSidebar.isOpen);
+            setLeftPanelOpen(!leftPanel.isOpen);
          } else if (section === 'C') {
-            setWorkspaceZoneAPanelCOpen(!rightSidebar.isOpen);
+            setWorkspaceZoneAPanelCOpen(!rightPanel.isOpen);
          }
       },
       [
          toggleSection,
-         setLeftSidebarOpen,
+         setLeftPanelOpen,
          setWorkspaceZoneAPanelCOpen,
-         leftSidebar.isOpen,
-         rightSidebar.isOpen,
+         leftPanel.isOpen,
+         rightPanel.isOpen,
          isHydrated,
       ]
    );
@@ -268,14 +268,14 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
 
          setSectionVisibility(section, visible);
 
-         // Also update the sidebar system
+         // Also update the panel system
          if (section === 'A') {
-            setLeftSidebarOpen(visible);
+            setLeftPanelOpen(visible);
          } else if (section === 'C') {
             setWorkspaceZoneAPanelCOpen(visible);
          }
       },
-      [setSectionVisibility, setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, isHydrated]
+      [setSectionVisibility, setLeftPanelOpen, setWorkspaceZoneAPanelCOpen, isHydrated]
    );
 
    // Tab management functions (placeholder implementations)
@@ -367,7 +367,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
          layoutSettings: settings,
          updateLayoutSettings,
          isViewLoaded,
-         isReady: isHydrated && sidebarHydrated,
+         isReady: isHydrated && panelHydrated,
          compatibility,
          performance,
       }),
@@ -389,7 +389,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
          updateLayoutSettings,
          isViewLoaded,
          isHydrated,
-         sidebarHydrated,
+         panelHydrated,
          compatibility,
          performance,
       ]

@@ -72,10 +72,10 @@ type WorkspaceZoneAPanelsContext = {
    setUIState: (state: UIState | ((prev: UIState) => UIState)) => void;
 
    // Individual panel controls (for backward compatibility)
-   toggleLeftSidebar: () => void;
-   setLeftSidebarWidth: (width: number) => void;
-   setLeftSidebarOpen: (open: boolean) => void;
-   toggleRightSidebar: () => void;
+   toggleLeftPanel: () => void;
+   setLeftPanelWidth: (width: number) => void;
+   setLeftPanelOpen: (open: boolean) => void;
+   toggleRightPanel: () => void;
    setWorkspaceZoneAPanelCWidth: (width: number) => void;
    setWorkspaceZoneAPanelCOpen: (open: boolean) => void;
 
@@ -118,10 +118,10 @@ const getPushModeMaxHeight = (viewportHeight?: number) => {
    return Math.max(MIN_BOTTOM_HEIGHT, Math.round(viewport * MAX_BOTTOM_HEIGHT_RATIO));
 };
 
-export function useResizableSidebar() {
+export function useResizablePanel() {
    const context = useContext(WorkspaceZoneAPanelsContext);
    if (!context) {
-      throw new Error('useResizableSidebar must be used within a WorkspaceZoneAPanelsProvider');
+      throw new Error('useResizablePanel must be used within a WorkspaceZoneAPanelsProvider');
    }
    return context;
 }
@@ -423,7 +423,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       []
    );
 
-   const toggleLeftSidebar = useCallback(() => {
+   const toggleLeftPanel = useCallback(() => {
       if (enableLeftRail) {
          // When left rail is enabled, toggle between 'open' and 'collapsed' states
          setWorkspaceZoneA((prev) => ({
@@ -460,7 +460,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       }
    }, [enableLeftRail, saveToLocalStorage, updateLeftRailState]);
 
-   const setLeftSidebarOpen = useCallback(
+   const setLeftPanelOpen = useCallback(
       (open: boolean) => {
          if (enableLeftRail) {
             // When left rail is enabled, set the leftState directly
@@ -494,7 +494,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       [enableLeftRail, saveToLocalStorage, updateLeftRailState]
    );
 
-   const setLeftSidebarWidth = useCallback(
+   const setLeftPanelWidth = useCallback(
       (width: number) => {
          const clampedWidth = Math.max(
             MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
@@ -520,7 +520,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       [saveToLocalStorage]
    );
 
-   const toggleRightSidebar = useCallback(() => {
+   const toggleRightPanel = useCallback(() => {
       setWorkspaceZoneA((prev) => {
          const newRightPanel = {
             ...prev.rightPanel,
@@ -768,7 +768,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          } catch {}
          // When entering fullscreen, close sidebars and hide workspace zone B, but remember their states via existing persistence
          if (fullscreen) {
-            setLeftSidebarOpen(false);
+            setLeftPanelOpen(false);
             setWorkspaceZoneAPanelCOpen(false);
             setWorkspaceZoneBVisible(false);
          } else {
@@ -777,7 +777,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          }
          // CSS classes now handle layout automatically
       },
-      [setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible]
+      [setLeftPanelOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible]
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
@@ -911,20 +911,20 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             }
          }
 
-         if (action === 'setLeftSidebarOpen') {
-            setLeftSidebarOpen(open);
+         if (action === 'setLeftPanelOpen') {
+            setLeftPanelOpen(open);
          }
 
          if (action === 'setWorkspaceZoneAPanelCOpen') {
             setWorkspaceZoneAPanelCOpen(open);
          }
 
-         if (action === 'toggleLeftSidebar') {
-            toggleLeftSidebar();
+         if (action === 'toggleLeftPanel') {
+            toggleLeftPanel();
          }
 
-         if (action === 'toggleRightSidebar') {
-            toggleRightSidebar();
+         if (action === 'toggleRightPanel') {
+            toggleRightPanel();
          }
 
          if (action === 'setMainFullscreen') {
@@ -956,10 +956,10 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setWorkspaceZoneBVisible,
       setCenterBottomSplit,
       setWorkspaceZoneBMode,
-      setLeftSidebarOpen,
+      setLeftPanelOpen,
       setWorkspaceZoneAPanelCOpen,
-      toggleLeftSidebar,
-      toggleRightSidebar,
+      toggleLeftPanel,
+      toggleRightPanel,
       setMainFullscreen,
       setWorkspaceZoneAVisible,
       toggleWorkspaceZoneA,
@@ -983,14 +983,14 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setUIState,
 
          // Backward compatibility - individual panel controls
-         leftSidebar: workspaceZoneA.leftPanel,
-         toggleLeftSidebar,
-         setLeftSidebarWidth,
-         setLeftSidebarOpen,
+         leftPanel: workspaceZoneA.leftPanel,
+         toggleLeftPanel,
+         setLeftPanelWidth,
+         setLeftPanelOpen,
          leftState: workspaceZoneA.leftState,
          setLeftState: updateLeftRailState,
-         rightSidebar: workspaceZoneA.rightPanel,
-         toggleRightSidebar,
+         rightPanel: workspaceZoneA.rightPanel,
+         toggleRightPanel,
          setWorkspaceZoneAPanelCWidth,
          setWorkspaceZoneAPanelCOpen,
 
@@ -1031,11 +1031,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setDragState,
          uiState,
          setUIState,
-         toggleLeftSidebar,
-         setLeftSidebarWidth,
-         setLeftSidebarOpen,
+         toggleLeftPanel,
+         setLeftPanelWidth,
+         setLeftPanelOpen,
          updateLeftRailState,
-         toggleRightSidebar,
+         toggleRightPanel,
          setWorkspaceZoneAPanelCWidth,
          setWorkspaceZoneAPanelCOpen,
          setWorkspaceZoneBMode,

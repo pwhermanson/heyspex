@@ -17,7 +17,7 @@ export interface UserState {
 }
 
 export interface LayoutState {
-   sidebarOpen: boolean;
+   panelOpen: boolean;
    workspaceZoneBOpen: boolean;
    theme: 'light' | 'dark' | 'system';
    viewMode: 'grid' | 'list';
@@ -50,7 +50,7 @@ export interface StoreActions {
    setError: (error: string | null) => void;
 
    // Layout actions
-   toggleSidebar: () => void;
+   togglePanel: () => void;
    toggleWorkspaceZoneB: () => void;
    setTheme: (theme: 'light' | 'dark' | 'system') => void;
    setViewMode: (mode: 'grid' | 'list') => void;

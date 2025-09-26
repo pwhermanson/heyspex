@@ -16,11 +16,11 @@ import { Input } from '@/src/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 import Link from 'next/link';
 import { RiBox3Fill, RiLinkedinFill } from '@remixicon/react';
-import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels-provider';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 
 export function HelpButton() {
-   const { leftState } = useResizableSidebar();
+   const { leftState } = useResizablePanel();
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const isCollapsed = enableLeftRail && leftState === 'collapsed';
 

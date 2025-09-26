@@ -37,18 +37,18 @@ Transition actual CSS properties on elements, not CSS custom properties:
 
 ```css
 /* ✅ CORRECT - Transition actual properties */
-.sidebar {
-   width: var(--sidebar-width);
+.panel {
+   width: var(--panel-width);
    transition:
       width 240ms ease,
       transform 240ms ease;
 }
 
-.sidebar-content {
+.panel-content {
    transition: opacity 160ms ease;
 }
 
-.sidebar--dragging {
+.panel--dragging {
    transition: none; /* Disable during drag for performance */
 }
 ```
@@ -59,21 +59,21 @@ Use CSS classes to control different states:
 
 ```css
 /* Base state */
-.sidebar {
+.panel {
    width: var(--left-width);
    transition: width 240ms ease;
 }
 
 /* State classes */
-.sidebar--collapsed {
+.panel--collapsed {
    width: var(--left-collapsed);
 }
 
-.sidebar--dragging {
+.panel--dragging {
    transition: none;
 }
 
-.sidebar--animating {
+.panel--animating {
    transition:
       width 240ms ease,
       transform 240ms ease;
@@ -85,20 +85,20 @@ Use CSS classes to control different states:
 Handle complex state changes in JavaScript:
 
 ```typescript
-// Example: Sidebar width management
-const updateSidebarWidth = (width: number) => {
-   const sidebar = document.querySelector('.sidebar');
-   if (sidebar) {
-      sidebar.style.setProperty('--left-width', `${width}px`);
+// Example: Panel width management
+const updatePanelWidth = (width: number) => {
+   const panel = document.querySelector('.panel');
+   if (panel) {
+      panel.style.setProperty('--left-width', `${width}px`);
       // CSS handles the transition automatically
    }
 };
 
 // Example: Drag state management
 const setDraggingState = (isDragging: boolean) => {
-   const sidebar = document.querySelector('.sidebar');
-   if (sidebar) {
-      sidebar.classList.toggle('sidebar--dragging', isDragging);
+   const panel = document.querySelector('.panel');
+   if (panel) {
+      panel.classList.toggle('panel--dragging', isDragging);
    }
 };
 ```
@@ -110,7 +110,7 @@ For advanced animations, use Framer Motion (already installed):
 ```typescript
 import { motion } from 'motion/react';
 
-const Sidebar = ({ isCollapsed }: { isCollapsed: boolean }) => (
+const Panel = ({ isCollapsed }: { isCollapsed: boolean }) => (
   <motion.div
     animate={{
       width: isCollapsed ? 64 : 280,
@@ -121,7 +121,7 @@ const Sidebar = ({ isCollapsed }: { isCollapsed: boolean }) => (
       ease: "easeOut",
       type: "tween"
     }}
-    className="sidebar"
+    className="panel"
   >
     {/* content */}
   </motion.div>
@@ -135,18 +135,18 @@ Keep CSS custom properties for values, not transitions:
 ```css
 :root {
    /* ✅ Good - Values only */
-   --sidebar-width: 280px;
-   --sidebar-width-collapsed: 64px;
+   --panel-width: 280px;
+   --panel-width-collapsed: 64px;
    --transition-duration: 240ms;
    --transition-easing: cubic-bezier(0.32, 0.72, 0, 1);
 
    /* ❌ Bad - Don't transition CSS variables */
-   /* transition: --sidebar-width 240ms ease; */
+   /* transition: --panel-width 240ms ease; */
 }
 
-.sidebar {
+.panel {
    /* ✅ Good - Use variables for values, transition properties */
-   width: var(--sidebar-width);
+   width: var(--panel-width);
    transition: width var(--transition-duration) var(--transition-easing);
 }
 ```
@@ -218,7 +218,7 @@ transition\s*:\s*--[a-zA-Z-]+
 ### Working Transitions
 
 - ✅ Element-level transitions in `globals.css`
-- ✅ Sidebar drag handle hover effects
+- ✅ Panel drag handle hover effects
 - ✅ Basic CSS animations in `tailwind.config.ts`
 
 ### Known Problematic Patterns

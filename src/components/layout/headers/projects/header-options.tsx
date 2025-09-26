@@ -3,10 +3,10 @@
 import { Button } from '@/src/components/ui/button';
 import { ListFilter, SlidersHorizontal } from 'lucide-react';
 import { Maximize2, Minimize2 } from 'lucide-react';
-import { useResizableSidebar } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
+import { useResizablePanel } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-provider';
 
 export default function HeaderOptions() {
-   const { isMainFullscreen, setMainFullscreen } = useResizableSidebar();
+   const { isMainFullscreen, setMainFullscreen } = useResizablePanel();
    return (
       <div className="w-full flex justify-between items-center border-b py-1.5 px-6 h-10">
          <Button size="xs" variant="ghost">

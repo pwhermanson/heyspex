@@ -17,7 +17,7 @@ import {
    DropdownMenuSubTrigger,
    DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/src/components/ui/sidebar';
+import { PanelMenu, PanelMenuButton, PanelMenuItem } from '@/src/components/ui/sidebar';
 import { Button } from '@/src/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -26,19 +26,19 @@ import { useCreateIssueStore } from '@/src/state/store/create-issue-store';
 export function OrgSwitcher() {
    const { openModal } = useCreateIssueStore();
    return (
-      <SidebarMenu>
-         <SidebarMenuItem>
+      <PanelMenu>
+         <PanelMenuItem>
             <DropdownMenu>
                <div className="w-full flex gap-1 items-center pt-2">
                   <DropdownMenuTrigger asChild>
-                     <SidebarMenuButton
+                     <PanelMenuButton
                         size="lg"
                         className="h-8 p-1 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         tooltip="Organization menu"
                      >
                         <MoreHorizontal className="h-4 w-4" />
                         <span className="sr-only">Organization menu</span>
-                     </SidebarMenuButton>
+                     </PanelMenuButton>
                   </DropdownMenuTrigger>
 
                   <Button
@@ -95,7 +95,7 @@ export function OrgSwitcher() {
                   </DropdownMenuItem>
                </DropdownMenuContent>
             </DropdownMenu>
-         </SidebarMenuItem>
-      </SidebarMenu>
+         </PanelMenuItem>
+      </PanelMenu>
    );
 }

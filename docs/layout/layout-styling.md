@@ -15,8 +15,8 @@ Both classes are intended to provide a consistent look-and-feel and can be theme
 
 - Styles: `src/styles/globals.css` (`@layer components`)
 - Panel B screen header: `src/components/layout/headers/issues/header-options.tsx`
-- Panel A header: `src/components/layout/sidebar/app-sidebar.tsx`
-- Panel C header: `src/components/layout/sidebar/right-sidebar.tsx`
+- Panel A header: `src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a.tsx`
+- Panel C header: `src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c.tsx`
 
 ### Classes
 
@@ -32,7 +32,7 @@ Both classes are intended to provide a consistent look-and-feel and can be theme
       - Dark mode: stronger shadow and muted hover bg
 
 - `panel-control-bar`
-   - Purpose: Panel-wide header bar (e.g., left and right sidebars).
+   - Purpose: Panel-wide header bar (e.g., workspace zone A panels).
    - Styling: currently composed from Tailwind utility classes directly on elements for consistency with `screen-control-bar`:
       - `w-full flex justify-between items-center border-b py-1.5 px-6 h-10`
    - Future: can be extracted to CSS like `screen-control-bar` if we need special theming.
@@ -58,7 +58,7 @@ Screen control bar (Panel B):
 
 Panel control bar (Panel A):
 
-```startLine:endLine:src/components/layout/sidebar/app-sidebar.tsx
+```startLine:endLine:src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a.tsx
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10">
             <div className="flex-1" />
             {/* controls */}
@@ -67,9 +67,9 @@ Panel control bar (Panel A):
 
 Panel control bar (Panel C):
 
-```startLine:endLine:src/components/layout/sidebar/right-sidebar.tsx
+```startLine:endLine:src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-c.tsx
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10">
-            <h2 className="text-lg font-semibold">Right Sidebar</h2>
+            <h2 className="text-lg font-semibold">Workspace Zone A Panel C</h2>
             {/* controls */}
          </div>
 ```

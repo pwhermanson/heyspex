@@ -144,14 +144,14 @@ export function createDefaultShortcuts(): Omit<KeyboardShortcut, 'id'>[] {
       {
          action: 'toggle-section',
          keys: ['ctrl', 'shift', 'a'],
-         description: 'Toggle left sidebar (Section A)',
+         description: 'Toggle left panel (Section A)',
          section: 'A',
          isGlobal: true,
       },
       {
          action: 'toggle-section',
          keys: ['ctrl', 'shift', 'c'],
-         description: 'Toggle right sidebar (Section C)',
+         description: 'Toggle right panel (Section C)',
          section: 'C',
          isGlobal: true,
       },

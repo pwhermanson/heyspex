@@ -24,15 +24,15 @@ export interface LayoutSectionsState {
 
 // Default configurations
 const DEFAULT_SECTION_WIDTHS: Record<LayoutSection, number> = {
-   A: 244, // Left sidebar
+   A: 244, // Left panel
    B: 0, // Main content (flexible)
-   C: 320, // Right sidebar
+   C: 320, // Right panel
 };
 
 const DEFAULT_SECTION_VISIBILITY: Record<LayoutSection, boolean> = {
-   A: true, // Left sidebar visible by default
+   A: true, // Left panel visible by default
    B: true, // Main content always visible
-   C: false, // Right sidebar hidden by default
+   C: false, // Right panel hidden by default
 };
 
 // Helper function to generate unique IDs

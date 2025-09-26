@@ -28,7 +28,7 @@ The system organizes z-index values into logical layers with clear separation:
 
 ### Content Layers (10-19)
 
-- **10**: Main content, panels, sidebar content, sticky headers
+- **10**: Main content, panels, panel content, sticky headers
 
 ### Control Layers (20-29)
 

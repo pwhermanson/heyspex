@@ -10,11 +10,11 @@ import {
    DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
 import {
-   SidebarGroup,
-   SidebarGroupLabel,
-   SidebarMenu,
-   SidebarMenuButton,
-   SidebarMenuItem,
+   PanelGroup,
+   PanelGroupLabel,
+   PanelMenu,
+   PanelMenuButton,
+   PanelMenuItem,
 } from '@/src/components/ui/sidebar';
 import Link from 'next/link';
 import { workspaceItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
@@ -22,28 +22,28 @@ import { RiPresentationLine } from '@remixicon/react';
 
 export function NavWorkspace() {
    return (
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-         <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-         <SidebarMenu>
+      <PanelGroup className="group-data-[collapsible=icon]:hidden">
+         <PanelGroupLabel>Workspace</PanelGroupLabel>
+         <PanelMenu>
             {workspaceItems.map((item) => (
-               <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild tooltip={item.name}>
+               <PanelMenuItem key={item.name}>
+                  <PanelMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.name}</span>
                      </Link>
-                  </SidebarMenuButton>
-               </SidebarMenuItem>
+                  </PanelMenuButton>
+               </PanelMenuItem>
             ))}
-            <SidebarMenuItem>
+            <PanelMenuItem>
                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                     <SidebarMenuButton asChild tooltip="More options">
+                     <PanelMenuButton asChild tooltip="More options">
                         <span>
                            <MoreHorizontal />
                            <span>More</span>
                         </span>
-                     </SidebarMenuButton>
+                     </PanelMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-48 rounded-lg" side="bottom" align="start">
                      <DropdownMenuItem>
@@ -57,12 +57,12 @@ export function NavWorkspace() {
                      <DropdownMenuSeparator />
                      <DropdownMenuItem>
                         <LayoutList className="text-muted-foreground" />
-                        <span>Customize sidebar</span>
+                        <span>Customize panel</span>
                      </DropdownMenuItem>
                   </DropdownMenuContent>
                </DropdownMenu>
-            </SidebarMenuItem>
-         </SidebarMenu>
-      </SidebarGroup>
+            </PanelMenuItem>
+         </PanelMenu>
+      </PanelGroup>
    );
 }

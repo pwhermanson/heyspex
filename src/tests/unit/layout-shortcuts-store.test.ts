@@ -26,8 +26,8 @@ describe('useLayoutShortcutsStore', () => {
 
          // Check that default shortcuts are present
          const shortcutDescriptions = result.current.shortcuts.map((s) => s.description);
-         expect(shortcutDescriptions).toContain('Toggle left sidebar');
-         expect(shortcutDescriptions).toContain('Toggle right sidebar');
+         expect(shortcutDescriptions).toContain('Toggle left panel');
+         expect(shortcutDescriptions).toContain('Toggle right panel');
          expect(shortcutDescriptions).toContain('Open settings');
       });
 
@@ -518,11 +518,11 @@ describe('useLayoutShortcutsStore', () => {
       it('should support adding toggle-section shortcuts', () => {
          const { result } = renderHook(() => useLayoutShortcutsStore());
 
-         // Add a left sidebar shortcut
+         // Add a left panel shortcut
          const leftShortcut = {
             action: 'toggle-section' as const,
             keys: ['ctrl', 'shift', 'l'],
-            description: 'Toggle left sidebar',
+            description: 'Toggle left panel',
             isGlobal: true,
             section: 'A' as const,
          };
@@ -536,11 +536,11 @@ describe('useLayoutShortcutsStore', () => {
          expect(createdLeftShortcut!.section).toBe('A');
          expect(createdLeftShortcut!.description).toContain('left');
 
-         // Add a right sidebar shortcut
+         // Add a right panel shortcut
          const rightShortcut = {
             action: 'toggle-section' as const,
             keys: ['ctrl', 'shift', 'r'],
-            description: 'Toggle right sidebar',
+            description: 'Toggle right panel',
             isGlobal: true,
             section: 'C' as const,
          };

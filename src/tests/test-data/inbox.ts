@@ -159,9 +159,8 @@ export const inboxItems: InboxItem[] = [
    {
       id: '7',
       identifier: 'LNUI-503',
-      title: 'Refactor Sidebar for better accessibility',
-      description:
-         'Refactor the sidebar component to improve accessibility and keyboard navigation',
+      title: 'Refactor Panel for better accessibility',
+      description: 'Refactor the panel component to improve accessibility and keyboard navigation',
       status: status[3],
       assignee: users[2],
       priority: priorities[0],

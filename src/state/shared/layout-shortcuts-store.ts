@@ -41,14 +41,14 @@ function initializeDefaultShortcuts() {
       {
          action: 'toggle-section' as const,
          keys: ['ctrl', 'shift', 'l'],
-         description: 'Toggle left sidebar',
+         description: 'Toggle left panel',
          isGlobal: true,
          section: 'A' as LayoutSection,
       },
       {
          action: 'toggle-section' as const,
          keys: ['ctrl', 'shift', 'r'],
-         description: 'Toggle right sidebar',
+         description: 'Toggle right panel',
          isGlobal: true,
          section: 'C' as LayoutSection,
       },

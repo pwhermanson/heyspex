@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/src/components/ui/button';
 import { PanelLeft, PanelRight, PanelLeftClose, PanelRightClose } from 'lucide-react';
-import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels-provider';
 import { cn } from '@/src/lib/lib/utils';
 
 interface WorkspaceZoneAPanelsToggleButtonProps {
@@ -21,28 +21,27 @@ export function WorkspaceZoneAPanelsToggleButton({
    className,
    showLabel = false,
 }: WorkspaceZoneAPanelsToggleButtonProps) {
-   const { leftSidebar, rightSidebar, toggleLeftSidebar, toggleRightSidebar } =
-      useResizableSidebar();
+   const { leftPanel, rightPanel, toggleLeftPanel, toggleRightPanel } = useResizablePanel();
 
-   const sidebarState = side === 'left' ? leftSidebar : rightSidebar;
-   const toggle = side === 'left' ? toggleLeftSidebar : toggleRightSidebar;
+   const panelState = side === 'left' ? leftPanel : rightPanel;
+   const toggle = side === 'left' ? toggleLeftPanel : toggleRightPanel;
 
    // Determine which icon to show based on side and state
    const getIcon = () => {
       if (side === 'left') {
-         return sidebarState.isOpen ? PanelLeftClose : PanelLeft;
+         return panelState.isOpen ? PanelLeftClose : PanelLeft;
       } else {
-         return sidebarState.isOpen ? PanelRightClose : PanelRight;
+         return panelState.isOpen ? PanelRightClose : PanelRight;
       }
    };
 
    const Icon = getIcon();
    const label =
       side === 'left'
-         ? sidebarState.isOpen
+         ? panelState.isOpen
             ? 'Hide Workspace Zone A Panel A'
             : 'Show Workspace Zone A Panel A'
-         : sidebarState.isOpen
+         : panelState.isOpen
            ? 'Hide Workspace Zone A Panel C'
            : 'Show Workspace Zone A Panel C';
 
@@ -80,7 +79,7 @@ export function WorkspaceZoneAPanelsToggleButton({
          <Icon className="h-4 w-4" />
          {showLabel && (
             <span className="ml-2">
-               {sidebarState.isOpen ? 'Hide' : 'Show'} {side} sidebar
+               {panelState.isOpen ? 'Hide' : 'Show'} {side} panel
             </span>
          )}
       </Button>

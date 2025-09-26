@@ -124,7 +124,7 @@ export const issues: Issue[] = [
    {
       id: '7',
       identifier: 'LNUI-503',
-      title: 'Refactor Sidebar for better accessibility',
+      title: 'Refactor Panel for better accessibility',
       description: '',
       status: status[3],
       priority: priorities[1],

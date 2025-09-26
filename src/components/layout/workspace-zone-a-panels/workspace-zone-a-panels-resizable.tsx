@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels-provider';
 import { WorkspaceZoneAPanelATrigger } from './workspace-zone-a-panel-a-trigger';
 import { WorkspaceZoneAPanelCTrigger } from './workspace-zone-a-panel-c-trigger';
 import {
@@ -28,20 +28,16 @@ interface WorkspaceZoneAPanelsResizableProps {
    className?: string;
 }
 
-export function ResizableSidebar({
-   side,
-   children,
-   className,
-}: WorkspaceZoneAPanelsResizableProps) {
-   const { leftSidebar, rightSidebar, leftState } = useResizableSidebar();
+export function ResizablePanel({ side, children, className }: WorkspaceZoneAPanelsResizableProps) {
+   const { leftPanel, rightPanel, leftState } = useResizablePanel();
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const isLeft = side === 'left';
    const isExpanded = isLeft
       ? enableLeftRail
          ? leftState === 'open'
-         : leftSidebar.isOpen
-      : rightSidebar.isOpen;
+         : leftPanel.isOpen
+      : rightPanel.isOpen;
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
 

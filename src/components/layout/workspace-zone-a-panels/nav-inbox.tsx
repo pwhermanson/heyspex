@@ -1,29 +1,24 @@
 'use client';
 
-import {
-   SidebarGroup,
-   SidebarMenu,
-   SidebarMenuButton,
-   SidebarMenuItem,
-} from '@/src/components/ui/sidebar';
+import { PanelGroup, PanelMenu, PanelMenuButton, PanelMenuItem } from '@/src/components/ui/sidebar';
 import Link from 'next/link';
 import { inboxItems } from '@/src/tests/test-data/workspace-zone-a-panels-nav';
 
 export function NavInbox() {
    return (
-      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-         <SidebarMenu>
+      <PanelGroup className="group-data-[collapsible=icon]:hidden">
+         <PanelMenu>
             {inboxItems.map((item) => (
-               <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild tooltip={item.name}>
+               <PanelMenuItem key={item.name}>
+                  <PanelMenuButton asChild tooltip={item.name}>
                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.name}</span>
                      </Link>
-                  </SidebarMenuButton>
-               </SidebarMenuItem>
+                  </PanelMenuButton>
+               </PanelMenuItem>
             ))}
-         </SidebarMenu>
-      </SidebarGroup>
+         </PanelMenu>
+      </PanelGroup>
    );
 }

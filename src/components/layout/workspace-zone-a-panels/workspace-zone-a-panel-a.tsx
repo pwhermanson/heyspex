@@ -11,12 +11,12 @@ import { NavAccount } from '@/src/components/layout/workspace-zone-a-panels/nav-
 import { NavFeatures } from '@/src/components/layout/workspace-zone-a-panels/nav-features';
 import { NavTeamsSettings } from '@/src/components/layout/workspace-zone-a-panels/nav-teams-settings';
 import { Button } from '@/src/components/ui/button';
-import { ResizableSidebar } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-resizable';
+import { ResizablePanel } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-resizable';
 import { WorkspaceZoneAPanelATrigger } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a-trigger';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useResizableSidebar } from './workspace-zone-a-panels-provider';
+import { useResizablePanel } from './workspace-zone-a-panels-provider';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 
@@ -24,14 +24,14 @@ export function WorkspaceZoneAPanelA() {
    const [open, setOpen] = React.useState(true);
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
-   const { leftState } = useResizableSidebar();
+   const { leftState } = useResizablePanel();
    const enableLeftRail = useFeatureFlag('enableLeftRail');
 
    // When left rail is enabled, show text only when state is 'open'
    const showText = !enableLeftRail || leftState === 'open';
 
    return (
-      <ResizableSidebar side="left">
+      <ResizablePanel side="left">
          {/* Workspace Zone A Panel A Header with Toggle Icon */}
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted">
             <div className="flex-1" />
@@ -138,6 +138,6 @@ export function WorkspaceZoneAPanelA() {
                </div>
             </div>
          </div>
-      </ResizableSidebar>
+      </ResizablePanel>
    );
 }

@@ -26,15 +26,15 @@ import {
    DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
 import {
-   SidebarGroup,
-   SidebarGroupLabel,
-   SidebarMenu,
-   SidebarMenuAction,
-   SidebarMenuButton,
-   SidebarMenuItem,
-   SidebarMenuSub,
-   SidebarMenuSubButton,
-   SidebarMenuSubItem,
+   PanelGroup,
+   PanelGroupLabel,
+   PanelMenu,
+   PanelMenuAction,
+   PanelMenuButton,
+   PanelMenuItem,
+   PanelMenuSub,
+   PanelMenuSubButton,
+   PanelMenuSubItem,
 } from '@/src/components/ui/sidebar';
 import { teams } from '@/src/tests/test-data/teams';
 import { RiDonutChartFill } from '@remixicon/react';
@@ -42,9 +42,9 @@ import { RiDonutChartFill } from '@remixicon/react';
 export function NavTeams() {
    const joinedTeams = teams.filter((t) => t.joined);
    return (
-      <SidebarGroup>
-         <SidebarGroupLabel>Your teams</SidebarGroupLabel>
-         <SidebarMenu>
+      <PanelGroup>
+         <PanelGroupLabel>Your teams</PanelGroupLabel>
+         <PanelMenu>
             {joinedTeams.map((item, index) => (
                <Collapsible
                   key={item.name}
@@ -52,9 +52,9 @@ export function NavTeams() {
                   defaultOpen={index === 0}
                   className="group/collapsible"
                >
-                  <SidebarMenuItem>
+                  <PanelMenuItem>
                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.name}>
+                        <PanelMenuButton tooltip={item.name}>
                            <div className="inline-flex size-6 bg-muted/50 items-center justify-center rounded shrink-0">
                               <div className="text-sm">{item.icon}</div>
                            </div>
@@ -64,12 +64,12 @@ export function NavTeams() {
                            </span>
                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                 <SidebarMenuAction asChild showOnHover>
+                                 <PanelMenuAction asChild showOnHover>
                                     <div>
                                        <MoreHorizontal />
                                        <span className="sr-only">More</span>
                                     </div>
-                                 </SidebarMenuAction>
+                                 </PanelMenuAction>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent
                                  className="w-48 rounded-lg"
@@ -99,48 +99,48 @@ export function NavTeams() {
                                  </DropdownMenuItem>
                               </DropdownMenuContent>
                            </DropdownMenu>
-                        </SidebarMenuButton>
+                        </PanelMenuButton>
                      </CollapsibleTrigger>
                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                           <SidebarMenuSubItem>
-                              <SidebarMenuSubButton asChild>
+                        <PanelMenuSub>
+                           <PanelMenuSubItem>
+                              <PanelMenuSubButton asChild>
                                  <Link href="/demo-user/team/CORE/all">
                                     <CopyMinus size={14} />
                                     <span>Issues</span>
                                  </Link>
-                              </SidebarMenuSubButton>
-                           </SidebarMenuSubItem>
-                           <SidebarMenuSubItem>
-                              <SidebarMenuSubButton asChild>
+                              </PanelMenuSubButton>
+                           </PanelMenuSubItem>
+                           <PanelMenuSubItem>
+                              <PanelMenuSubButton asChild>
                                  <Link href="/demo-user/team/CORE/all">
                                     <RiDonutChartFill size={14} />
                                     <span>Cycles</span>
                                  </Link>
-                              </SidebarMenuSubButton>
-                           </SidebarMenuSubItem>
-                           <SidebarMenuSubItem>
-                              <SidebarMenuSubButton asChild>
+                              </PanelMenuSubButton>
+                           </PanelMenuSubItem>
+                           <PanelMenuSubItem>
+                              <PanelMenuSubButton asChild>
                                  <Link href="/demo-user/projects">
                                     <Box size={14} />
                                     <span>Projects</span>
                                  </Link>
-                              </SidebarMenuSubButton>
-                           </SidebarMenuSubItem>
-                           <SidebarMenuSubItem>
-                              <SidebarMenuSubButton asChild>
+                              </PanelMenuSubButton>
+                           </PanelMenuSubItem>
+                           <PanelMenuSubItem>
+                              <PanelMenuSubButton asChild>
                                  <Link href="#">
                                     <Layers size={14} />
                                     <span>Views</span>
                                  </Link>
-                              </SidebarMenuSubButton>
-                           </SidebarMenuSubItem>
-                        </SidebarMenuSub>
+                              </PanelMenuSubButton>
+                           </PanelMenuSubItem>
+                        </PanelMenuSub>
                      </CollapsibleContent>
-                  </SidebarMenuItem>
+                  </PanelMenuItem>
                </Collapsible>
             ))}
-         </SidebarMenu>
-      </SidebarGroup>
+         </PanelMenu>
+      </PanelGroup>
    );
 }
