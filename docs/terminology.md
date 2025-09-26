@@ -17,6 +17,12 @@ This document defines the standardized terminology and naming conventions used t
 - **Nickname**: "App Shell"
 - **Purpose**: The outermost container that holds everything. This is where the empty state logo and "get started" text will appear when all panels are closed.
 
+#### 1.1 App Shell Branded
+
+- **Technical**: `app-shell-branded`
+- **Nickname**: "App Shell Branded"
+- **Purpose**: The interactive, animated logo display component that serves as the main landing page element. It creates dynamic visual effects based on mouse movement and hover states, featuring multi-layer animations, distance-based calculations, and smooth state transitions. This component appears when all panels are closed and provides an engaging visual experience with real-time mouse tracking, shadow effects, radial glows, animated color transitions, and grid background patterns.
+
 ### 2. Global Control Bar (Navigation Bar)
 
 - **Technical**: `control-bar` or `navigation-bar`

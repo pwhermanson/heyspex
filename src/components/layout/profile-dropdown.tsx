@@ -23,6 +23,8 @@ import { Moon, Sun } from 'lucide-react';
 import { useUserStore } from '@/src/state/store/user-store';
 import { getUserInitials } from '@/src/lib/lib/user-utils';
 import { users } from '@/src/tests/test-data/users';
+import { WorkspaceSwitcher } from '@/src/components/workspace/workspace-switcher';
+import { CreateWorkspaceDialog } from '@/src/components/workspace/create-workspace-dialog';
 
 export function ProfileDropdown() {
    const { theme, resolvedTheme, setTheme } = useTheme();
@@ -106,7 +108,7 @@ export function ProfileDropdown() {
             <DropdownMenuSub>
                <DropdownMenuSubTrigger>Switch Workspace</DropdownMenuSubTrigger>
                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
+                  <DropdownMenuSubContent className="w-64">
                      <DropdownMenuLabel>
                         {currentUser?.email || 'demo@example.com'}
                      </DropdownMenuLabel>
@@ -118,7 +120,15 @@ export function ProfileDropdown() {
                         {currentUser?.name.toLowerCase().replace(/\s+/g, '-') || 'demo-user'}
                      </DropdownMenuItem>
                      <DropdownMenuSeparator />
-                     <DropdownMenuItem>Create or join workspace</DropdownMenuItem>
+                     <div className="px-2 py-1">
+                        <WorkspaceSwitcher />
+                     </div>
+                     <DropdownMenuSeparator />
+                     <CreateWorkspaceDialog>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                           Create or join workspace
+                        </DropdownMenuItem>
+                     </CreateWorkspaceDialog>
                      <DropdownMenuItem>Add an account</DropdownMenuItem>
                   </DropdownMenuSubContent>
                </DropdownMenuPortal>

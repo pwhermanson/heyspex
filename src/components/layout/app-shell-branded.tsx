@@ -1,10 +1,34 @@
 'use client';
 
+/**
+ * App Shell Branded Component
+ *
+ * A sophisticated interactive logo display that serves as the main landing page element.
+ * Creates dynamic visual effects based on mouse movement and hover states, featuring:
+ *
+ * • Real-time mouse tracking with immediate visual response
+ * • Multi-layer visual effects (shadows, glows, grids)
+ * • Animated color transitions through predefined palette
+ * • Distance-based calculations for smooth state transitions
+ * • Performance-optimized calculations with memoization
+ * • Timeout management for idle detection and fade effects
+ *
+ * This component appears when all panels are closed and provides an engaging
+ * visual experience with interactive elements that respond to user input.
+ *
+ * For comprehensive documentation, implementation details, and refactoring guidelines,
+ * see: @/docs/components/app-shell-branded.md
+ *
+ * @component AppShellBranded
+ * @param {AppShellBrandedProps} props - Component props
+ * @returns {JSX.Element} Interactive logo display with visual effects
+ */
+
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 
-interface CenteredLogoProps {
+interface AppShellBrandedProps {
    className?: string;
 }
 
@@ -173,14 +197,15 @@ const STYLE_GENERATORS = {
       isFading: boolean,
       isMouseOver: boolean,
       isIdle: boolean,
-      shadowData: { x: number; y: number; blur: number; color: string }
+      shadowData: { x: number; y: number; blur: number; opacity: number },
+      swirlingColor: string
    ) => {
       if (isFading) {
-         return VISUAL_CONSTANTS.BRIGHTNESS_INVERT;
+         return 'brightness(0) invert(1)'; // Black to white
       } else if (isMouseOver && !isIdle) {
-         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${shadowData.color}) brightness(${VISUAL_CONSTANTS.BRIGHTNESS_NORMAL})`;
+         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${swirlingColor}) brightness(1)`;
       } else {
-         return `brightness(${VISUAL_CONSTANTS.BRIGHTNESS_DIM})`;
+         return 'brightness(0.7)';
       }
    },
 
@@ -191,7 +216,7 @@ const STYLE_GENERATORS = {
          : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
 } as const;
 
-export function CenteredLogo({ className }: CenteredLogoProps) {
+export function AppShellBranded({ className }: AppShellBrandedProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isMouseMoving, setIsMouseMoving] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
@@ -273,53 +298,57 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    // Calculate shadow offset, blur, and opacity based on logo's actual center (memoized)
    const getShadowOffset = useCallback(() => {
       const logoData = getLogoCenterAndDistance();
-      if (!logoData) return { x: 0, y: 0, blur: 0, color: 'rgba(0, 0, 0, 0)' };
+      if (!logoData) return { x: 0, y: 0, blur: 0, opacity: 1 };
 
       const { logoCenterX, logoCenterY, distance } = logoData;
 
-      // Calculate offset from logo center (inverted for realistic shadow direction)
-      const offsetX = -(mousePosition.x - logoCenterX) / VISUAL_CONSTANTS.SHADOW_OFFSET_DIVISOR;
-      const offsetY = -(mousePosition.y - logoCenterY) / VISUAL_CONSTANTS.SHADOW_OFFSET_DIVISOR;
+      // Shadow follows mouse position - offset from logo center
+      const offsetX = -(mousePosition.x - logoCenterX) / 20;
+      const offsetY = -(mousePosition.y - logoCenterY) / 20;
 
-      // Calculate blur based on distance (closer = sharper, farther = blurrier)
-      const maxDistance = VISUAL_CONSTANTS.MAX_SHADOW_DISTANCE; // Much larger radius for sharp shadow
-      const blur = Math.min(
-         Math.pow(distance / maxDistance, 2) * VISUAL_CONSTANTS.MAX_SHADOW_BLUR,
-         VISUAL_CONSTANTS.MAX_SHADOW_BLUR
-      ); // Quadratic curve, max 15px blur
+      // Blur increases with distance from logo
+      const maxDistance = 3000;
+      const blur = Math.min(Math.pow(distance / maxDistance, 2) * 15, 15);
 
-      // Calculate distance-based opacity (closer = darker, farther = lighter)
-      const opacityDistance = VISUAL_CONSTANTS.OPACITY_FADE_DISTANCE; // Start fading opacity at 400px
-      const distanceOpacity = Math.max(
-         1 - distance / opacityDistance,
-         VISUAL_CONSTANTS.MIN_OPACITY
-      ); // Min 10% opacity
+      // Opacity decreases with distance from logo
+      const opacityDistance = 400;
+      const opacity = Math.max(1 - distance / opacityDistance, 0.1);
 
-      // Calculate viewport edge opacity (fade to 0 as mouse approaches edges)
-      if (!containerRef.current)
-         return { x: offsetX, y: offsetY, blur, color: `rgba(0, 0, 0, ${distanceOpacity})` };
-
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const edgeFadeDistance = VISUAL_CONSTANTS.EDGE_FADE_DISTANCE; // Start fading at 100px from edge
-
-      const distanceToLeft = mousePosition.x;
-      const distanceToRight = containerRect.width - mousePosition.x;
-      const distanceToTop = mousePosition.y;
-      const distanceToBottom = containerRect.height - mousePosition.y;
-
-      const minDistanceToEdge = Math.min(
-         distanceToLeft,
-         distanceToRight,
-         distanceToTop,
-         distanceToBottom
-      );
-      const edgeOpacity = Math.min(minDistanceToEdge / edgeFadeDistance, 1);
-
-      // Combine both opacity factors
-      const opacity = Math.max(distanceOpacity * edgeOpacity, 0);
-
-      return { x: offsetX, y: offsetY, blur, color: `rgba(0, 0, 0, ${opacity})` };
+      return { x: offsetX, y: offsetY, blur, opacity };
    }, [getLogoCenterAndDistance, mousePosition.x, mousePosition.y]);
+
+   // Calculate swirling color based on time and position (memoized)
+   const getSwirlingColor = useCallback(() => {
+      const time = Date.now() / 1000;
+      const angle = (time * 0.3) % (Math.PI * 2);
+
+      // Animate through color palette over time
+      const swirlPhase = Math.sin(angle) * 0.5 + 0.5;
+
+      const colors = [
+         [59, 130, 246], // Blue
+         [34, 197, 94], // Green
+         [147, 51, 234], // Purple
+         [236, 72, 153], // Pink
+         [249, 115, 22], // Orange
+         [234, 179, 8], // Yellow
+      ];
+
+      // Smooth color transition between palette colors
+      const colorIndex = (swirlPhase * (colors.length - 1)) % colors.length;
+      const currentColorIndex = Math.floor(colorIndex);
+      const nextColorIndex = (currentColorIndex + 1) % colors.length;
+      const blendFactor = colorIndex - currentColorIndex;
+
+      const currentColor = colors[currentColorIndex];
+      const nextColor = colors[nextColorIndex];
+
+      const r = Math.round(currentColor[0] * (1 - blendFactor) + nextColor[0] * blendFactor);
+      const g = Math.round(currentColor[1] * (1 - blendFactor) + nextColor[1] * blendFactor);
+      const b = Math.round(currentColor[2] * (1 - blendFactor) + nextColor[2] * blendFactor);
+
+      return `rgba(${r}, ${g}, ${b}, ${getShadowOffset().opacity})`;
+   }, [getShadowOffset]);
 
    // Calculate glow intensity based on distance from logo (memoized)
    const getGlowIntensity = useCallback(() => {
@@ -370,7 +399,14 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
    // Memoized filter and transition values for logo
    const logoStyle = useMemo(() => {
       const shadowData = getShadowOffset();
-      const filterValue = STYLE_GENERATORS.getLogoFilter(isFading, isMouseOver, isIdle, shadowData);
+      const swirlingColor = getSwirlingColor();
+      const filterValue = STYLE_GENERATORS.getLogoFilter(
+         isFading,
+         isMouseOver,
+         isIdle,
+         shadowData,
+         swirlingColor
+      );
       const transitionValue = STYLE_GENERATORS.getTransitionStyle(isFading);
 
       return {
@@ -379,7 +415,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
          transition: transitionValue,
          opacity: 1, // Always visible, just changes color
       } as React.CSSProperties;
-   }, [isMouseOver, isIdle, isFading, getShadowOffset]);
+   }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
 
    const handleMouseLeave = useCallback(() => {
       // Clear existing timeouts
@@ -439,16 +475,19 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
             className="mb-6 group cursor-pointer relative"
             style={{ zIndex: VISUAL_CONSTANTS.LOGO_Z_INDEX }}
          >
-            {/* Solid black background logo */}
+            {/* Black shadow base - creates the shadow effect */}
             <div
                className="h-auto w-auto max-w-[300px] absolute top-0 left-0 z-0"
-               style={COMPONENT_STYLES.solidBlackLogo}
+               style={{
+                  filter: 'brightness(0)',
+                  WebkitFilter: 'brightness(0)',
+               }}
             >
                <Image
                   src="/heyspex-logo-stacked.png"
                   alt=""
-                  width={VISUAL_CONSTANTS.LOGO_WIDTH}
-                  height={VISUAL_CONSTANTS.LOGO_HEIGHT}
+                  width={300}
+                  height={273}
                   className="h-auto w-auto max-w-[300px]"
                   priority
                />
@@ -463,6 +502,7 @@ export function CenteredLogo({ className }: CenteredLogoProps) {
                }}
             />
 
+            {/* Main logo with animated shadow */}
             <div
                ref={logoRef}
                className="h-auto w-auto max-w-[300px] relative"

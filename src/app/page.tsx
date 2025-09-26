@@ -1,22 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import MainLayout from '@/src/components/layout/main-layout';
+import { AppShellBranded } from '@/src/components/layout/app-shell-branded';
 
 export default function Home() {
-   const router = useRouter();
-
-   useEffect(() => {
-      // Use replace instead of push to avoid back button issues
-      router.replace('demo-user/team/CORE/all');
-   }, [router]);
-
    return (
-      <div className="flex items-center justify-center min-h-screen">
-         <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Redirecting...</p>
-         </div>
-      </div>
+      <MainLayout>
+         <AppShellBranded />
+      </MainLayout>
    );
 }

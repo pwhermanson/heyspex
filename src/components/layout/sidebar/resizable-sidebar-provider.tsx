@@ -351,19 +351,23 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             }
          }
 
-         // Load Workspace Zone A visibility state - only restore if user has previously interacted
-         const savedWorkspaceZoneAVisible = localStorage.getItem('ui:workspaceZoneAVisible');
-         if (savedWorkspaceZoneAVisible !== null) {
-            setIsWorkspaceZoneAVisible(savedWorkspaceZoneAVisible === 'true');
-         }
-         // If no saved state, keep the default empty state (false)
+         // Load Workspace Zone A visibility state - always start with empty state
+         // Don't restore from localStorage to ensure app always starts with empty state
+         // Users must explicitly open workspace via command palette or keyboard shortcut
+         // const savedWorkspaceZoneAVisible = localStorage.getItem('ui:workspaceZoneAVisible');
+         // if (savedWorkspaceZoneAVisible !== null) {
+         //    setIsWorkspaceZoneAVisible(savedWorkspaceZoneAVisible === 'true');
+         // }
+         // Keep the default empty state (false) - workspace only opens on user action
 
-         // Load Top Bar visibility state - only restore if user has previously interacted
-         const savedTopBarVisible = localStorage.getItem('ui:topBarVisible');
-         if (savedTopBarVisible !== null) {
-            setIsTopBarVisible(savedTopBarVisible === 'true');
-         }
-         // If no saved state, keep the default empty state (false)
+         // Load Top Bar visibility state - always start hidden for empty state
+         // Don't restore from localStorage to ensure app always starts with empty state
+         // Top bar will show when workspace is opened
+         // const savedTopBarVisible = localStorage.getItem('ui:topBarVisible');
+         // if (savedTopBarVisible !== null) {
+         //    setIsTopBarVisible(savedTopBarVisible === 'true');
+         // }
+         // Keep the default empty state (false) - top bar only shows when workspace is opened
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }

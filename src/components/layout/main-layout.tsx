@@ -24,9 +24,12 @@ import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
-import { CenteredLogo } from '@/src/components/layout/centered-logo';
+import { AppShellBranded } from '@/src/components/layout/app-shell-branded';
+import { useWorkspaceInitialization } from '@/src/lib/hooks/use-workspace-initialization';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
+// Import workspace commands to register them
+import '@/src/lib/lib/command-palette/commands/workspace-commands';
 
 interface MainLayoutProps {
    children: React.ReactNode;
@@ -72,6 +75,9 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       isWorkspaceZoneAVisible,
       isTopBarVisible,
    } = useResizableSidebar();
+
+   // Initialize workspace data
+   useWorkspaceInitialization();
 
    // Initialize command palette keyboard shortcuts
    useCommandPaletteShortcuts();
@@ -243,7 +249,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                </div>
             ) : (
                /* Centered Logo when Workspace Zone A is closed */
-               <CenteredLogo />
+               <AppShellBranded />
             )}
 
             {/* Drag handles positioned between sections */}
