@@ -29,8 +29,8 @@ export function WorkspaceZoneBContainer({
             style={{
                bottom: '0px',
                height: `${height}px`,
-               backgroundColor: 'var(--workspace-zone-b-bg)',
-               background: 'var(--workspace-zone-b-bg)',
+               backgroundColor: 'var(--workspace-zone-b-bg) !important',
+               background: 'var(--workspace-zone-b-bg) !important',
             }}
          >
             {children}
@@ -45,6 +45,10 @@ export function WorkspaceZoneBContainer({
             'relative overflow-hidden z-[50] px-2 workspace-zone-b workspace-zone-b-push',
             className
          )}
+         style={{
+            backgroundColor: 'var(--workspace-zone-b-bg) !important',
+            background: 'var(--workspace-zone-b-bg) !important',
+         }}
       >
          {children}
       </div>

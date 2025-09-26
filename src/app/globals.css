@@ -209,8 +209,8 @@
 
    /* Legacy support for existing fixed positioning class */
    .fixed.left-0.right-0.z-\[100\].workspace-zone-b {
-      background-color: hsl(var(--muted)) !important;
-      background: hsl(var(--muted)) !important;
+      background-color: hsl(var(--card)) !important;
+      background: hsl(var(--card)) !important;
       opacity: 1 !important;
       color: hsl(var(--foreground));
    }
