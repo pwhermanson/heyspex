@@ -10,7 +10,7 @@ import {
 
 // Types for layout sections as defined in the feature requirements
 export type LayoutSection = 'A' | 'B' | 'C'; // Left sidebar, main content, right sidebar
-export type LayoutArea = 'top-bar' | LayoutSection | 'bottom-bar';
+export type LayoutArea = 'top-bar' | LayoutSection | 'workspace-zone-b';
 
 // Screen types that can be loaded in sections
 export type ScreenType =
@@ -60,7 +60,12 @@ export interface LayoutView {
 // Keyboard shortcut configuration
 export interface KeyboardShortcut {
    id: string;
-   action: 'toggle-section' | 'switch-view' | 'toggle-bottom-bar' | 'open-settings' | 'custom';
+   action:
+      | 'toggle-section'
+      | 'switch-view'
+      | 'toggle-workspace-zone-b'
+      | 'open-settings'
+      | 'custom';
    keys: string[]; // e.g., ['ctrl', 'shift', 'l']
    description: string;
    isGlobal?: boolean; // Whether it works across the app

@@ -1,17 +1,17 @@
 import React from 'react';
 
-type BottomBarMode = 'push' | 'overlay';
+type WorkspaceZoneBMode = 'push' | 'overlay';
 
-export function BottomBarToggleButton({
+export function WorkspaceZoneBToggleButton({
    mode,
    onToggle,
    size = 36,
    className = '',
-   titlePush = 'Push mode: bottom bar docks and pushes content',
-   titleOverlay = 'Overlay mode: bottom bar floats over content',
+   titlePush = 'Push mode: workspace zone b docks and pushes content',
+   titleOverlay = 'Overlay mode: workspace zone b floats over content',
 }: {
-   mode: BottomBarMode;
-   onToggle: (next: BottomBarMode) => void;
+   mode: WorkspaceZoneBMode;
+   onToggle: (next: WorkspaceZoneBMode) => void;
    size?: number;
    className?: string;
    titlePush?: string;
@@ -78,7 +78,7 @@ function OverlayIcon(props: React.SVGProps<SVGSVGElement>) {
       >
          {/* larger content panel */}
          <rect x="6" y="4" width="12" height="10" rx="1.8" />
-         {/* floating bottom bar overlapping content */}
+         {/* floating workspace zone B overlapping content */}
          <rect x="9" y="14" width="6" height="4" rx="1.2" />
       </svg>
    );

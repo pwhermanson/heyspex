@@ -7,7 +7,12 @@ import type { LayoutSection } from './layout-views-store';
 // Keyboard shortcut configuration
 export interface KeyboardShortcut {
    id: string;
-   action: 'toggle-section' | 'switch-view' | 'toggle-bottom-bar' | 'open-settings' | 'custom';
+   action:
+      | 'toggle-section'
+      | 'switch-view'
+      | 'toggle-workspace-zone-b'
+      | 'open-settings'
+      | 'custom';
    keys: string[]; // e.g., ['ctrl', 'shift', 'l']
    description: string;
    isGlobal?: boolean; // Whether it works across the app

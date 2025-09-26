@@ -1,13 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { BottomBarModeToggle, type BottomBarMode } from './bottom-bar-mode-toggle';
+import { WorkspaceZoneBModeToggle, type WorkspaceZoneBMode } from './workspace-zone-b-mode-toggle';
 import { WorkspaceZoneBContent } from './workspace-zone-b-content';
 import { Button } from '@/src/components/ui/button';
 import { X, Minus, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/src/lib/lib/utils';
 import { useResizableSidebar } from '@/src/components/layout/sidebar/resizable-sidebar-provider';
-import { BottomDragHandle } from '@/src/components/layout/bottom-drag-handle';
+import { WorkspaceZoneBDragHandle } from '@/src/components/layout/workspace-zone-b-drag-handle';
 import {
    ResizablePanelGroup,
    ResizablePanel,
@@ -63,9 +63,9 @@ const Layout3SplitIcon = ({ className }: { className?: string }) => (
    </svg>
 );
 
-interface BottomBarProps {
-   mode: BottomBarMode;
-   onModeChange: (mode: BottomBarMode) => void;
+interface WorkspaceZoneBProps {
+   mode: WorkspaceZoneBMode;
+   onModeChange: (mode: WorkspaceZoneBMode) => void;
    height: number;
    isOverlay?: boolean;
    onClose?: () => void;
@@ -79,7 +79,7 @@ interface BottomBarProps {
    isWorkspaceZoneAHidden?: boolean;
 }
 
-export function BottomBar({
+export function WorkspaceZoneB({
    mode,
    onModeChange,
    height,
@@ -91,9 +91,9 @@ export function BottomBar({
    onDragStart,
    isDragging = false,
    isWorkspaceZoneAHidden = false,
-}: BottomBarProps) {
+}: WorkspaceZoneBProps) {
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
-   const { setBottomBarHeight } = useResizableSidebar();
+   const { setWorkspaceZoneBHeight } = useResizableSidebar();
 
    // When Workspace Zone A is hidden, force overlay mode
    const effectiveMode = isWorkspaceZoneAHidden ? 'overlay' : mode;
@@ -132,7 +132,7 @@ export function BottomBar({
       const target = isFull ? 40 : maxHeight;
       // Preserve the current mode when toggling full screen
       // Both push and overlay modes should maintain their mode when expanding/collapsing
-      setBottomBarHeight(target);
+      setWorkspaceZoneBHeight(target);
    };
 
    // Layout handlers for Section D
@@ -233,7 +233,7 @@ export function BottomBar({
 
                {/* Mode Toggle - hidden when Workspace Zone A is hidden */}
                {!isWorkspaceZoneAHidden && (
-                  <BottomBarModeToggle mode={mode} onChange={onModeChange} className="h-6" />
+                  <WorkspaceZoneBModeToggle mode={mode} onChange={onModeChange} className="h-6" />
                )}
 
                {/* Fullscreen / Collapse Toggle */}
@@ -276,8 +276,12 @@ export function BottomBar({
             </div>
          </div>
 
-         {/* Bottom Drag Handle - available in both overlay and push modes */}
-         <BottomDragHandle onMouseDown={onDragStart} isDragging={isDragging} mode={effectiveMode} />
+         {/* Workspace Zone B Drag Handle - available in both overlay and push modes */}
+         <WorkspaceZoneBDragHandle
+            onMouseDown={onDragStart}
+            isDragging={isDragging}
+            mode={effectiveMode}
+         />
 
          {/* Bottom Bar Content - only show if not collapsed */}
          {!isCollapsed && (

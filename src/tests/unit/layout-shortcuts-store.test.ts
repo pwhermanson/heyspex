@@ -50,7 +50,7 @@ describe('useLayoutShortcutsStore', () => {
          const validActions = [
             'toggle-section',
             'switch-view',
-            'toggle-bottom-bar',
+            'toggle-workspace-zone-b',
             'open-settings',
             'custom',
          ];

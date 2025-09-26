@@ -13,10 +13,10 @@ type SidebarState = {
 
 export type LeftSidebarState = 'open' | 'collapsed';
 
-type BottomBarMode = 'push' | 'overlay';
+type WorkspaceZoneBMode = 'push' | 'overlay';
 
-type BottomBarState = {
-   mode: BottomBarMode;
+type WorkspaceZoneBState = {
+   mode: WorkspaceZoneBMode;
    height: number;
    isVisible: boolean;
    // For overlay mode - vertical position from bottom
@@ -39,12 +39,12 @@ type EnhancedSidebarContext = {
    setRightSidebarOpen: (open: boolean) => void;
 
    // Bottom bar
-   bottomBar: BottomBarState;
-   setBottomBarMode: (mode: BottomBarMode) => void;
-   setBottomBarHeight: (height: number) => void;
-   setBottomBarVisible: (visible: boolean) => void;
-   setBottomBarOverlayPosition: (position: number) => void;
-   toggleBottomBar: () => void;
+   workspaceZoneB: WorkspaceZoneBState;
+   setWorkspaceZoneBMode: (mode: WorkspaceZoneBMode) => void;
+   setWorkspaceZoneBHeight: (height: number) => void;
+   setWorkspaceZoneBVisible: (visible: boolean) => void;
+   setWorkspaceZoneBOverlayPosition: (position: number) => void;
+   toggleWorkspaceZoneB: () => void;
 
    // Center-bottom split
    centerBottomSplit: number;
@@ -121,7 +121,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       preferredWidth: DEFAULT_RIGHT_WIDTH,
    });
 
-   const [bottomBar, setBottomBar] = useState<BottomBarState>({
+   const [workspaceZoneB, setWorkspaceZoneB] = useState<WorkspaceZoneBState>({
       mode: 'push',
       height: DEFAULT_BOTTOM_HEIGHT, // 40px collapsed
       isVisible: false, // Start hidden for empty state
@@ -137,8 +137,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    // Center-bottom split height (0 = no split, >0 = split height)
    const [centerBottomSplit, setCenterBottomSplit] = useState(0);
 
-   // Workspace Zone A visibility state - start with empty state by default
-   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(false);
+   // Workspace Zone A visibility state - start visible by default
+   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
 
    // Top bar visibility state - start hidden for empty state by default
    const [isTopBarVisible, setIsTopBarVisible] = useState(false);
@@ -150,10 +150,10 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
    useEffect(() => {
       enableBottomSplitRef.current = enableBottomSplit;
    }, [enableBottomSplit]);
-   const bottomBarHeightRef = React.useRef(bottomBar.height);
+   const workspaceZoneBHeightRef = React.useRef(workspaceZoneB.height);
    useEffect(() => {
-      bottomBarHeightRef.current = bottomBar.height;
-   }, [bottomBar.height]);
+      workspaceZoneBHeightRef.current = workspaceZoneB.height;
+   }, [workspaceZoneB.height]);
 
    // Debounced save to localStorage
    const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -197,13 +197,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
       }
 
-      const shouldShowBottomBar =
-         enableBottomSplit && !isMainFullscreen && bottomBar.isVisible && bottomBar.mode === 'push';
+      const shouldShowWorkspaceZoneB =
+         enableBottomSplit &&
+         !isMainFullscreen &&
+         workspaceZoneB.isVisible &&
+         workspaceZoneB.mode === 'push';
 
-      const effectiveBottomHeight = shouldShowBottomBar ? bottomBar.height : 0;
+      const effectiveBottomHeight = shouldShowWorkspaceZoneB ? workspaceZoneB.height : 0;
 
       rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
-      rootStyle.setProperty('--bottombar-mode', enableBottomSplit ? bottomBar.mode : 'push');
+      rootStyle.setProperty('--bottombar-mode', enableBottomSplit ? workspaceZoneB.mode : 'push');
       rootStyle.setProperty('--center-bottom-split', `${centerBottomSplit}px`);
    }, [
       enableLeftRail,
@@ -213,9 +216,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       leftSidebar.width,
       rightSidebar.isOpen,
       rightSidebar.width,
-      bottomBar.height,
-      bottomBar.isVisible,
-      bottomBar.mode,
+      workspaceZoneB.height,
+      workspaceZoneB.isVisible,
+      workspaceZoneB.mode,
       isMainFullscreen,
       centerBottomSplit,
    ]);
@@ -293,15 +296,15 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             });
          }
 
-         // Load bottom bar state - only load saved preferences if they exist
-         const savedBottomMode = localStorage.getItem('ui:bottomBarMode');
-         const savedBottomHeight = localStorage.getItem('ui:bottomBarHeight');
-         const savedBottomVisible = localStorage.getItem('ui:bottomBarVisible');
-         const savedOverlayPosition = localStorage.getItem('ui:bottomBarOverlayPosition');
+         // Load workspace zone B state - only load saved preferences if they exist
+         const savedBottomMode = localStorage.getItem('ui:workspaceZoneBMode');
+         const savedBottomHeight = localStorage.getItem('ui:workspaceZoneBHeight');
+         const savedBottomVisible = localStorage.getItem('ui:workspaceZoneBVisible');
+         const savedOverlayPosition = localStorage.getItem('ui:workspaceZoneBOverlayPosition');
 
-         // Only apply saved state if user has previously interacted with bottom bar
+         // Only apply saved state if user has previously interacted with workspace zone B
          if (savedBottomMode || savedBottomHeight || savedBottomVisible) {
-            const mode = (savedBottomMode === 'overlay' ? 'overlay' : 'push') as BottomBarMode;
+            const mode = (savedBottomMode === 'overlay' ? 'overlay' : 'push') as WorkspaceZoneBMode;
             const height = savedBottomHeight
                ? parseInt(savedBottomHeight, 10)
                : DEFAULT_BOTTOM_HEIGHT;
@@ -329,7 +332,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
                   ? overlayPosition
                   : DEFAULT_OVERLAY_POSITION;
 
-            setBottomBar({
+            setWorkspaceZoneB({
                mode,
                height: validHeight,
                isVisible,
@@ -572,8 +575,8 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       [saveToLocalStorage]
    );
    // Bottom bar management functions
-   const setBottomBarMode = useCallback((mode: BottomBarMode) => {
-      setBottomBar((prev) => {
+   const setWorkspaceZoneBMode = useCallback((mode: WorkspaceZoneBMode) => {
+      setWorkspaceZoneB((prev) => {
          const newState = { ...prev, mode };
 
          // Graceful transition from overlay to push mode
@@ -586,94 +589,97 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
                // Set to maximum push mode height for best UX
                newState.height = pushMaxHeight;
                try {
-                  localStorage.setItem('ui:bottomBarHeight', pushMaxHeight.toString());
+                  localStorage.setItem('ui:workspaceZoneBHeight', pushMaxHeight.toString());
                } catch (error) {
-                  console.warn('Failed to save bottom bar height to localStorage:', error);
+                  console.warn('Failed to save workspace zone B height to localStorage:', error);
                }
             }
          }
 
          try {
-            localStorage.setItem('ui:bottomBarMode', mode);
+            localStorage.setItem('ui:workspaceZoneBMode', mode);
          } catch (error) {
-            console.warn('Failed to save bottom bar mode to localStorage:', error);
+            console.warn('Failed to save workspace zone B mode to localStorage:', error);
          }
          return newState;
       });
    }, []);
 
-   const setBottomBarHeight = useCallback(
+   const setWorkspaceZoneBHeight = useCallback(
       (height: number) => {
-         // Helper function to get main container top position (same logic as BottomBar component)
+         // Helper function to get main container top position (same logic as WorkspaceZoneB component)
          const getMainTop = () => {
             if (typeof window === 'undefined') return 56;
             const el = document.querySelector('[data-main-container]') as HTMLElement | null;
             return el ? Math.round(el.getBoundingClientRect().top) : 56;
          };
 
-         // For height changes, use same limits as BottomBar full screen button
+         // For height changes, use same limits as WorkspaceZoneB full screen button
          const maxHeight =
-            bottomBar.mode === 'overlay'
+            workspaceZoneB.mode === 'overlay'
                ? Math.max(MIN_BOTTOM_HEIGHT, window.innerHeight - getMainTop())
                : getPushModeMaxHeight();
 
          const clampedHeight = Math.max(MIN_BOTTOM_HEIGHT, Math.min(maxHeight, height));
 
-         setBottomBar((prev) => {
+         setWorkspaceZoneB((prev) => {
             const newState = { ...prev, height: clampedHeight };
             try {
-               localStorage.setItem('ui:bottomBarHeight', clampedHeight.toString());
+               localStorage.setItem('ui:workspaceZoneBHeight', clampedHeight.toString());
             } catch (error) {
-               console.warn('Failed to save bottom bar height to localStorage:', error);
+               console.warn('Failed to save workspace zone B height to localStorage:', error);
             }
             return newState;
          });
       },
-      [bottomBar.mode]
+      [workspaceZoneB.mode]
    );
 
-   const setBottomBarVisible = useCallback((visible: boolean) => {
-      setBottomBar((prev) => {
+   const setWorkspaceZoneBVisible = useCallback((visible: boolean) => {
+      setWorkspaceZoneB((prev) => {
          const newState = { ...prev, isVisible: visible };
          try {
-            localStorage.setItem('ui:bottomBarVisible', visible.toString());
+            localStorage.setItem('ui:workspaceZoneBVisible', visible.toString());
          } catch (error) {
-            console.warn('Failed to save bottom bar visibility to localStorage:', error);
+            console.warn('Failed to save workspace zone B visibility to localStorage:', error);
          }
          return newState;
       });
    }, []);
 
-   const setBottomBarOverlayPosition = useCallback(
+   const setWorkspaceZoneBOverlayPosition = useCallback(
       (position: number) => {
          // For overlay position, allow from 0 (bottom) to full viewport height minus bar height
          const maxPosition =
-            bottomBar.mode === 'overlay'
-               ? window.innerHeight - bottomBar.height
-               : window.innerHeight - bottomBar.height;
+            workspaceZoneB.mode === 'overlay'
+               ? window.innerHeight - workspaceZoneB.height
+               : window.innerHeight - workspaceZoneB.height;
 
          const clampedPosition = Math.max(0, Math.min(maxPosition, position));
 
-         setBottomBar((prev) => {
+         setWorkspaceZoneB((prev) => {
             const newState = { ...prev, overlayPosition: clampedPosition };
             try {
-               localStorage.setItem('ui:bottomBarOverlayPosition', clampedPosition.toString());
+               localStorage.setItem('ui:workspaceZoneBOverlayPosition', clampedPosition.toString());
             } catch (error) {
-               console.warn('Failed to save bottom bar overlay position to localStorage:', error);
+               console.warn(
+                  'Failed to save workspace zone B overlay position to localStorage:',
+                  error
+               );
             }
             return newState;
          });
       },
-      [bottomBar.mode, bottomBar.height]
+      [workspaceZoneB.mode, workspaceZoneB.height]
    );
 
-   const toggleBottomBar = useCallback(() => {
-      setBottomBar((prev) => {
+   const toggleWorkspaceZoneB = useCallback(() => {
+      setWorkspaceZoneB((prev) => {
          const newState = { ...prev, isVisible: !prev.isVisible };
          try {
-            localStorage.setItem('ui:bottomBarVisible', newState.isVisible.toString());
+            localStorage.setItem('ui:workspaceZoneBVisible', newState.isVisible.toString());
          } catch (error) {
-            console.warn('Failed to save bottom bar visibility to localStorage:', error);
+            console.warn('Failed to save workspace zone B visibility to localStorage:', error);
          }
          return newState;
       });
@@ -685,19 +691,19 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          try {
             localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
          } catch {}
-         // When entering fullscreen, close sidebars and hide bottom bar, but remember their states via existing persistence
+         // When entering fullscreen, close sidebars and hide workspace zone B, but remember their states via existing persistence
          if (fullscreen) {
             setLeftSidebarOpen(false);
             setRightSidebarOpen(false);
-            setBottomBarVisible(false);
+            setWorkspaceZoneBVisible(false);
          } else {
-            // On exit, simply show bottom bar again; sidebars restored via persisted state on user action
-            setBottomBarVisible(true);
+            // On exit, simply show workspace zone B again; sidebars restored via persisted state on user action
+            setWorkspaceZoneBVisible(true);
          }
          // Update CSS variables immediately
          setTimeout(updateGridLayout, 0);
       },
-      [setLeftSidebarOpen, setRightSidebarOpen, setBottomBarVisible, updateGridLayout]
+      [setLeftSidebarOpen, setRightSidebarOpen, setWorkspaceZoneBVisible, updateGridLayout]
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
@@ -747,14 +753,14 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
 
             if (!enableBottomSplitRef.current) {
                setFeatureFlag('enableBottomSplit', true);
-               setBottomBarVisible(true);
+               setWorkspaceZoneBVisible(true);
                try {
-                  setBottomBarHeight(Math.max(bottomBarHeightRef.current ?? 40, 240));
+                  setWorkspaceZoneBHeight(Math.max(workspaceZoneBHeightRef.current ?? 40, 240));
                } catch {}
                return;
             }
 
-            toggleBottomBar();
+            toggleWorkspaceZoneB();
          }
 
          // Ctrl+Shift+8 or Ctrl+Numpad8 - Toggle top bar
@@ -770,9 +776,9 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             capture: true,
          } as AddEventListenerOptions);
    }, [
-      toggleBottomBar,
-      setBottomBarHeight,
-      setBottomBarVisible,
+      toggleWorkspaceZoneB,
+      setWorkspaceZoneBHeight,
+      setWorkspaceZoneBVisible,
       toggleTopBar,
       setWorkspaceZoneAVisible,
    ]);
@@ -782,16 +788,16 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       const handlePanelCommand = (event: CustomEvent) => {
          const { action, visible, height, open, fullscreen } = event.detail;
 
-         if (action === 'setBottomBarVisible') {
-            if (visible && !bottomBar.isVisible) {
+         if (action === 'setWorkspaceZoneBVisible') {
+            if (visible && !workspaceZoneB.isVisible) {
                // When opening, ensure bottom split is enabled and set a reasonable height
                if (!enableBottomSplitRef.current) {
                   setFeatureFlag('enableBottomSplit', true);
                }
                const defaultHeight = 300;
-               setBottomBarHeight(defaultHeight);
+               setWorkspaceZoneBHeight(defaultHeight);
             }
-            setBottomBarVisible(visible);
+            setWorkspaceZoneBVisible(visible);
          }
 
          if (action === 'setCenterBottomSplit') {
@@ -813,10 +819,10 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
             }
          }
 
-         if (action === 'setBottomBarMode') {
+         if (action === 'setWorkspaceZoneBMode') {
             const mode = event.detail.mode;
             if (mode === 'push' || mode === 'overlay') {
-               setBottomBarMode(mode);
+               setWorkspaceZoneBMode(mode);
             }
          }
 
@@ -860,11 +866,11 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       window.addEventListener('panel-command', handlePanelCommand as EventListener);
       return () => window.removeEventListener('panel-command', handlePanelCommand as EventListener);
    }, [
-      bottomBar.isVisible,
-      setBottomBarHeight,
-      setBottomBarVisible,
+      workspaceZoneB.isVisible,
+      setWorkspaceZoneBHeight,
+      setWorkspaceZoneBVisible,
       setCenterBottomSplit,
-      setBottomBarMode,
+      setWorkspaceZoneBMode,
       setLeftSidebarOpen,
       setRightSidebarOpen,
       toggleLeftSidebar,
@@ -889,12 +895,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          toggleRightSidebar,
          setRightSidebarWidth,
          setRightSidebarOpen,
-         bottomBar,
-         setBottomBarMode,
-         setBottomBarHeight,
-         setBottomBarVisible,
-         setBottomBarOverlayPosition,
-         toggleBottomBar,
+         workspaceZoneB,
+         setWorkspaceZoneBMode,
+         setWorkspaceZoneBHeight,
+         setWorkspaceZoneBVisible,
+         setWorkspaceZoneBOverlayPosition,
+         toggleWorkspaceZoneB,
          centerBottomSplit,
          setCenterBottomSplit,
          isDragging,
@@ -923,12 +929,12 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
          toggleRightSidebar,
          setRightSidebarWidth,
          setRightSidebarOpen,
-         bottomBar,
-         setBottomBarMode,
-         setBottomBarHeight,
-         setBottomBarVisible,
-         setBottomBarOverlayPosition,
-         toggleBottomBar,
+         workspaceZoneB,
+         setWorkspaceZoneBMode,
+         setWorkspaceZoneBHeight,
+         setWorkspaceZoneBVisible,
+         setWorkspaceZoneBOverlayPosition,
+         toggleWorkspaceZoneB,
          centerBottomSplit,
          setCenterBottomSplit,
          isDragging,

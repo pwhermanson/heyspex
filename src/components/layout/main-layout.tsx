@@ -15,7 +15,7 @@ import {
 import { SidebarProvider } from '@/src/components/ui/sidebar';
 import { CreateIssueModalProvider } from '@/src/components/shared/issues/create-issue-modal-provider';
 import { TopBar } from '@/src/components/layout/top-bar';
-import { BottomBar } from '@/src/components/layout/bottom-bar';
+import { WorkspaceZoneB } from '@/src/components/layout/workspace-zone-b';
 import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-b-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
 import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
@@ -65,9 +65,9 @@ const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
 function LayoutGrid({ children, header }: MainLayoutProps) {
    const {
       isDragging,
-      bottomBar,
-      setBottomBarMode,
-      // setBottomBarHeight, // Unused for now
+      workspaceZoneB,
+      setWorkspaceZoneBMode,
+      // setWorkspaceZoneBHeight, // Unused for now
       isHydrated,
       isMainFullscreen,
       centerBottomSplit,
@@ -88,7 +88,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
    const isBottomSplitEnabled = useFeatureFlag('enableBottomSplit');
    const safeBottomEnabled = isHydrated && isBottomSplitEnabled;
 
-   // Calculate grid rows based on bottom bar mode and visibility
+   // Calculate grid rows based on workspace zone B mode and visibility
    const getGridRows = () => {
       if (isMainFullscreen) {
          return '1fr';
@@ -103,7 +103,10 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       rows.push('1fr');
 
       const shouldReserveBottomRow =
-         safeBottomEnabled && bottomBar.mode === 'push' && bottomBar.isVisible && !isMainFullscreen;
+         safeBottomEnabled &&
+         workspaceZoneB.mode === 'push' &&
+         workspaceZoneB.isVisible &&
+         !isMainFullscreen;
 
       if (shouldReserveBottomRow) {
          rows.push('var(--bottombar-height, 40px)');
@@ -116,7 +119,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       <div
          className="h-svh w-full grid relative"
          style={{ gridTemplateRows: getGridRows() }}
-         data-bottom-mode={safeBottomEnabled ? bottomBar.mode : undefined}
+         data-bottom-mode={safeBottomEnabled ? workspaceZoneB.mode : undefined}
       >
          {/* App Shell - Background layer that everything renders on top of */}
          <div className="absolute inset-0 z-0">
@@ -287,13 +290,13 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          </div>
 
          {/* Workspace Zone B - Unified Container */}
-         {isBottomSplitEnabled && isHydrated && !isMainFullscreen && bottomBar.isVisible && (
-            <WorkspaceZoneBContainer mode={bottomBar.mode} height={bottomBar.height}>
-               <BottomBar
-                  mode={bottomBar.mode}
-                  onModeChange={isHydrated ? setBottomBarMode : () => {}}
-                  height={bottomBar.height}
-                  isOverlay={bottomBar.mode === 'overlay'}
+         {isBottomSplitEnabled && isHydrated && !isMainFullscreen && workspaceZoneB.isVisible && (
+            <WorkspaceZoneBContainer mode={workspaceZoneB.mode} height={workspaceZoneB.height}>
+               <WorkspaceZoneB
+                  mode={workspaceZoneB.mode}
+                  onModeChange={isHydrated ? setWorkspaceZoneBMode : () => {}}
+                  height={workspaceZoneB.height}
+                  isOverlay={workspaceZoneB.mode === 'overlay'}
                   onDragStart={undefined}
                   isDragging={isDragging}
                   isWorkspaceZoneAHidden={!isWorkspaceZoneAVisible}

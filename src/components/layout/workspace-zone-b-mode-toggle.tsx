@@ -2,15 +2,19 @@ import React from 'react';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/lib/utils';
 
-export type BottomBarMode = 'push' | 'overlay';
+export type WorkspaceZoneBMode = 'push' | 'overlay';
 
-interface BottomBarModeToggleProps {
-   mode: BottomBarMode;
-   onChange: (mode: BottomBarMode) => void;
+interface WorkspaceZoneBModeToggleProps {
+   mode: WorkspaceZoneBMode;
+   onChange: (mode: WorkspaceZoneBMode) => void;
    className?: string;
 }
 
-export function BottomBarModeToggle({ mode, onChange, className = '' }: BottomBarModeToggleProps) {
+export function WorkspaceZoneBModeToggle({
+   mode,
+   onChange,
+   className = '',
+}: WorkspaceZoneBModeToggleProps) {
    const isOverlay = mode === 'overlay';
 
    const toggleOverlay = () => {

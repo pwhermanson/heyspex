@@ -12,10 +12,10 @@ function getResizableSidebarContext() {
    // Access the global store or context that holds the sidebar controls
    // For now, we'll dispatch custom events that the provider can listen to
    return {
-      setBottomBarVisible: (visible: boolean) => {
+      setWorkspaceZoneBVisible: (visible: boolean) => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setBottomBarVisible', visible },
+               detail: { action: 'setWorkspaceZoneBVisible', visible },
             })
          );
       },
@@ -33,10 +33,10 @@ function getResizableSidebarContext() {
             })
          );
       },
-      setBottomBarMode: (mode: 'push' | 'overlay') => {
+      setWorkspaceZoneBMode: (mode: 'push' | 'overlay') => {
          window.dispatchEvent(
             new CustomEvent('panel-command', {
-               detail: { action: 'setBottomBarMode', mode },
+               detail: { action: 'setWorkspaceZoneBMode', mode },
             })
          );
       },
@@ -116,7 +116,7 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         sidebarContext.setBottomBarVisible(true);
+         sidebarContext.setWorkspaceZoneBVisible(true);
       }
    },
 });
@@ -130,7 +130,7 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         sidebarContext.setBottomBarVisible(false);
+         sidebarContext.setWorkspaceZoneBVisible(false);
       }
    },
 });
@@ -145,7 +145,7 @@ registerCommand({
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
          // Switch to push mode so user can see the split result
-         sidebarContext.setBottomBarMode('push');
+         sidebarContext.setWorkspaceZoneBMode('push');
          // Open the center bottom split
          sidebarContext.setCenterBottomSplit(200);
       }

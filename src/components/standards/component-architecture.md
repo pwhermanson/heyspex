@@ -10,7 +10,7 @@ This document establishes standardized patterns and conventions for all componen
 
 - **Purpose**: High-level layout structure and navigation
 - **Pattern**: Container components that manage layout state
-- **Examples**: `MainLayout`, `TopBar`, `BottomBar`, `AppSidebar`
+- **Examples**: `MainLayout`, `TopBar`, `WorkspaceZoneB`, `AppSidebar`
 
 ### 2. Common Components (`components/common/`)
 

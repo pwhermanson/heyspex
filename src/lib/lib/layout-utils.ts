@@ -156,9 +156,9 @@ export function createDefaultShortcuts(): Omit<KeyboardShortcut, 'id'>[] {
          isGlobal: true,
       },
       {
-         action: 'toggle-bottom-bar',
+         action: 'toggle-workspace-zone-b',
          keys: ['ctrl', 'shift', 'b'],
-         description: 'Toggle bottom bar',
+         description: 'Toggle workspace zone B',
          isGlobal: true,
       },
       {

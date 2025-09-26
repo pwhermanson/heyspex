@@ -59,7 +59,7 @@ export const mockWorkspaces: MockWorkspace[] = [
          },
          global: {
             topBarVisible: false,
-            bottomBarVisible: false,
+            workspaceZoneBVisible: false,
             controlBarPosition: 'top',
          },
       },
@@ -129,7 +129,7 @@ export const mockWorkspaces: MockWorkspace[] = [
          },
          global: {
             topBarVisible: true,
-            bottomBarVisible: true,
+            workspaceZoneBVisible: true,
             controlBarPosition: 'top',
          },
       },
@@ -189,7 +189,7 @@ export const mockWorkspaces: MockWorkspace[] = [
          },
          global: {
             topBarVisible: false,
-            bottomBarVisible: false,
+            workspaceZoneBVisible: false,
             controlBarPosition: 'top',
          },
       },

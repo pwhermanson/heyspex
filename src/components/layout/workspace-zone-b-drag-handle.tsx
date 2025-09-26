@@ -4,20 +4,20 @@ import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
 import { useResizableSidebar } from './sidebar/resizable-sidebar-provider';
 
-interface BottomDragHandleProps {
+interface WorkspaceZoneBDragHandleProps {
    onMouseDown?: (e: React.MouseEvent) => void;
    isDragging?: boolean;
    className?: string;
    mode?: 'push' | 'overlay';
 }
 
-export function BottomDragHandle({
+export function WorkspaceZoneBDragHandle({
    onMouseDown,
    isDragging = false,
    className,
    mode = 'push',
-}: BottomDragHandleProps) {
-   const { bottomBar, setBottomBarHeight, setIsDragging } = useResizableSidebar();
+}: WorkspaceZoneBDragHandleProps) {
+   const { workspaceZoneB, setWorkspaceZoneBHeight, setIsDragging } = useResizableSidebar();
 
    const handleMouseDown = React.useCallback(
       (event: React.MouseEvent) => {
@@ -37,9 +37,9 @@ export function BottomDragHandle({
          document.documentElement.classList.add('sidebar-dragging');
 
          const startY = event.clientY;
-         const startHeight = bottomBar.height;
+         const startHeight = workspaceZoneB.height;
 
-         // Helper function to get main container top position (same logic as BottomBar component)
+         // Helper function to get main container top position (same logic as WorkspaceZoneB component)
          const getMainTop = () => {
             if (typeof window === 'undefined') return 56;
             const el = document.querySelector('[data-main-container]') as HTMLElement | null;
@@ -72,7 +72,7 @@ export function BottomDragHandle({
             const clampedHeight = Math.max(40, Math.min(maxHeight, newHeight));
 
             // Update height immediately for visual feedback
-            setBottomBarHeight(clampedHeight);
+            setWorkspaceZoneBHeight(clampedHeight);
          };
 
          const handleMouseUp = () => {
@@ -87,7 +87,7 @@ export function BottomDragHandle({
          document.addEventListener('mousemove', handleMouseMove);
          document.addEventListener('mouseup', handleMouseUp);
       },
-      [onMouseDown, bottomBar.height, setBottomBarHeight, setIsDragging, mode]
+      [onMouseDown, workspaceZoneB.height, setWorkspaceZoneBHeight, setIsDragging, mode]
    );
 
    return (

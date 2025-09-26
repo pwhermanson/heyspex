@@ -1,10 +1,10 @@
 import React from 'react';
 import { cn } from '@/src/lib/lib/utils';
 
-export type BottomBarMode = 'push' | 'overlay';
+export type WorkspaceZoneBMode = 'push' | 'overlay';
 
 interface WorkspaceZoneBContainerProps {
-   mode: BottomBarMode;
+   mode: WorkspaceZoneBMode;
    height: number;
    children: React.ReactNode;
    className?: string;

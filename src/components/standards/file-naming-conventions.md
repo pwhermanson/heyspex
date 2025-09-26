@@ -33,7 +33,7 @@ components/
 ├── layout/                    # Layout components
 │   ├── main-layout.tsx
 │   ├── top-bar.tsx
-│   └── bottom-bar.tsx
+│   └── workspace-zone-b.tsx
 ├── common/                    # Reusable business components
 │   ├── issues/
 │   │   ├── priority-selector.tsx
@@ -231,7 +231,7 @@ components/
 ├── layout/
 │   ├── main-layout.tsx
 │   ├── top-bar.tsx
-│   └── bottom-bar.tsx
+│   └── workspace-zone-b.tsx
 └── ui/
     ├── button.tsx
     ├── input.tsx
