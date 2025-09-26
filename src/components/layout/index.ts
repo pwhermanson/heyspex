@@ -34,6 +34,9 @@ export * from './headers/teams/header-nav';
 export * from './headers/teams/header-options';
 export * from './headers/teams/header';
 
+// Workspace Zone A Components
+export * from './workspace-zone-a-container';
+
 // Workspace Zone A Panels
 export * from './workspace-zone-a-panels/workspace-zone-a-panel-a';
 export * from './workspace-zone-a-panels/back-to-app';

@@ -252,18 +252,14 @@
 
    /* Workspace Zone A - Visible state (PRESERVES EXISTING VISUAL DESIGN) */
    .workspace-zone-a-visible {
-      --left-width: 244px;
-      --right-width: 320px;
-      --grid-template-columns: 244px 1fr 320px;
-      /* All existing visual styling preserved - only implementation changes */
+      /* CSS custom properties are set by JavaScript in updateGridLayout */
+      /* This class is used for CSS transitions and other styling */
    }
 
    /* Workspace Zone A - Hidden state (PRESERVES EXISTING VISUAL DESIGN) */
    .workspace-zone-a-hidden {
-      --left-width: 0px;
-      --right-width: 0px;
-      --grid-template-columns: 0px 1fr 0px;
-      /* All existing visual styling preserved - only implementation changes */
+      /* CSS custom properties are set by JavaScript in updateGridLayout */
+      /* This class is used for CSS transitions and other styling */
    }
 
    /* Disable transitions during toggle - unified approach */
