@@ -12,6 +12,44 @@
 /* @import '../styles/tokens.css'; */ /* Permanently disabled - causes server hanging */
 
 :root {
+   /* Z-Index Custom Properties */
+   --z-background: 0;
+   --z-app-shell: 0;
+   --z-decorative: 1;
+   --z-glow-effects: 2;
+   --z-main-content: 10;
+   --z-panel-content: 10;
+   --z-sidebar-content: 10;
+   --z-sticky-headers: 10;
+   --z-top-bar: 20;
+   --z-panel-control-bar: 20;
+   --z-screen-control-bar: 10;
+   --z-bottom-bar: 20;
+   --z-workspace-zone-b: 20;
+   --z-interactive-elements: 30;
+   --z-buttons: 30;
+   --z-inputs: 30;
+   --z-drag-handles: 50;
+   --z-tooltips: 50;
+   --z-dropdown-menus: 50;
+   --z-popovers: 50;
+   --z-select-dropdowns: 50;
+   --z-context-menus: 50;
+   --z-sheets: 50;
+   --z-command-palette: 50;
+   --z-modals: 200;
+   --z-dialogs: 200;
+   --z-notifications: 60;
+   --z-alerts: 60;
+   --z-loading-overlays: 60;
+   --z-debug-overlays: 70;
+   --z-dev-tools: 70;
+   --z-error-boundaries: 90;
+   --z-critical-loading: 90;
+   --z-emergency-override: 100;
+   --z-workspace-zone-b-overlay: 100;
+   --z-workspace-zone-b-push: 50;
+
    --card: oklch(0.99 0.002 240);
    --card-foreground: oklch(0.25 0.008 285.823);
    --popover: oklch(0.985 0.003 240);
@@ -166,7 +204,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      z-index: 1;
+      z-index: var(--z-decorative);
    }
 
    .group:hover .radial-glow-explosion-active {
@@ -220,7 +258,7 @@
       border-top: 1px solid hsl(var(--border));
       border-bottom: 1px solid hsl(var(--border));
       position: relative;
-      z-index: 10;
+      z-index: var(--z-screen-control-bar);
       display: flex;
       align-items: center;
       justify-content: space-between;

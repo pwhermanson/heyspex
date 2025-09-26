@@ -8,6 +8,7 @@ export * from './lib/notification-utils';
 export * from './lib/status-utils';
 export * from './lib/user-utils';
 export * from './lib/feature-flags';
+export * from './z-index-management';
 
 // Hooks
 export * from './hooks';

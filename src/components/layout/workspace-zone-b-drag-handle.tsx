@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
 import { useResizableSidebar } from './workspace-zone-a-panels/workspace-zone-a-panels-provider';
+import { ZIndex } from '@/src/lib/z-index-management';
 
 interface WorkspaceZoneBDragHandleProps {
    onMouseDown?: (e: React.MouseEvent) => void;
@@ -93,12 +94,13 @@ export function WorkspaceZoneBDragHandle({
    return (
       <div
          className={cn(
-            'absolute inset-x-0 top-0 h-2 cursor-grab active:cursor-grabbing group z-50 select-none touch-none pointer-events-auto',
+            'absolute inset-x-0 top-0 h-2 cursor-grab active:cursor-grabbing group select-none touch-none pointer-events-auto',
             'transition-all layout-transition-short motion-reduce:transition-none',
             mode === 'overlay' && 'hover:bg-blue-500/30',
             mode === 'overlay' && isDragging && 'bg-blue-500/30',
             className
          )}
+         style={ZIndex.utils.getStyle('DRAG_HANDLES')}
          onMouseDown={handleMouseDown}
          role="separator"
          aria-orientation="horizontal"

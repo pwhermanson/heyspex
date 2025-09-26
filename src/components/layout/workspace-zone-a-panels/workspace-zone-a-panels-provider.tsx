@@ -35,8 +35,8 @@ type WorkspaceZoneAPanelsContext = {
    // Workspace Zone A Panel C (right panel)
    rightSidebar: WorkspaceZoneAPanelState;
    toggleRightSidebar: () => void;
-   setRightSidebarWidth: (width: number) => void;
-   setRightSidebarOpen: (open: boolean) => void;
+   setWorkspaceZoneAPanelCWidth: (width: number) => void;
+   setWorkspaceZoneAPanelCOpen: (open: boolean) => void;
 
    // Bottom bar
    workspaceZoneB: WorkspaceZoneBState;
@@ -85,6 +85,10 @@ const DEFAULT_LEFT_WIDTH = 244;
 const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
 const RIGHT_COLLAPSED_WIDTH = 64;
+
+// Viewport breaking point constants
+const RIGHT_PANEL_VIEWPORT_BREAKING_POINT = 0.2; // 20% of viewport width
+const FALLBACK_VIEWPORT_WIDTH = 1200;
 
 const MIN_BOTTOM_HEIGHT = 40; // Collapsed state height
 const MAX_BOTTOM_HEIGHT_RATIO = 0.5;
@@ -143,6 +147,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Top bar visibility state - start hidden for empty state by default
    const [isTopBarVisible, setIsTopBarVisible] = useState(false);
 
+   // Viewport width state for breaking point calculations
+   const [viewportWidth, setViewportWidth] = useState(
+      typeof window !== 'undefined' ? window.innerWidth : FALLBACK_VIEWPORT_WIDTH
+   );
+
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
    // Keep latest values in refs for a stable keydown listener
@@ -154,6 +163,14 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    useEffect(() => {
       workspaceZoneBHeightRef.current = workspaceZoneB.height;
    }, [workspaceZoneB.height]);
+
+   // Calculate if right panel should be collapsed based on viewport width
+   const shouldCollapseRightPanel = useCallback(() => {
+      const currentViewportWidth =
+         typeof window !== 'undefined' ? window.innerWidth : viewportWidth;
+      const breakingPointWidth = currentViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
+      return rightSidebar.width <= breakingPointWidth;
+   }, [rightSidebar.width, viewportWidth]);
 
    // Debounced save to localStorage
    const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -549,7 +566,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       });
    }, [saveToLocalStorage]);
 
-   const setRightSidebarOpen = useCallback(
+   const setWorkspaceZoneAPanelCOpen = useCallback(
       (open: boolean) => {
          setRightSidebar((prev) => {
             const newState = {
@@ -565,7 +582,34 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       [saveToLocalStorage]
    );
 
-   const setRightSidebarWidth = useCallback(
+   // Monitor viewport width changes and handle breaking point logic
+   useEffect(() => {
+      if (!isHydrated) return;
+
+      const handleWindowResize = () => {
+         const newViewportWidth = window.innerWidth;
+         setViewportWidth(newViewportWidth);
+
+         // Check if right panel should be collapsed based on new viewport width
+         const breakingPointWidth = newViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
+         console.log('Viewport resize:', {
+            viewportWidth: newViewportWidth,
+            rightPanelWidth: rightSidebar.width,
+            breakingPointWidth,
+            shouldCollapse: rightSidebar.isOpen && rightSidebar.width <= breakingPointWidth,
+         });
+         if (rightSidebar.isOpen && rightSidebar.width <= breakingPointWidth) {
+            // Auto-collapse the right panel when it reaches the breaking point
+            console.log('Auto-collapsing right panel due to breaking point');
+            setWorkspaceZoneAPanelCOpen(false);
+         }
+      };
+
+      window.addEventListener('resize', handleWindowResize);
+      return () => window.removeEventListener('resize', handleWindowResize);
+   }, [isHydrated, rightSidebar.isOpen, rightSidebar.width, setWorkspaceZoneAPanelCOpen]);
+
+   const setWorkspaceZoneAPanelCWidth = useCallback(
       (width: number) => {
          const clampedWidth = Math.max(
             MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
@@ -579,13 +623,38 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                   width: clampedWidth,
                   preferredWidth: clampedWidth,
                };
+
+               // Check if the new width should trigger auto-collapse
+               const currentViewportWidth =
+                  typeof window !== 'undefined' ? window.innerWidth : viewportWidth;
+               const breakingPointWidth =
+                  currentViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
+
+               console.log('Width change:', {
+                  newWidth: clampedWidth,
+                  viewportWidth: currentViewportWidth,
+                  breakingPointWidth,
+                  shouldCollapse: clampedWidth <= breakingPointWidth,
+               });
+
+               if (clampedWidth <= breakingPointWidth) {
+                  // Auto-collapse the panel when it reaches the breaking point
+                  console.log('Auto-collapsing right panel due to width change');
+                  const collapsedState = {
+                     ...newState,
+                     isOpen: false,
+                  };
+                  saveToLocalStorage('right', collapsedState);
+                  return collapsedState;
+               }
+
                saveToLocalStorage('right', newState);
                return newState;
             }
             return prev;
          });
       },
-      [saveToLocalStorage]
+      [saveToLocalStorage, viewportWidth]
    );
    // Bottom bar management functions
    const setWorkspaceZoneBMode = useCallback((mode: WorkspaceZoneBMode) => {
@@ -707,7 +776,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          // When entering fullscreen, close sidebars and hide workspace zone B, but remember their states via existing persistence
          if (fullscreen) {
             setLeftSidebarOpen(false);
-            setRightSidebarOpen(false);
+            setWorkspaceZoneAPanelCOpen(false);
             setWorkspaceZoneBVisible(false);
          } else {
             // On exit, simply show workspace zone B again; sidebars restored via persisted state on user action
@@ -716,7 +785,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          // Update CSS variables immediately
          setTimeout(updateGridLayout, 0);
       },
-      [setLeftSidebarOpen, setRightSidebarOpen, setWorkspaceZoneBVisible, updateGridLayout]
+      [setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible, updateGridLayout]
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
@@ -843,8 +912,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             setLeftSidebarOpen(open);
          }
 
-         if (action === 'setRightSidebarOpen') {
-            setRightSidebarOpen(open);
+         if (action === 'setWorkspaceZoneAPanelCOpen') {
+            setWorkspaceZoneAPanelCOpen(open);
          }
 
          if (action === 'toggleLeftSidebar') {
@@ -885,7 +954,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setCenterBottomSplit,
       setWorkspaceZoneBMode,
       setLeftSidebarOpen,
-      setRightSidebarOpen,
+      setWorkspaceZoneAPanelCOpen,
       toggleLeftSidebar,
       toggleRightSidebar,
       setMainFullscreen,
@@ -906,8 +975,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setLeftState: updateLeftRailState,
          rightSidebar,
          toggleRightSidebar,
-         setRightSidebarWidth,
-         setRightSidebarOpen,
+         setWorkspaceZoneAPanelCWidth,
+         setWorkspaceZoneAPanelCOpen,
          workspaceZoneB,
          setWorkspaceZoneBMode,
          setWorkspaceZoneBHeight,
@@ -940,8 +1009,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          updateLeftRailState,
          rightSidebar,
          toggleRightSidebar,
-         setRightSidebarWidth,
-         setRightSidebarOpen,
+         setWorkspaceZoneAPanelCWidth,
+         setWorkspaceZoneAPanelCOpen,
          workspaceZoneB,
          setWorkspaceZoneBMode,
          setWorkspaceZoneBHeight,

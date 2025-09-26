@@ -17,9 +17,9 @@ export function WorkspaceZoneAPanelsDragHandle({
       leftSidebar,
       rightSidebar,
       setLeftSidebarWidth,
-      setRightSidebarWidth,
+      setWorkspaceZoneAPanelCWidth,
       setLeftSidebarOpen,
-      setRightSidebarOpen,
+      setWorkspaceZoneAPanelCOpen,
       isDragging,
       setIsDragging,
       dragSide,
@@ -46,7 +46,7 @@ export function WorkspaceZoneAPanelsDragHandle({
             if (side === 'left') {
                setLeftSidebarOpen(true);
             } else {
-               setRightSidebarOpen(true);
+               setWorkspaceZoneAPanelCOpen(true);
             }
             // Small delay to allow the sidebar to open before starting drag
             setTimeout(() => {
@@ -144,7 +144,7 @@ export function WorkspaceZoneAPanelsDragHandle({
             if (side === 'left' && leftSidebar.isOpen) {
                setLeftSidebarWidth(nextLeftWidth);
             } else if (side === 'right' && rightSidebar.isOpen) {
-               setRightSidebarWidth(nextRightWidth);
+               setWorkspaceZoneAPanelCWidth(nextRightWidth);
             }
 
             document.removeEventListener('mousemove', handleMouseMove);
@@ -159,9 +159,9 @@ export function WorkspaceZoneAPanelsDragHandle({
          leftSidebar,
          rightSidebar,
          setLeftSidebarWidth,
-         setRightSidebarWidth,
+         setWorkspaceZoneAPanelCWidth,
          setLeftSidebarOpen,
-         setRightSidebarOpen,
+         setWorkspaceZoneAPanelCOpen,
          setIsDragging,
          setDragSide,
       ]

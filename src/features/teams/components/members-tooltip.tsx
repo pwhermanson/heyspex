@@ -8,6 +8,8 @@ import {
    TooltipTrigger,
 } from '@/src/components/ui/tooltip';
 import { User } from '@/src/tests/test-data/users';
+import { ZIndex } from '@/src/lib/z-index-management';
+import { cn } from '@/src/lib/lib/utils';
 
 interface MembersTooltipProps {
    members: User[];
@@ -29,7 +31,12 @@ export function MembersTooltip({ members }: MembersTooltipProps) {
                      </Avatar>
                   ))}
                   {remainingCount > 0 && (
-                     <div className="size-6 rounded-full bg-sidebar border-2 border-container flex items-center justify-center text-xs z-[5]">
+                     <div
+                        className={cn(
+                           'size-6 rounded-full bg-sidebar border-2 border-container flex items-center justify-center text-xs',
+                           ZIndex.utils.getTailwindClass('DECORATIVE')
+                        )}
+                     >
                         +{remainingCount}
                      </div>
                   )}

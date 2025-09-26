@@ -22,6 +22,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
+import { ZIndex } from '@/src/lib/z-index-management';
 
 interface AppShellBrandedSimpleProps {
    className?: string;
@@ -34,7 +35,7 @@ export function AppShellBrandedSimple({ className }: AppShellBrandedSimpleProps)
             'flex flex-col items-center justify-center min-h-screen w-full bg-black text-white',
             className
          )}
-         style={{ zIndex: 0 }}
+         style={ZIndex.utils.getStyle('APP_SHELL')}
       >
          {/* Logo */}
          <div className="mb-6 group cursor-pointer relative">

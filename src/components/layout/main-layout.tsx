@@ -135,7 +135,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
             {isWorkspaceZoneAVisible ? (
                <div
                   className={cn(
-                     'grid w-full h-full overflow-hidden relative z-10',
+                     'grid w-full h-full overflow-hidden relative',
                      !isDragging &&
                         'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}

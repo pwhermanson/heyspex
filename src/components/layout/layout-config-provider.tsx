@@ -100,7 +100,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
       leftSidebar,
       rightSidebar,
       setLeftSidebarOpen,
-      setRightSidebarOpen,
+      setWorkspaceZoneAPanelCOpen,
       leftState,
       setLeftState: setLeftRailState,
       isHydrated: sidebarHydrated,
@@ -163,7 +163,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
 
       // Sync right sidebar (Section C)
       if (sectionVisibility.C !== rightSidebar.isOpen) {
-         setRightSidebarOpen(sectionVisibility.C);
+         setWorkspaceZoneAPanelCOpen(sectionVisibility.C);
       }
    }, [
       sectionVisibility,
@@ -171,7 +171,7 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
       rightSidebar.isOpen,
       isHydrated,
       setLeftSidebarOpen,
-      setRightSidebarOpen,
+      setWorkspaceZoneAPanelCOpen,
    ]);
 
    // Sync width changes from sidebar system back to layout config
@@ -248,13 +248,13 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
          if (section === 'A') {
             setLeftSidebarOpen(!leftSidebar.isOpen);
          } else if (section === 'C') {
-            setRightSidebarOpen(!rightSidebar.isOpen);
+            setWorkspaceZoneAPanelCOpen(!rightSidebar.isOpen);
          }
       },
       [
          toggleSection,
          setLeftSidebarOpen,
-         setRightSidebarOpen,
+         setWorkspaceZoneAPanelCOpen,
          leftSidebar.isOpen,
          rightSidebar.isOpen,
          isHydrated,
@@ -272,10 +272,10 @@ export function LayoutConfigProvider({ children }: { children: React.ReactNode }
          if (section === 'A') {
             setLeftSidebarOpen(visible);
          } else if (section === 'C') {
-            setRightSidebarOpen(visible);
+            setWorkspaceZoneAPanelCOpen(visible);
          }
       },
-      [setSectionVisibility, setLeftSidebarOpen, setRightSidebarOpen, isHydrated]
+      [setSectionVisibility, setLeftSidebarOpen, setWorkspaceZoneAPanelCOpen, isHydrated]
    );
 
    // Tab management functions (placeholder implementations)

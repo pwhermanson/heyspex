@@ -27,6 +27,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
+import { ZIndex } from '@/src/lib/z-index-management';
 
 interface AppShellBrandedProps {
    className?: string;
@@ -107,9 +108,9 @@ const VISUAL_CONSTANTS = {
    BRIGHTNESS_NORMAL: 1,
    BRIGHTNESS_INVERT: 'brightness(0) invert(1)',
 
-   // Z-index values
-   GLOW_Z_INDEX: 2,
-   LOGO_Z_INDEX: 10,
+   // Z-index values - using centralized system
+   GLOW_Z_INDEX: ZIndex.layers.GLOW_EFFECTS,
+   LOGO_Z_INDEX: ZIndex.layers.MAIN_CONTENT,
 
    // Default values
    DEFAULT_OPACITY: 1,

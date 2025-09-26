@@ -8,6 +8,7 @@ import Notifications from '@/src/components/layout/headers/issues/notifications'
 import { OrgSwitcher } from '@/src/components/layout/workspace-zone-a-panels/org-switcher';
 import { BackToApp } from '@/src/components/layout/workspace-zone-a-panels/back-to-app';
 import { ProfileDropdown } from '@/src/components/layout/profile-dropdown';
+import { cn } from '@/src/lib/lib/utils';
 
 export function TopBar() {
    const pathname = usePathname();

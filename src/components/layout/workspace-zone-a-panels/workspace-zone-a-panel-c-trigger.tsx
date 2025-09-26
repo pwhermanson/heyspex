@@ -5,14 +5,14 @@ import { SidebarClosedIcon, SidebarRightOpenIcon } from '@/src/components/ui/sid
 import { useResizableSidebar } from './workspace-zone-a-panels-provider';
 
 export function WorkspaceZoneAPanelCTrigger() {
-   const { rightSidebar, setRightSidebarOpen } = useResizableSidebar();
+   const { rightSidebar, setWorkspaceZoneAPanelCOpen } = useResizableSidebar();
 
    return (
       <Button
          variant="ghost"
          size="icon"
          className="h-7 w-7 text-muted-foreground hover:!text-icon-hover"
-         onClick={() => setRightSidebarOpen(!rightSidebar.isOpen)}
+         onClick={() => setWorkspaceZoneAPanelCOpen(!rightSidebar.isOpen)}
          title={
             rightSidebar.isOpen ? 'Hide Workspace Zone A Panel C' : 'Show Workspace Zone A Panel C'
          }

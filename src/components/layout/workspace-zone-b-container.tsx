@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/src/lib/lib/utils';
+import { ZIndex } from '@/src/lib/z-index-management';
 
 export type WorkspaceZoneBMode = 'push' | 'overlay';
 
@@ -23,7 +24,8 @@ export function WorkspaceZoneBContainer({
       return (
          <div
             className={cn(
-               'fixed left-0 right-0 z-[100] workspace-zone-b workspace-zone-b-overlay',
+               'fixed left-0 right-0 workspace-zone-b workspace-zone-b-overlay',
+               ZIndex.utils.getTailwindClass('WORKSPACE_ZONE_B_OVERLAY'),
                className
             )}
             style={{
@@ -42,7 +44,8 @@ export function WorkspaceZoneBContainer({
    return (
       <div
          className={cn(
-            'relative overflow-hidden z-[50] px-2 workspace-zone-b workspace-zone-b-push',
+            'relative overflow-hidden px-2 workspace-zone-b workspace-zone-b-push',
+            ZIndex.utils.getTailwindClass('WORKSPACE_ZONE_B_PUSH'),
             className
          )}
          style={{
