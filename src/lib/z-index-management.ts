@@ -58,15 +58,15 @@ export const Z_INDEX_LAYERS = {
    DRAG_HANDLES: 50, // Higher for drag interactions
 
    // Overlay layers (40-49)
-   TOOLTIPS: 50,
-   DROPDOWN_MENUS: 50,
-   POPOVERS: 50,
-   SELECT_DROPDOWNS: 50,
-   CONTEXT_MENUS: 50,
+   TOOLTIPS: 40,
+   DROPDOWN_MENUS: 110, // Higher than Workspace Zone B overlay
+   POPOVERS: 45,
+   SELECT_DROPDOWNS: 110, // Higher than Workspace Zone B overlay
+   CONTEXT_MENUS: 45,
    SHEETS: 50,
 
    // High-priority overlays (50-59)
-   COMMAND_PALETTE: 50,
+   COMMAND_PALETTE: 250, // Highest priority - above everything
    MODALS: 200, // Using higher value for critical modals
    DIALOGS: 200,
 
@@ -190,13 +190,16 @@ export const ZIndexUtils = {
          20: 'z-20',
          30: 'z-30',
          40: 'z-40',
+         45: 'z-[45]',
          50: 'z-50',
          60: 'z-60',
          70: 'z-70',
          80: 'z-80',
          90: 'z-90',
          100: 'z-[100]',
+         110: 'z-[110]',
          200: 'z-[200]',
+         250: 'z-[250]',
       };
 
       return standardClasses[value] || 'z-50'; // fallback to z-50
