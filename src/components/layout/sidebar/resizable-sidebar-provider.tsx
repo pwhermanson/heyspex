@@ -856,6 +856,7 @@ export function ResizableSidebarProvider({ children }: { children: React.ReactNo
       toggleWorkspaceZoneA,
       setTopBarVisible,
       toggleTopBar,
+      centerBottomSplit,
    ]);
 
    const contextValue = React.useMemo(
