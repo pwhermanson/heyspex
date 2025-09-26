@@ -176,8 +176,8 @@ registerCommand({
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Show Workspace Zone A container (panels A, B, C)
-         sidebarContext.setWorkspaceZoneAVisible(true);
+         // Toggle Workspace Zone A container (panels A, B, C)
+         sidebarContext.toggleWorkspaceZoneA();
       }
    },
 });
@@ -187,12 +187,13 @@ registerCommand({
    id: 'workspace.zone.a.close',
    title: '/workspace zone A close',
    keywords: ['workspace', 'zone', 'main', 'content', 'close', 'hide'],
+   shortcut: 'Ctrl+Shift+1',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const sidebarContext = getResizableSidebarContext();
       if (sidebarContext) {
-         // Hide Workspace Zone A container (panels A, B, C)
-         sidebarContext.setWorkspaceZoneAVisible(false);
+         // Toggle Workspace Zone A container (panels A, B, C)
+         sidebarContext.toggleWorkspaceZoneA();
       }
    },
 });

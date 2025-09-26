@@ -245,6 +245,33 @@
       color: hsl(var(--foreground));
    }
 
+   /* Workspace Zone A - Base styling */
+   .workspace-zone-a {
+      transition: all var(--layout-motion-duration-medium) var(--layout-motion-easing);
+   }
+
+   /* Workspace Zone A - Visible state (PRESERVES EXISTING VISUAL DESIGN) */
+   .workspace-zone-a-visible {
+      --left-width: 244px;
+      --right-width: 320px;
+      --grid-template-columns: 244px 1fr 320px;
+      /* All existing visual styling preserved - only implementation changes */
+   }
+
+   /* Workspace Zone A - Hidden state (PRESERVES EXISTING VISUAL DESIGN) */
+   .workspace-zone-a-hidden {
+      --left-width: 0px;
+      --right-width: 0px;
+      --grid-template-columns: 0px 1fr 0px;
+      /* All existing visual styling preserved - only implementation changes */
+   }
+
+   /* Disable transitions during toggle - unified approach */
+   .workspace-zone-a-toggling,
+   .workspace-zone-b-toggling {
+      transition: none !important;
+   }
+
    /* Legacy support for existing fixed positioning class */
    .fixed.left-0.right-0.z-\[100\].workspace-zone-b {
       background-color: hsl(var(--card)) !important;
@@ -403,6 +430,14 @@ input[type='search'] {
 /* Disable ALL transitions during drag for maximum performance */
 .sidebar-dragging,
 .sidebar-dragging * {
+   transition: none !important;
+}
+
+/* Disable transitions when toggling Workspace Zone A for instant feedback */
+.workspace-zone-a-toggling [data-resizable-sidebar='left'],
+.workspace-zone-a-toggling [data-resizable-sidebar='right'],
+.workspace-zone-a-toggling [data-resizable-sidebar='main-content'],
+.workspace-zone-a-toggling [data-resizable-sidebar='content-inner'] {
    transition: none !important;
 }
 

@@ -70,6 +70,7 @@ type WorkspaceZoneAPanelsContext = {
    isWorkspaceZoneAVisible: boolean;
    setWorkspaceZoneAVisible: (visible: boolean) => void;
    toggleWorkspaceZoneA: () => void;
+   isTogglingWorkspaceZoneA: boolean;
 
    // Control bar visibility
    isControlBarVisible: boolean;
@@ -144,6 +145,9 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Workspace Zone A visibility state - start visible by default
    const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
 
+   // Track when Workspace Zone A is being toggled to disable transitions
+   const [isTogglingWorkspaceZoneA, setIsTogglingWorkspaceZoneA] = useState(false);
+
    // Control bar visibility state - start hidden for empty state by default
    const [isControlBarVisible, setIsControlBarVisible] = useState(false);
 
@@ -181,50 +185,96 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          return;
       }
 
+      const updateStartTime = performance.now();
+      console.log('🔧 updateGridLayout started at:', updateStartTime);
+
       const rootElement = document.documentElement;
       const rootStyle = rootElement.style;
 
-      const leftCollapsedWidth = LEFT_COLLAPSED_WIDTH;
-      const rightCollapsedWidth = RIGHT_COLLAPSED_WIDTH;
+      // Use requestAnimationFrame to batch CSS updates and avoid layout thrashing
+      requestAnimationFrame(() => {
+         const rafStartTime = performance.now();
+         console.log(
+            '🎬 requestAnimationFrame CSS update started at:',
+            rafStartTime - updateStartTime,
+            'ms'
+         );
 
-      const leftWidth = isMainFullscreen
-         ? 0
-         : enableLeftRail
-           ? leftState === 'open'
-              ? leftSidebar.width
-              : LEFT_COLLAPSED_WIDTH
-           : leftSidebar.isOpen
-             ? leftSidebar.width
-             : leftCollapsedWidth;
+         // Use a second requestAnimationFrame to ensure we're on the next paint cycle
+         requestAnimationFrame(() => {
+            const paintStartTime = performance.now();
+            console.log(
+               '🎨 Paint cycle CSS update started at:',
+               paintStartTime - updateStartTime,
+               'ms'
+            );
 
-      const rightWidth = isMainFullscreen
-         ? 0
-         : rightSidebar.isOpen
-           ? rightSidebar.width
-           : rightCollapsedWidth;
+            const leftCollapsedWidth = LEFT_COLLAPSED_WIDTH;
+            const rightCollapsedWidth = RIGHT_COLLAPSED_WIDTH;
 
-      rootStyle.setProperty('--left-width', `${leftWidth}px`);
-      rootStyle.setProperty('--right-width', `${rightWidth}px`);
-      rootStyle.setProperty('--sidebar-left-width', `${leftWidth}px`);
-      rootStyle.setProperty('--sidebar-right-width', `${rightWidth}px`);
-      rootStyle.setProperty('--grid-template-columns', `${leftWidth}px 1fr ${rightWidth}px`);
+            const leftWidth =
+               !isWorkspaceZoneAVisible || isMainFullscreen
+                  ? 0
+                  : enableLeftRail
+                    ? leftState === 'open'
+                       ? leftSidebar.width
+                       : LEFT_COLLAPSED_WIDTH
+                    : leftSidebar.isOpen
+                      ? leftSidebar.width
+                      : leftCollapsedWidth;
 
-      if (enableLeftRail) {
-         rootStyle.setProperty('--left-open', `${leftSidebar.width}px`);
-         rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
-      }
+            const rightWidth =
+               !isWorkspaceZoneAVisible || isMainFullscreen
+                  ? 0
+                  : rightSidebar.isOpen
+                    ? rightSidebar.width
+                    : rightCollapsedWidth;
 
-      const shouldShowWorkspaceZoneB =
-         enableBottomSplit &&
-         !isMainFullscreen &&
-         workspaceZoneB.isVisible &&
-         workspaceZoneB.mode === 'push';
+            // Batch all CSS property updates to avoid layout thrashing
+            rootStyle.setProperty('--left-width', `${leftWidth}px`);
+            rootStyle.setProperty('--right-width', `${rightWidth}px`);
+            rootStyle.setProperty('--sidebar-left-width', `${leftWidth}px`);
+            rootStyle.setProperty('--sidebar-right-width', `${rightWidth}px`);
+            rootStyle.setProperty('--grid-template-columns', `${leftWidth}px 1fr ${rightWidth}px`);
 
-      const effectiveBottomHeight = shouldShowWorkspaceZoneB ? workspaceZoneB.height : 0;
+            if (enableLeftRail) {
+               rootStyle.setProperty('--left-open', `${leftSidebar.width}px`);
+               rootStyle.setProperty('--left-collapsed', `${LEFT_COLLAPSED_WIDTH}px`);
+            }
 
-      rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
-      rootStyle.setProperty('--bottombar-mode', enableBottomSplit ? workspaceZoneB.mode : 'push');
-      rootStyle.setProperty('--center-bottom-split', `${centerBottomSplit}px`);
+            const shouldShowWorkspaceZoneB =
+               enableBottomSplit &&
+               !isMainFullscreen &&
+               workspaceZoneB.isVisible &&
+               workspaceZoneB.mode === 'push';
+
+            const effectiveBottomHeight = shouldShowWorkspaceZoneB ? workspaceZoneB.height : 0;
+
+            rootStyle.setProperty('--bottombar-height', `${effectiveBottomHeight}px`);
+            rootStyle.setProperty(
+               '--bottombar-mode',
+               enableBottomSplit ? workspaceZoneB.mode : 'push'
+            );
+            rootStyle.setProperty('--center-bottom-split', `${centerBottomSplit}px`);
+
+            const paintEndTime = performance.now();
+            console.log(
+               '🎨 Paint cycle CSS update completed at:',
+               paintEndTime - updateStartTime,
+               'ms'
+            );
+         });
+
+         const rafEndTime = performance.now();
+         console.log(
+            '🎬 requestAnimationFrame CSS update completed at:',
+            rafEndTime - updateStartTime,
+            'ms'
+         );
+      });
+
+      const updateEndTime = performance.now();
+      console.log('🔧 updateGridLayout completed at:', updateEndTime - updateStartTime, 'ms');
    }, [
       enableLeftRail,
       enableBottomSplit,
@@ -238,6 +288,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       workspaceZoneB.mode,
       isMainFullscreen,
       centerBottomSplit,
+      isWorkspaceZoneAVisible,
    ]);
 
    const updateLeftRailState = useCallback(
@@ -429,7 +480,15 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
 
    // Update grid layout whenever sidebar states change
    useEffect(() => {
+      const effectStartTime = performance.now();
+      console.log('⚡ useEffect updateGridLayout triggered at:', effectStartTime);
       updateGridLayout();
+      const effectEndTime = performance.now();
+      console.log(
+         '⚡ useEffect updateGridLayout completed at:',
+         effectEndTime - effectStartTime,
+         'ms'
+      );
    }, [updateGridLayout]);
 
    // Cleanup timeout on unmount
@@ -798,7 +857,10 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    }, []);
 
    const toggleWorkspaceZoneA = useCallback(() => {
-      setWorkspaceZoneAVisible(!isWorkspaceZoneAVisible);
+      const newVisible = !isWorkspaceZoneAVisible;
+
+      // Simple state update - CSS classes handle the visual changes
+      setWorkspaceZoneAVisible(newVisible);
    }, [isWorkspaceZoneAVisible, setWorkspaceZoneAVisible]);
 
    const setControlBarVisible = useCallback((visible: boolean) => {
@@ -818,16 +880,24 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
          const isCtrlLike = event.ctrlKey || event.metaKey;
+         const isTopDigit1 = event.shiftKey && event.code === 'Digit1';
+         const isNumpad1 = event.code === 'Numpad1';
          const isTopDigit2 = event.shiftKey && event.code === 'Digit2';
          const isNumpad2 = event.code === 'Numpad2';
          const isTopDigit8 = event.shiftKey && event.code === 'Digit8';
          const isNumpad8 = event.code === 'Numpad8';
          const isComma = event.shiftKey && event.key === ',';
 
+         // Ctrl+Shift+1 or Ctrl+Numpad1 - Toggle workspace zone A
+         if (isCtrlLike && !event.altKey && (isTopDigit1 || isNumpad1)) {
+            event.preventDefault();
+            toggleWorkspaceZoneA();
+         }
+
          // Ctrl+Shift+, - Toggle workspace zone A
          if (isCtrlLike && !event.altKey && isComma) {
             event.preventDefault();
-            setWorkspaceZoneAVisible(true);
+            toggleWorkspaceZoneA();
          }
 
          if (isCtrlLike && !event.altKey && (isTopDigit2 || isNumpad2)) {
@@ -862,7 +932,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setWorkspaceZoneBHeight,
       setWorkspaceZoneBVisible,
       toggleControlBar,
-      setWorkspaceZoneAVisible,
+      toggleWorkspaceZoneA,
    ]);
 
    // Listen for panel command events from command palette
@@ -996,6 +1066,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
+         isTogglingWorkspaceZoneA,
          isControlBarVisible,
          setControlBarVisible,
          toggleControlBar,
@@ -1030,6 +1101,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          isWorkspaceZoneAVisible,
          setWorkspaceZoneAVisible,
          toggleWorkspaceZoneA,
+         isTogglingWorkspaceZoneA,
          isControlBarVisible,
          setControlBarVisible,
          toggleControlBar,
