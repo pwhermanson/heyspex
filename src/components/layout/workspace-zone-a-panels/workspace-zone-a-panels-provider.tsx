@@ -5,6 +5,7 @@ import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { setFeatureFlag } from '@/src/lib/lib/feature-flags';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
+// Simplified state structures following Zone B's pattern
 type WorkspaceZoneAPanelState = {
    isOpen: boolean;
    width: number;
@@ -23,54 +24,70 @@ type WorkspaceZoneBState = {
    overlayPosition: number;
 };
 
+// Simplified Zone A state structure (matching Zone B's simplicity)
+type WorkspaceZoneAState = {
+   isVisible: boolean;
+   leftPanel: WorkspaceZoneAPanelState;
+   rightPanel: WorkspaceZoneAPanelState;
+   leftState: WorkspaceZoneAPanelAState;
+};
+
+// Simplified drag state
+type DragState = {
+   isDragging: boolean;
+   dragSide: 'left' | 'right' | null;
+};
+
+// Simplified UI state
+type UIState = {
+   isHydrated: boolean;
+   isMainFullscreen: boolean;
+   isControlBarVisible: boolean;
+   centerBottomSplit: number;
+   viewportWidth: number;
+};
+
+// Simplified context type following Zone B's pattern
 type WorkspaceZoneAPanelsContext = {
-   // Workspace Zone A Panel A (left panel)
-   leftSidebar: WorkspaceZoneAPanelState;
+   // Simplified Zone A state
+   workspaceZoneA: WorkspaceZoneAState;
+   setWorkspaceZoneA: (
+      state: WorkspaceZoneAState | ((prev: WorkspaceZoneAState) => WorkspaceZoneAState)
+   ) => void;
+   toggleWorkspaceZoneA: () => void;
+
+   // Zone B state (already simplified)
+   workspaceZoneB: WorkspaceZoneBState;
+   setWorkspaceZoneB: (
+      state: WorkspaceZoneBState | ((prev: WorkspaceZoneBState) => WorkspaceZoneBState)
+   ) => void;
+   toggleWorkspaceZoneB: () => void;
+
+   // Simplified drag state
+   dragState: DragState;
+   setDragState: (state: DragState | ((prev: DragState) => DragState)) => void;
+
+   // Simplified UI state
+   uiState: UIState;
+   setUIState: (state: UIState | ((prev: UIState) => UIState)) => void;
+
+   // Individual panel controls (for backward compatibility)
    toggleLeftSidebar: () => void;
    setLeftSidebarWidth: (width: number) => void;
    setLeftSidebarOpen: (open: boolean) => void;
-   leftState: WorkspaceZoneAPanelAState;
-   setLeftState: (state: WorkspaceZoneAPanelAState) => void;
-
-   // Workspace Zone A Panel C (right panel)
-   rightSidebar: WorkspaceZoneAPanelState;
    toggleRightSidebar: () => void;
    setWorkspaceZoneAPanelCWidth: (width: number) => void;
    setWorkspaceZoneAPanelCOpen: (open: boolean) => void;
 
-   // Bottom bar
-   workspaceZoneB: WorkspaceZoneBState;
+   // Zone B controls (for backward compatibility)
    setWorkspaceZoneBMode: (mode: WorkspaceZoneBMode) => void;
    setWorkspaceZoneBHeight: (height: number) => void;
    setWorkspaceZoneBVisible: (visible: boolean) => void;
    setWorkspaceZoneBOverlayPosition: (position: number) => void;
-   toggleWorkspaceZoneB: () => void;
 
-   // Center-bottom split
-   centerBottomSplit: number;
+   // UI controls (for backward compatibility)
    setCenterBottomSplit: (height: number) => void;
-
-   // Drag state
-   isDragging: boolean;
-   setIsDragging: (dragging: boolean) => void;
-   dragSide: 'left' | 'right' | null;
-   setDragSide: (side: 'left' | 'right' | null) => void;
-
-   // Hydration state
-   isHydrated: boolean;
-
-   // Fullscreen main content
-   isMainFullscreen: boolean;
    setMainFullscreen: (fullscreen: boolean) => void;
-
-   // Workspace Zone A visibility
-   isWorkspaceZoneAVisible: boolean;
-   setWorkspaceZoneAVisible: (visible: boolean) => void;
-   toggleWorkspaceZoneA: () => void;
-   isTogglingWorkspaceZoneA: boolean;
-
-   // Control bar visibility
-   isControlBarVisible: boolean;
    setControlBarVisible: (visible: boolean) => void;
    toggleControlBar: () => void;
 };
@@ -110,17 +127,20 @@ export function useResizableSidebar() {
 }
 
 export function WorkspaceZoneAPanelsProvider({ children }: { children: React.ReactNode }) {
-   const [leftSidebar, setLeftSidebar] = useState<WorkspaceZoneAPanelState>({
-      isOpen: true,
-      width: DEFAULT_LEFT_WIDTH,
-      preferredWidth: DEFAULT_LEFT_WIDTH,
-   });
-   const [leftState, setLeftState] = useState<WorkspaceZoneAPanelAState>('open');
-
-   const [rightSidebar, setRightSidebar] = useState<WorkspaceZoneAPanelState>({
-      isOpen: true,
-      width: DEFAULT_RIGHT_WIDTH,
-      preferredWidth: DEFAULT_RIGHT_WIDTH,
+   // Simplified state management following Zone B's pattern
+   const [workspaceZoneA, setWorkspaceZoneA] = useState<WorkspaceZoneAState>({
+      isVisible: true,
+      leftPanel: {
+         isOpen: true,
+         width: DEFAULT_LEFT_WIDTH,
+         preferredWidth: DEFAULT_LEFT_WIDTH,
+      },
+      rightPanel: {
+         isOpen: true,
+         width: DEFAULT_RIGHT_WIDTH,
+         preferredWidth: DEFAULT_RIGHT_WIDTH,
+      },
+      leftState: 'open',
    });
 
    const [workspaceZoneB, setWorkspaceZoneB] = useState<WorkspaceZoneBState>({
@@ -130,28 +150,18 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       overlayPosition: DEFAULT_OVERLAY_POSITION, // Start at bottom
    });
 
-   const [isHydrated, setIsHydrated] = useState(false);
-   const [isMainFullscreen, setIsMainFullscreen] = useState(false);
+   const [dragState, setDragState] = useState<DragState>({
+      isDragging: false,
+      dragSide: null,
+   });
 
-   const [isDragging, setIsDragging] = useState(false);
-   const [dragSide, setDragSide] = useState<'left' | 'right' | null>(null);
-
-   // Center-bottom split height (0 = no split, >0 = split height)
-   const [centerBottomSplit, setCenterBottomSplit] = useState(0);
-
-   // Workspace Zone A visibility state - start visible by default
-   const [isWorkspaceZoneAVisible, setIsWorkspaceZoneAVisible] = useState(true);
-
-   // Track when Workspace Zone A is being toggled to disable transitions
-   const [isTogglingWorkspaceZoneA, setIsTogglingWorkspaceZoneA] = useState(false);
-
-   // Control bar visibility state - start hidden for empty state by default
-   const [isControlBarVisible, setIsControlBarVisible] = useState(false);
-
-   // Viewport width state for breaking point calculations
-   const [viewportWidth, setViewportWidth] = useState(
-      typeof window !== 'undefined' ? window.innerWidth : FALLBACK_VIEWPORT_WIDTH
-   );
+   const [uiState, setUIState] = useState<UIState>({
+      isHydrated: false,
+      isMainFullscreen: false,
+      isControlBarVisible: false,
+      centerBottomSplit: 0,
+      viewportWidth: typeof window !== 'undefined' ? window.innerWidth : FALLBACK_VIEWPORT_WIDTH,
+   });
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
@@ -168,32 +178,38 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Calculate if right panel should be collapsed based on viewport width
    const shouldCollapseRightPanel = useCallback(() => {
       const currentViewportWidth =
-         typeof window !== 'undefined' ? window.innerWidth : viewportWidth;
+         typeof window !== 'undefined' ? window.innerWidth : uiState.viewportWidth;
       const breakingPointWidth = currentViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
-      return rightSidebar.width <= breakingPointWidth;
-   }, [rightSidebar.width, viewportWidth]);
+      return workspaceZoneA.rightPanel.width <= breakingPointWidth;
+   }, [workspaceZoneA.rightPanel.width, uiState.viewportWidth]);
 
    // Debounced save to localStorage
    const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
    // CSS classes now handle layout - no need for updateGridLayout function
 
-   const updateLeftRailState = useCallback(
-      (state: WorkspaceZoneAPanelAState) => {
-         setLeftState((prev) => (prev === state ? prev : state));
-      },
-      [setLeftState]
-   );
+   const updateLeftRailState = useCallback((state: WorkspaceZoneAPanelAState) => {
+      setWorkspaceZoneA((prev) => ({
+         ...prev,
+         leftState: prev.leftState === state ? prev.leftState : state,
+      }));
+   }, []);
 
    // Hydration effect - load saved state after client-side hydration
    useEffect(() => {
-      setIsHydrated(true);
+      setUIState((prev) => ({ ...prev, isHydrated: true }));
 
       try {
          // Load left sidebar state
          const savedLeftOpen = localStorage.getItem('sidebar-left-open');
          const savedLeftWidth = localStorage.getItem('sidebar-left-width');
          const savedLeftPreferred = localStorage.getItem('sidebar-left-preferred-width');
+
+         let leftPanel = {
+            isOpen: true,
+            width: DEFAULT_LEFT_WIDTH,
+            preferredWidth: DEFAULT_LEFT_WIDTH,
+         };
 
          if (savedLeftOpen !== null) {
             const isOpen = savedLeftOpen === 'true';
@@ -213,22 +229,27 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                   ? preferredWidth
                   : validWidth;
 
-            setLeftSidebar({
+            leftPanel = {
                isOpen,
                width: validWidth,
                preferredWidth: validPreferred,
-            });
+            };
          }
 
          const savedLeftState = localStorage.getItem('ui:leftState');
-         if (savedLeftState === 'open' || savedLeftState === 'collapsed') {
-            setLeftState(savedLeftState);
-         }
+         const leftState =
+            savedLeftState === 'open' || savedLeftState === 'collapsed' ? savedLeftState : 'open';
 
          // Load right sidebar state
          const savedRightOpen = localStorage.getItem('sidebar-right-open');
          const savedRightWidth = localStorage.getItem('sidebar-right-width');
          const savedRightPreferred = localStorage.getItem('sidebar-right-preferred-width');
+
+         let rightPanel = {
+            isOpen: true,
+            width: DEFAULT_RIGHT_WIDTH,
+            preferredWidth: DEFAULT_RIGHT_WIDTH,
+         };
 
          if (savedRightOpen !== null) {
             const isOpen = savedRightOpen === 'true';
@@ -248,11 +269,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                   ? preferredWidth
                   : validWidth;
 
-            setRightSidebar({
+            rightPanel = {
                isOpen,
                width: validWidth,
                preferredWidth: validPreferred,
-            });
+            };
          }
 
          // Load workspace zone B state - only load saved preferences if they exist
@@ -260,6 +281,13 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          const savedBottomHeight = localStorage.getItem('ui:workspaceZoneBHeight');
          const savedBottomVisible = localStorage.getItem('ui:workspaceZoneBVisible');
          const savedOverlayPosition = localStorage.getItem('ui:workspaceZoneBOverlayPosition');
+
+         let workspaceZoneBState = {
+            mode: 'push' as WorkspaceZoneBMode,
+            height: DEFAULT_BOTTOM_HEIGHT,
+            isVisible: false,
+            overlayPosition: DEFAULT_OVERLAY_POSITION,
+         };
 
          // Only apply saved state if user has previously interacted with workspace zone B
          if (savedBottomMode || savedBottomHeight || savedBottomVisible) {
@@ -291,17 +319,17 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                   ? overlayPosition
                   : DEFAULT_OVERLAY_POSITION;
 
-            setWorkspaceZoneB({
+            workspaceZoneBState = {
                mode,
                height: validHeight,
                isVisible,
                overlayPosition: validOverlayPosition,
-            });
+            };
          }
-         // If no saved state, keep the default collapsed state (40px)
 
          // Load center-bottom split state
          const savedCenterBottomSplit = localStorage.getItem('ui:centerBottomSplit');
+         let centerBottomSplit = 0;
          if (savedCenterBottomSplit !== null) {
             const splitHeight = parseInt(savedCenterBottomSplit, 10);
             if (!isNaN(splitHeight) && splitHeight >= 0) {
@@ -309,61 +337,57 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                   typeof window !== 'undefined' ? window.innerHeight : FALLBACK_VIEWPORT_HEIGHT;
                const maxHeight = Math.max(100, Math.round(viewportHeight * 0.5));
                const validHeight = Math.min(maxHeight, Math.max(0, splitHeight));
-               setCenterBottomSplit(validHeight);
+               centerBottomSplit = validHeight;
             }
          }
 
-         // Load Workspace Zone A visibility state - always start with empty state
-         // Don't restore from localStorage to ensure app always starts with empty state
-         // Users must explicitly open workspace via command palette or keyboard shortcut
-         // const savedWorkspaceZoneAVisible = localStorage.getItem('ui:workspaceZoneAVisible');
-         // if (savedWorkspaceZoneAVisible !== null) {
-         //    setIsWorkspaceZoneAVisible(savedWorkspaceZoneAVisible === 'true');
-         // }
-         // Keep the default empty state (false) - workspace only opens on user action
+         // Load fullscreen state
+         const savedFullscreen = localStorage.getItem('ui:mainFullscreen');
+         const isMainFullscreen = savedFullscreen === 'true';
 
-         // Load Control Bar visibility state - always start hidden for empty state
-         // Don't restore from localStorage to ensure app always starts with empty state
-         // Control bar will show when workspace is opened
-         // const savedControlBarVisible = localStorage.getItem('ui:controlBarVisible');
-         // if (savedControlBarVisible !== null) {
-         //    setIsControlBarVisible(savedControlBarVisible === 'true');
-         // }
-         // Keep the default empty state (false) - control bar only shows when workspace is opened
+         // Update all states at once
+         setWorkspaceZoneA((prev) => ({
+            ...prev,
+            leftPanel,
+            rightPanel,
+            leftState,
+         }));
+
+         setWorkspaceZoneB(workspaceZoneBState);
+
+         setUIState((prev) => ({
+            ...prev,
+            centerBottomSplit,
+            isMainFullscreen,
+         }));
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }
-      try {
-         const savedFullscreen = localStorage.getItem('ui:mainFullscreen');
-         if (savedFullscreen !== null) {
-            setIsMainFullscreen(savedFullscreen === 'true');
-         }
-      } catch {}
    }, []);
 
    useEffect(() => {
-      if (!isHydrated) {
+      if (!uiState.isHydrated) {
          return;
       }
 
       try {
-         localStorage.setItem('ui:leftState', leftState);
+         localStorage.setItem('ui:leftState', workspaceZoneA.leftState);
       } catch (error) {
          console.warn('Failed to save left sidebar rail state to localStorage:', error);
       }
-   }, [leftState, isHydrated]);
+   }, [workspaceZoneA.leftState, uiState.isHydrated]);
 
    useEffect(() => {
-      if (!isHydrated) {
+      if (!uiState.isHydrated) {
          return;
       }
 
       try {
-         localStorage.setItem('ui:centerBottomSplit', centerBottomSplit.toString());
+         localStorage.setItem('ui:centerBottomSplit', uiState.centerBottomSplit.toString());
       } catch (error) {
          console.warn('Failed to save center-bottom split state to localStorage:', error);
       }
-   }, [centerBottomSplit, isHydrated]);
+   }, [uiState.centerBottomSplit, uiState.isHydrated]);
 
    // CSS classes now handle layout automatically - no useEffect needed
 
@@ -402,67 +426,72 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    const toggleLeftSidebar = useCallback(() => {
       if (enableLeftRail) {
          // When left rail is enabled, toggle between 'open' and 'collapsed' states
-         // Keep isOpen: true in both cases for proper width calculations
-         setLeftState((prev) => (prev === 'open' ? 'collapsed' : 'open'));
-
-         // Ensure sidebar remains "open" from the legacy perspective for width calculations
-         if (!leftSidebar.isOpen) {
-            setLeftSidebar((prev) => ({
-               ...prev,
-               isOpen: true,
-            }));
-         }
+         setWorkspaceZoneA((prev) => ({
+            ...prev,
+            leftState: prev.leftState === 'open' ? 'collapsed' : 'open',
+            leftPanel: {
+               ...prev.leftPanel,
+               isOpen: true, // Keep isOpen: true for proper width calculations
+            },
+         }));
       } else {
          // Legacy behavior: toggle isOpen state
-         setLeftSidebar((prev) => {
-            const isOpening = !prev.isOpen;
-            const width = isOpening ? prev.preferredWidth : prev.width;
-            const preferredWidth = isOpening ? prev.preferredWidth : prev.width;
+         setWorkspaceZoneA((prev) => {
+            const isOpening = !prev.leftPanel.isOpen;
+            const width = isOpening ? prev.leftPanel.preferredWidth : prev.leftPanel.width;
+            const preferredWidth = isOpening ? prev.leftPanel.preferredWidth : prev.leftPanel.width;
 
-            const newState = {
-               ...prev,
+            const newLeftPanel = {
+               ...prev.leftPanel,
                isOpen: isOpening,
                width,
                preferredWidth,
             };
 
-            saveToLocalStorage('left', newState);
+            saveToLocalStorage('left', newLeftPanel);
             updateLeftRailState(isOpening ? 'open' : 'collapsed');
 
-            return newState;
+            return {
+               ...prev,
+               leftPanel: newLeftPanel,
+               leftState: isOpening ? 'open' : 'collapsed',
+            };
          });
       }
-   }, [enableLeftRail, leftSidebar.isOpen, saveToLocalStorage, updateLeftRailState]);
+   }, [enableLeftRail, saveToLocalStorage, updateLeftRailState]);
 
    const setLeftSidebarOpen = useCallback(
       (open: boolean) => {
          if (enableLeftRail) {
             // When left rail is enabled, set the leftState directly
-            setLeftState(open ? 'open' : 'collapsed');
-
-            // Ensure sidebar remains "open" from the legacy perspective for width calculations
-            if (!leftSidebar.isOpen) {
-               setLeftSidebar((prev) => ({
-                  ...prev,
-                  isOpen: true,
-               }));
-            }
+            setWorkspaceZoneA((prev) => ({
+               ...prev,
+               leftState: open ? 'open' : 'collapsed',
+               leftPanel: {
+                  ...prev.leftPanel,
+                  isOpen: true, // Keep isOpen: true for proper width calculations
+               },
+            }));
          } else {
             // Legacy behavior
-            setLeftSidebar((prev) => {
-               const newState = {
-                  ...prev,
+            setWorkspaceZoneA((prev) => {
+               const newLeftPanel = {
+                  ...prev.leftPanel,
                   isOpen: open,
-                  width: open ? prev.preferredWidth : prev.width,
-                  preferredWidth: open ? prev.preferredWidth : prev.width,
+                  width: open ? prev.leftPanel.preferredWidth : prev.leftPanel.width,
+                  preferredWidth: open ? prev.leftPanel.preferredWidth : prev.leftPanel.width,
                };
-               saveToLocalStorage('left', newState);
+               saveToLocalStorage('left', newLeftPanel);
                updateLeftRailState(open ? 'open' : 'collapsed');
-               return newState;
+               return {
+                  ...prev,
+                  leftPanel: newLeftPanel,
+                  leftState: open ? 'open' : 'collapsed',
+               };
             });
          }
       },
-      [enableLeftRail, leftSidebar.isOpen, saveToLocalStorage, updateLeftRailState]
+      [enableLeftRail, saveToLocalStorage, updateLeftRailState]
    );
 
    const setLeftSidebarWidth = useCallback(
@@ -472,15 +501,18 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
          );
 
-         setLeftSidebar((prev) => {
-            if (clampedWidth !== prev.width && prev.isOpen) {
-               const newState = {
-                  ...prev,
+         setWorkspaceZoneA((prev) => {
+            if (clampedWidth !== prev.leftPanel.width && prev.leftPanel.isOpen) {
+               const newLeftPanel = {
+                  ...prev.leftPanel,
                   width: clampedWidth,
                   preferredWidth: clampedWidth,
                };
-               saveToLocalStorage('left', newState);
-               return newState;
+               saveToLocalStorage('left', newLeftPanel);
+               return {
+                  ...prev,
+                  leftPanel: newLeftPanel,
+               };
             }
             return prev;
          });
@@ -489,29 +521,37 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    );
 
    const toggleRightSidebar = useCallback(() => {
-      setRightSidebar((prev) => {
-         const newState = {
-            ...prev,
-            isOpen: !prev.isOpen,
-            width: !prev.isOpen ? prev.preferredWidth : prev.width,
-            preferredWidth: !prev.isOpen ? prev.preferredWidth : prev.width,
+      setWorkspaceZoneA((prev) => {
+         const newRightPanel = {
+            ...prev.rightPanel,
+            isOpen: !prev.rightPanel.isOpen,
+            width: !prev.rightPanel.isOpen ? prev.rightPanel.preferredWidth : prev.rightPanel.width,
+            preferredWidth: !prev.rightPanel.isOpen
+               ? prev.rightPanel.preferredWidth
+               : prev.rightPanel.width,
          };
-         saveToLocalStorage('right', newState);
-         return newState;
+         saveToLocalStorage('right', newRightPanel);
+         return {
+            ...prev,
+            rightPanel: newRightPanel,
+         };
       });
    }, [saveToLocalStorage]);
 
    const setWorkspaceZoneAPanelCOpen = useCallback(
       (open: boolean) => {
-         setRightSidebar((prev) => {
-            const newState = {
-               ...prev,
+         setWorkspaceZoneA((prev) => {
+            const newRightPanel = {
+               ...prev.rightPanel,
                isOpen: open,
-               width: open ? prev.preferredWidth : prev.width,
-               preferredWidth: open ? prev.preferredWidth : prev.width,
+               width: open ? prev.rightPanel.preferredWidth : prev.rightPanel.width,
+               preferredWidth: open ? prev.rightPanel.preferredWidth : prev.rightPanel.width,
             };
-            saveToLocalStorage('right', newState);
-            return newState;
+            saveToLocalStorage('right', newRightPanel);
+            return {
+               ...prev,
+               rightPanel: newRightPanel,
+            };
          });
       },
       [saveToLocalStorage]
@@ -519,30 +559,38 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
 
    // Monitor viewport width changes and handle breaking point logic
    useEffect(() => {
-      if (!isHydrated) return;
+      if (!uiState.isHydrated) return;
 
       const handleWindowResize = () => {
          const newViewportWidth = window.innerWidth;
-         setViewportWidth(newViewportWidth);
+         setUIState((prev) => ({ ...prev, viewportWidth: newViewportWidth }));
 
          // Check if right panel should be collapsed based on new viewport width
          const breakingPointWidth = newViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
          console.log('Viewport resize:', {
             viewportWidth: newViewportWidth,
-            rightPanelWidth: rightSidebar.width,
+            rightPanelWidth: workspaceZoneA.rightPanel.width,
             breakingPointWidth,
-            shouldCollapse: rightSidebar.isOpen && rightSidebar.width <= breakingPointWidth,
+            shouldCollapse:
+               workspaceZoneA.rightPanel.isOpen &&
+               workspaceZoneA.rightPanel.width <= breakingPointWidth,
          });
-         if (rightSidebar.isOpen && rightSidebar.width <= breakingPointWidth) {
+         if (
+            workspaceZoneA.rightPanel.isOpen &&
+            workspaceZoneA.rightPanel.width <= breakingPointWidth
+         ) {
             // Auto-collapse the right panel when it reaches the breaking point
             console.log('Auto-collapsing right panel due to breaking point');
-            setWorkspaceZoneAPanelCOpen(false);
+            setWorkspaceZoneA((prev) => ({
+               ...prev,
+               rightPanel: { ...prev.rightPanel, isOpen: false },
+            }));
          }
       };
 
       window.addEventListener('resize', handleWindowResize);
       return () => window.removeEventListener('resize', handleWindowResize);
-   }, [isHydrated, rightSidebar.isOpen, rightSidebar.width, setWorkspaceZoneAPanelCOpen]);
+   }, [uiState.isHydrated, workspaceZoneA.rightPanel.isOpen, workspaceZoneA.rightPanel.width]);
 
    const setWorkspaceZoneAPanelCWidth = useCallback(
       (width: number) => {
@@ -551,17 +599,17 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
          );
 
-         setRightSidebar((prev) => {
-            if (clampedWidth !== prev.width && prev.isOpen) {
-               const newState = {
-                  ...prev,
+         setWorkspaceZoneA((prev) => {
+            if (clampedWidth !== prev.rightPanel.width && prev.rightPanel.isOpen) {
+               const newRightPanel = {
+                  ...prev.rightPanel,
                   width: clampedWidth,
                   preferredWidth: clampedWidth,
                };
 
                // Check if the new width should trigger auto-collapse
                const currentViewportWidth =
-                  typeof window !== 'undefined' ? window.innerWidth : viewportWidth;
+                  typeof window !== 'undefined' ? window.innerWidth : uiState.viewportWidth;
                const breakingPointWidth =
                   currentViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
 
@@ -575,21 +623,27 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                if (clampedWidth <= breakingPointWidth) {
                   // Auto-collapse the panel when it reaches the breaking point
                   console.log('Auto-collapsing right panel due to width change');
-                  const collapsedState = {
-                     ...newState,
+                  const collapsedPanel = {
+                     ...newRightPanel,
                      isOpen: false,
                   };
-                  saveToLocalStorage('right', collapsedState);
-                  return collapsedState;
+                  saveToLocalStorage('right', collapsedPanel);
+                  return {
+                     ...prev,
+                     rightPanel: collapsedPanel,
+                  };
                }
 
-               saveToLocalStorage('right', newState);
-               return newState;
+               saveToLocalStorage('right', newRightPanel);
+               return {
+                  ...prev,
+                  rightPanel: newRightPanel,
+               };
             }
             return prev;
          });
       },
-      [saveToLocalStorage, viewportWidth]
+      [saveToLocalStorage, uiState.viewportWidth]
    );
    // Bottom bar management functions
    const setWorkspaceZoneBMode = useCallback((mode: WorkspaceZoneBMode) => {
@@ -702,9 +756,13 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       });
    }, []);
 
+   const setCenterBottomSplit = useCallback((height: number) => {
+      setUIState((prev) => ({ ...prev, centerBottomSplit: height }));
+   }, []);
+
    const setMainFullscreen = useCallback(
       (fullscreen: boolean) => {
-         setIsMainFullscreen(fullscreen);
+         setUIState((prev) => ({ ...prev, isMainFullscreen: fullscreen }));
          try {
             localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
          } catch {}
@@ -723,7 +781,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
-      setIsWorkspaceZoneAVisible(visible);
+      setWorkspaceZoneA((prev) => ({ ...prev, isVisible: visible }));
       try {
          localStorage.setItem('ui:workspaceZoneAVisible', visible.toString());
       } catch (error) {
@@ -732,14 +790,14 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    }, []);
 
    const toggleWorkspaceZoneA = useCallback(() => {
-      const newVisible = !isWorkspaceZoneAVisible;
-
-      // Simple state update - CSS classes handle the visual changes
-      setWorkspaceZoneAVisible(newVisible);
-   }, [isWorkspaceZoneAVisible, setWorkspaceZoneAVisible]);
+      setWorkspaceZoneA((prev) => ({
+         ...prev,
+         isVisible: !prev.isVisible,
+      }));
+   }, []);
 
    const setControlBarVisible = useCallback((visible: boolean) => {
-      setIsControlBarVisible(visible);
+      setUIState((prev) => ({ ...prev, isControlBarVisible: visible }));
       try {
          localStorage.setItem('ui:controlBarVisible', visible.toString());
       } catch (error) {
@@ -748,8 +806,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    }, []);
 
    const toggleControlBar = useCallback(() => {
-      setControlBarVisible(!isControlBarVisible);
-   }, [isControlBarVisible, setControlBarVisible]);
+      setUIState((prev) => ({ ...prev, isControlBarVisible: !prev.isControlBarVisible }));
+   }, []);
 
    // Temporary shortcut for toggling Section D until settings wiring is in place.
    useEffect(() => {
@@ -837,7 +895,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
 
          if (action === 'toggleCenterBottomSplit') {
             // Get current value from state instead of store
-            if (centerBottomSplit > 0) {
+            if (uiState.centerBottomSplit > 0) {
                setCenterBottomSplit(0);
             } else {
                const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
@@ -907,75 +965,85 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       toggleWorkspaceZoneA,
       setControlBarVisible,
       toggleControlBar,
-      centerBottomSplit,
+      uiState.centerBottomSplit,
    ]);
 
    const contextValue = React.useMemo(
       () => ({
-         leftSidebar,
+         // Simplified state
+         workspaceZoneA,
+         setWorkspaceZoneA,
+         toggleWorkspaceZoneA,
+         workspaceZoneB,
+         setWorkspaceZoneB,
+         toggleWorkspaceZoneB,
+         dragState,
+         setDragState,
+         uiState,
+         setUIState,
+
+         // Backward compatibility - individual panel controls
+         leftSidebar: workspaceZoneA.leftPanel,
          toggleLeftSidebar,
          setLeftSidebarWidth,
          setLeftSidebarOpen,
-         leftState,
+         leftState: workspaceZoneA.leftState,
          setLeftState: updateLeftRailState,
-         rightSidebar,
+         rightSidebar: workspaceZoneA.rightPanel,
          toggleRightSidebar,
          setWorkspaceZoneAPanelCWidth,
          setWorkspaceZoneAPanelCOpen,
-         workspaceZoneB,
+
+         // Backward compatibility - Zone B controls
          setWorkspaceZoneBMode,
          setWorkspaceZoneBHeight,
          setWorkspaceZoneBVisible,
          setWorkspaceZoneBOverlayPosition,
-         toggleWorkspaceZoneB,
-         centerBottomSplit,
+
+         // Backward compatibility - UI controls
+         centerBottomSplit: uiState.centerBottomSplit,
          setCenterBottomSplit,
-         isDragging,
-         setIsDragging,
-         dragSide,
-         setDragSide,
-         isHydrated,
-         isMainFullscreen,
+         isDragging: dragState.isDragging,
+         setIsDragging: (dragging: boolean) =>
+            setDragState((prev) => ({ ...prev, isDragging: dragging })),
+         dragSide: dragState.dragSide,
+         setDragSide: (side: 'left' | 'right' | null) =>
+            setDragState((prev) => ({ ...prev, dragSide: side })),
+         isHydrated: uiState.isHydrated,
+         isMainFullscreen: uiState.isMainFullscreen,
          setMainFullscreen,
-         isWorkspaceZoneAVisible,
-         setWorkspaceZoneAVisible,
-         toggleWorkspaceZoneA,
-         isTogglingWorkspaceZoneA,
-         isControlBarVisible,
+         isWorkspaceZoneAVisible: workspaceZoneA.isVisible,
+         setWorkspaceZoneAVisible: (visible: boolean) =>
+            setWorkspaceZoneA((prev) => ({ ...prev, isVisible: visible })),
+         isTogglingWorkspaceZoneA: false, // Removed complex toggle tracking
+         isControlBarVisible: uiState.isControlBarVisible,
          setControlBarVisible,
          toggleControlBar,
       }),
       [
-         leftSidebar,
+         workspaceZoneA,
+         setWorkspaceZoneA,
+         toggleWorkspaceZoneA,
+         workspaceZoneB,
+         setWorkspaceZoneB,
+         toggleWorkspaceZoneB,
+         dragState,
+         setDragState,
+         uiState,
+         setUIState,
          toggleLeftSidebar,
          setLeftSidebarWidth,
          setLeftSidebarOpen,
-         leftState,
          updateLeftRailState,
-         rightSidebar,
          toggleRightSidebar,
          setWorkspaceZoneAPanelCWidth,
          setWorkspaceZoneAPanelCOpen,
-         workspaceZoneB,
          setWorkspaceZoneBMode,
          setWorkspaceZoneBHeight,
          setWorkspaceZoneBVisible,
          setWorkspaceZoneBOverlayPosition,
-         toggleWorkspaceZoneB,
-         centerBottomSplit,
          setCenterBottomSplit,
-         isDragging,
-         setIsDragging,
-         dragSide,
-         setDragSide,
-         isHydrated,
-         isMainFullscreen,
          setMainFullscreen,
-         isWorkspaceZoneAVisible,
-         setWorkspaceZoneAVisible,
-         toggleWorkspaceZoneA,
-         isTogglingWorkspaceZoneA,
-         isControlBarVisible,
          setControlBarVisible,
          toggleControlBar,
       ]

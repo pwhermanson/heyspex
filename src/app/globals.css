@@ -217,8 +217,14 @@
    }
 
    .workspace-zone-a-panel {
-      background-color: hsl(var(--card)) !important;
-      background: hsl(var(--card)) !important;
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      opacity: 1 !important;
+   }
+
+   .dark .workspace-zone-a-panel {
+      background-color: #1a1a1a !important;
+      background: #1a1a1a !important;
    }
 
    .bg-container {
@@ -247,6 +253,8 @@
 
    /* Workspace Zone A - Base styling */
    .workspace-zone-a {
+      position: relative;
+      z-index: var(--z-main-content);
       transition: all var(--layout-motion-duration-medium) var(--layout-motion-easing);
    }
 
