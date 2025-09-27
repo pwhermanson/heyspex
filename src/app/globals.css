@@ -276,6 +276,15 @@
       --sidebar-right-width: 0px;
    }
 
+   /* Workspace Zone A - Fullscreen state (Panel B full width, Panels A and C hidden) */
+   .workspace-zone-a-fullscreen {
+      --left-width: 0px;
+      --right-width: 0px;
+      --grid-template-columns: 0px 1fr 0px;
+      --sidebar-left-width: 0px;
+      --sidebar-right-width: 0px;
+   }
+
    /* Disable transitions during toggle - unified approach */
    .workspace-zone-a-toggling,
    .workspace-zone-b-toggling {

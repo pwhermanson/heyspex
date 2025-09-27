@@ -129,7 +129,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          </div>
 
          {/* GlobalControlBar - spans full width */}
-         {!isMainFullscreen && isControlBarEnabled && isControlBarVisible && <GlobalControlBar />}
+         {isControlBarEnabled && isControlBarVisible && <GlobalControlBar />}
 
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden z-10">
@@ -139,10 +139,13 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   className={cn(
                      'grid w-full h-full overflow-hidden relative',
                      !isDragging &&
-                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
+                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none',
+                     isMainFullscreen && 'workspace-zone-a-fullscreen'
                   )}
                   style={{
-                     gridTemplateColumns: `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
+                     gridTemplateColumns: isMainFullscreen
+                        ? '0px 1fr 0px'
+                        : `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
                      gridTemplateAreas: '"sidebar main right-sidebar"',
                   }}
                >
@@ -193,7 +196,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                            )}
                            style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
                         >
-                           {!isMainFullscreen && <PanelControlBar />}
+                           <PanelControlBar />
                            {header}
                            <div
                               className={cn(
@@ -271,7 +274,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          </div>
 
          {/* Workspace Zone B - Unified Container */}
-         {isBottomSplitEnabled && isHydrated && !isMainFullscreen && workspaceZoneB.isVisible && (
+         {isBottomSplitEnabled && isHydrated && workspaceZoneB.isVisible && (
             <WorkspaceZoneBContainer mode={workspaceZoneB.mode} height={workspaceZoneB.height}>
                <WorkspaceZoneB
                   mode={workspaceZoneB.mode}

@@ -258,3 +258,25 @@ registerCommand({
       }
    },
 });
+
+// Register Panel B Fullscreen Toggle command
+registerCommand({
+   id: 'panel.fullscreen.toggle',
+   title: '/panel fullscreen toggle',
+   keywords: ['panel', 'fullscreen', 'expand', 'center', 'main', 'toggle'],
+   shortcut: 'Ctrl+Shift+5',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         // Toggle Panel B fullscreen mode (push Panels A and C off viewport)
+         // We need to get the current state from the context, but since we can't access it directly,
+         // we'll dispatch a toggle event that the provider can handle
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'toggleMainFullscreen' },
+            })
+         );
+      }
+   },
+});

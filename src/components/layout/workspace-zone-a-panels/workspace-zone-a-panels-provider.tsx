@@ -758,18 +758,19 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          try {
             localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
          } catch {}
-         // When entering fullscreen, close sidebars and hide workspace zone B, but remember their states via existing persistence
+         // When entering fullscreen, close sidebars but keep control bar and workspace zone B visible
+         // This will make Panel B go full width and push Panels A and C off viewport
          if (fullscreen) {
             setLeftPanelOpen(false);
             setWorkspaceZoneAPanelCOpen(false);
-            setWorkspaceZoneBVisible(false);
+            // Keep workspace zone B visible - don't hide it
          } else {
-            // On exit, simply show workspace zone B again; sidebars restored via persisted state on user action
-            setWorkspaceZoneBVisible(true);
+            // On exit, restore sidebars to their previous state
+            // Workspace zone B remains visible
          }
          // CSS classes now handle layout automatically
       },
-      [setLeftPanelOpen, setWorkspaceZoneAPanelCOpen, setWorkspaceZoneBVisible]
+      [setLeftPanelOpen, setWorkspaceZoneAPanelCOpen]
    );
 
    const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
@@ -805,18 +806,18 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
          const isCtrlLike = event.ctrlKey || event.metaKey;
-         const isTopDigit1 = event.shiftKey && event.code === 'Digit1';
-         const isNumpad1 = event.code === 'Numpad1';
+         const isTopDigit5 = event.shiftKey && event.code === 'Digit5';
+         const isNumpad5 = event.code === 'Numpad5';
          const isTopDigit2 = event.shiftKey && event.code === 'Digit2';
          const isNumpad2 = event.code === 'Numpad2';
          const isTopDigit8 = event.shiftKey && event.code === 'Digit8';
          const isNumpad8 = event.code === 'Numpad8';
          const isComma = event.shiftKey && event.key === ',';
 
-         // Ctrl+Shift+1 or Ctrl+Numpad1 - Toggle workspace zone A
-         if (isCtrlLike && !event.altKey && (isTopDigit1 || isNumpad1)) {
+         // Ctrl+Shift+5 or Ctrl+Numpad5 - Toggle Panel B fullscreen (push Panels A and C off viewport)
+         if (isCtrlLike && !event.altKey && (isTopDigit5 || isNumpad5)) {
             event.preventDefault();
-            toggleWorkspaceZoneA();
+            setMainFullscreen(!uiState.isMainFullscreen);
          }
 
          // Ctrl+Shift+, - Toggle workspace zone A
@@ -858,6 +859,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setWorkspaceZoneBVisible,
       toggleControlBar,
       toggleWorkspaceZoneA,
+      setMainFullscreen,
+      uiState.isMainFullscreen,
    ]);
 
    // Listen for panel command events from command palette
@@ -923,6 +926,10 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             setMainFullscreen(fullscreen);
          }
 
+         if (action === 'toggleMainFullscreen') {
+            setMainFullscreen(!uiState.isMainFullscreen);
+         }
+
          if (action === 'setWorkspaceZoneAVisible') {
             setWorkspaceZoneAVisible(visible);
          }
@@ -958,6 +965,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setControlBarVisible,
       toggleControlBar,
       uiState.centerBottomSplit,
+      uiState.isMainFullscreen,
    ]);
 
    const contextValue = React.useMemo(
