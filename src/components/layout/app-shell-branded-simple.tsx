@@ -28,7 +28,10 @@ interface AppShellBrandedSimpleProps {
    className?: string;
 }
 
-export function AppShellBrandedSimple({ className }: AppShellBrandedSimpleProps) {
+export const AppShellBrandedSimple = React.memo(function AppShellBrandedSimple({
+   className,
+}: AppShellBrandedSimpleProps) {
+   console.log('🎨 AppShellBrandedSimple component rendering');
    return (
       <div
          className={cn(
@@ -65,4 +68,4 @@ export function AppShellBrandedSimple({ className }: AppShellBrandedSimpleProps)
          </div>
       </div>
    );
-}
+});

@@ -25,10 +25,8 @@ import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
-import { AppShellBranded } from '@/src/components/layout/app-shell-branded';
-import { AppShellBrandedSimple } from '@/src/components/layout/app-shell-branded-simple';
 import { useWorkspaceInitialization } from '@/src/lib/hooks/use-workspace-initialization';
-import { shouldUseSimpleBranded } from '@/src/lib/config/branded-component-config';
+import { StableAppShell } from '@/src/components/layout/stable-app-shell';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
 // Import workspace commands to register them
@@ -63,7 +61,7 @@ const isEmptyHeader = (header: React.ReactNode | undefined): boolean => {
    return false;
 };
 
-function LayoutGrid({ children, header }: MainLayoutProps) {
+const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayoutProps) {
    const {
       isDragging,
       workspaceZoneB,
@@ -127,156 +125,155 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       >
          {/* App Shell - Background layer that everything renders on top of */}
          <div className="absolute inset-0 z-0">
-            {shouldUseSimpleBranded() ? <AppShellBrandedSimple /> : <AppShellBranded />}
+            <StableAppShell />
          </div>
 
          {/* GlobalControlBar - spans full width */}
          {isControlBarEnabled && isControlBarVisible && <GlobalControlBar />}
 
-         {/* Main Area - contains the three-panel layout */}
-         <div className="relative overflow-hidden z-10">
-            {/* Workspace Zone A - Three-panel grid */}
-            <WorkspaceZoneAContainer
-               isVisible={workspaceZoneAMode !== 'hidden'}
-               mode={workspaceZoneAMode}
-            >
-               <div
-                  className={cn(
-                     'grid w-full h-full overflow-hidden relative',
-                     !isDragging &&
-                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
-                  )}
-                  style={{
-                     gridTemplateColumns:
-                        workspaceZoneAMode === 'fullscreen'
-                           ? '0px 1fr 0px'
-                           : `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
-                     gridTemplateAreas: '"sidebar main right-sidebar"',
-                  }}
-               >
-                  {/* Left Sidebar Area */}
+         {/* Main Area - contains the three-panel layout - only render when Workspace Zone A is visible */}
+         {workspaceZoneAMode !== 'hidden' && (
+            <div className="relative overflow-hidden z-10">
+               {/* Workspace Zone A - Three-panel grid */}
+               <WorkspaceZoneAContainer isVisible={true} mode={workspaceZoneAMode}>
                   <div
                      className={cn(
-                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
-                        workspaceZoneAMode === 'fullscreen' && 'p-0'
+                        'grid w-full h-full overflow-hidden relative',
+                        !isDragging &&
+                           'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                      )}
-                     style={{ gridArea: 'sidebar' }}
+                     style={{
+                        gridTemplateColumns:
+                           workspaceZoneAMode === 'fullscreen'
+                              ? '0px 1fr 0px'
+                              : `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
+                        gridTemplateAreas: '"sidebar main right-sidebar"',
+                     }}
                   >
-                     <WorkspaceZoneAPanelA />
-                  </div>
-
-                  {/* Main Content Area */}
-                  <div
-                     className={cn(
-                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
-                        workspaceZoneAMode === 'fullscreen' && 'p-0'
-                     )}
-                     style={{ gridArea: 'main' }}
-                  >
+                     {/* Left Sidebar Area */}
                      <div
                         className={cn(
-                           'overflow-hidden workspace-zone-a-panel h-full',
-                           !isMainFullscreen && 'lg:border lg:rounded-md',
-                           centerBottomSplit > 0
-                              ? 'grid'
-                              : 'flex flex-col items-center justify-start'
+                           'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
+                           workspaceZoneAMode === 'fullscreen' && 'p-0'
                         )}
-                        style={
-                           centerBottomSplit > 0
-                              ? {
-                                   gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
-                                   gridTemplateAreas: '"center" "bottom"',
-                                }
-                              : undefined
-                        }
-                        data-main-container
+                        style={{ gridArea: 'sidebar' }}
                      >
-                        {/* Center Content Area */}
+                        <WorkspaceZoneAPanelA />
+                     </div>
+
+                     {/* Main Content Area */}
+                     <div
+                        className={cn(
+                           'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
+                           workspaceZoneAMode === 'fullscreen' && 'p-0'
+                        )}
+                        style={{ gridArea: 'main' }}
+                     >
                         <div
                            className={cn(
-                              'overflow-hidden',
+                              'overflow-hidden workspace-zone-a-panel h-full',
+                              !isMainFullscreen && 'lg:border lg:rounded-md',
                               centerBottomSplit > 0
-                                 ? 'flex flex-col items-center justify-start w-full'
-                                 : 'contents'
+                                 ? 'grid'
+                                 : 'flex flex-col items-center justify-start'
                            )}
-                           style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
+                           style={
+                              centerBottomSplit > 0
+                                 ? {
+                                      gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
+                                      gridTemplateAreas: '"center" "bottom"',
+                                   }
+                                 : undefined
+                           }
+                           data-main-container
                         >
-                           <PanelControlBar />
-                           {header}
+                           {/* Center Content Area */}
                            <div
                               className={cn(
-                                 'overflow-auto w-full',
-                                 workspaceZoneAMode === 'fullscreen'
-                                    ? 'h-full'
-                                    : isEmptyHeader(header)
-                                      ? 'h-full'
-                                      : centerBottomSplit > 0
-                                        ? 'h-full'
-                                        : 'h-full'
+                                 'overflow-hidden',
+                                 centerBottomSplit > 0
+                                    ? 'flex flex-col items-center justify-start w-full'
+                                    : 'contents'
                               )}
+                              style={centerBottomSplit > 0 ? { gridArea: 'center' } : undefined}
                            >
-                              {children}
-                           </div>
-                        </div>
-
-                        {/* Split Handle - only rendered when split is active */}
-                        {centerBottomSplit > 0 && (
-                           <div className="relative">
-                              <div className="absolute inset-x-0 -top-1 z-10">
-                                 <SplitHandle
-                                    currentHeight={centerBottomSplit}
-                                    minHeight={0}
-                                    maxHeight={Math.max(100, Math.round(800 * 0.5))}
-                                    onHeightChange={setCenterBottomSplit}
-                                    onDragStart={undefined}
-                                    onDragEnd={undefined}
-                                    isDragging={isDragging}
-                                    aria-label="Adjust center-bottom split"
-                                 />
+                              <PanelControlBar />
+                              {header}
+                              <div
+                                 className={cn(
+                                    'overflow-auto w-full',
+                                    workspaceZoneAMode === 'fullscreen'
+                                       ? 'h-full'
+                                       : isEmptyHeader(header)
+                                         ? 'h-full'
+                                         : centerBottomSplit > 0
+                                           ? 'h-full'
+                                           : 'h-full'
+                                 )}
+                              >
+                                 {children}
                               </div>
                            </div>
-                        )}
 
-                        {/* Bottom Content Area - only rendered when split is active */}
-                        {centerBottomSplit > 0 && (
-                           <div
-                              className="overflow-hidden border-t bg-muted/30"
-                              style={{ gridArea: 'bottom' }}
-                           >
-                              <div className="h-full overflow-auto p-4">
-                                 <div className="text-sm text-muted-foreground">
-                                    <p>Bottom split area</p>
-                                    <p className="mt-2">
-                                       Height: <strong>{centerBottomSplit}px</strong>
-                                    </p>
+                           {/* Split Handle - only rendered when split is active */}
+                           {centerBottomSplit > 0 && (
+                              <div className="relative">
+                                 <div className="absolute inset-x-0 -top-1 z-10">
+                                    <SplitHandle
+                                       currentHeight={centerBottomSplit}
+                                       minHeight={0}
+                                       maxHeight={Math.max(100, Math.round(800 * 0.5))}
+                                       onHeightChange={setCenterBottomSplit}
+                                       onDragStart={undefined}
+                                       onDragEnd={undefined}
+                                       isDragging={isDragging}
+                                       aria-label="Adjust center-bottom split"
+                                    />
                                  </div>
                               </div>
-                           </div>
-                        )}
+                           )}
+
+                           {/* Bottom Content Area - only rendered when split is active */}
+                           {centerBottomSplit > 0 && (
+                              <div
+                                 className="overflow-hidden border-t bg-muted/30"
+                                 style={{ gridArea: 'bottom' }}
+                              >
+                                 <div className="h-full overflow-auto p-4">
+                                    <div className="text-sm text-muted-foreground">
+                                       <p>Bottom split area</p>
+                                       <p className="mt-2">
+                                          Height: <strong>{centerBottomSplit}px</strong>
+                                       </p>
+                                    </div>
+                                 </div>
+                              </div>
+                           )}
+                        </div>
                      </div>
+
+                     {/* Right Sidebar Area */}
+                     <div
+                        className={cn(
+                           'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
+                           workspaceZoneAMode === 'fullscreen' && 'p-0'
+                        )}
+                        style={{ gridArea: 'right-sidebar' }}
+                     >
+                        <WorkspaceZoneAPanelC />
+                     </div>
+
+                     {/* Drag Handle between Panel A and Panel B */}
+                     <WorkspaceZoneADragHandle side="left" />
+
+                     {/* Drag Handle between Panel B and Panel C */}
+                     <WorkspaceZoneADragHandle side="right" />
                   </div>
+               </WorkspaceZoneAContainer>
 
-                  {/* Right Sidebar Area */}
-                  <div
-                     className={cn(
-                        'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
-                        workspaceZoneAMode === 'fullscreen' && 'p-0'
-                     )}
-                     style={{ gridArea: 'right-sidebar' }}
-                  >
-                     <WorkspaceZoneAPanelC />
-                  </div>
-
-                  {/* Drag Handle between Panel A and Panel B */}
-                  <WorkspaceZoneADragHandle side="left" />
-
-                  {/* Drag Handle between Panel B and Panel C */}
-                  <WorkspaceZoneADragHandle side="right" />
-               </div>
-            </WorkspaceZoneAContainer>
-
-            {/* Drag handles removed - will be re-implemented */}
-         </div>
+               {/* Drag handles removed - will be re-implemented */}
+            </div>
+         )}
 
          {/* Workspace Zone B - Unified Container */}
          {isBottomSplitEnabled && isHydrated && workspaceZoneB.isVisible && (
@@ -298,7 +295,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          <CommandPaletteModal />
       </div>
    );
-}
+});
 
 export default function MainLayout({ children, header, headersNumber = 2 }: MainLayoutProps) {
    const pathname = usePathname();

@@ -217,11 +217,19 @@ const STYLE_GENERATORS = {
          : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
 } as const;
 
-export function AppShellBranded({ className }: AppShellBrandedProps) {
+export const AppShellBranded = React.memo(function AppShellBranded({
+   className,
+}: AppShellBrandedProps) {
    const [isMouseOver, setIsMouseOver] = useState(false);
    const [isMouseMoving, setIsMouseMoving] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
    const [isFading, setIsFading] = useState(false);
+   const [isClient, setIsClient] = useState(false);
+
+   // Ensure client-side rendering for interactivity
+   React.useEffect(() => {
+      setIsClient(true);
+   }, []);
    const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>(
       VISUAL_CONSTANTS.DEFAULT_MOUSE_POSITION
    );
@@ -244,6 +252,9 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
 
    const handleMouseMove = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
+         // Only handle mouse events on client side
+         if (!isClient) return;
+
          // Always update mouse position immediately for smooth tracking
          if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
@@ -260,7 +271,6 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
 
          // Activate effects immediately - no delay
          setIsMouseOver(true);
-
          setIsIdle(false);
          setIsFading(false);
 
@@ -274,7 +284,7 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
             }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
          }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
       },
-      [clearAllTimeouts]
+      [clearAllTimeouts, isClient]
    );
 
    // Helper function to get logo center and distance from mouse (memoized)
@@ -419,6 +429,9 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
    }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
 
    const handleMouseLeave = useCallback(() => {
+      // Only handle mouse events on client side
+      if (!isClient) return;
+
       // Clear existing timeouts
       clearAllTimeouts();
 
@@ -431,11 +444,13 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
             setIsFading(true);
          }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
       }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
-   }, [clearAllTimeouts]);
+   }, [clearAllTimeouts, isClient]);
 
    // Cleanup timeouts on unmount
    useEffect(() => {
-      return clearAllTimeouts;
+      return () => {
+         clearAllTimeouts();
+      };
    }, [clearAllTimeouts]);
 
    return (
@@ -446,14 +461,22 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
             'bg-background text-foreground relative overflow-hidden',
             className
          )}
-         onMouseMove={handleMouseMove}
-         onMouseLeave={handleMouseLeave}
+         onMouseMove={isClient ? handleMouseMove : undefined}
+         onMouseLeave={isClient ? handleMouseLeave : undefined}
+         style={{
+            zIndex: 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+         }}
       >
          {/* Grid background with gradient */}
          <div className="absolute inset-0" style={gridBackgroundStyle} />
 
-         {/* Mouse-following glow effect */}
-         {isMouseOver && (
+         {/* Mouse-following glow effect - only render when client is ready */}
+         {isClient && isMouseOver && (
             <div
                className="absolute inset-0 pointer-events-none"
                style={{
@@ -529,4 +552,4 @@ export function AppShellBranded({ className }: AppShellBrandedProps) {
          </div>
       </div>
    );
-}
+});

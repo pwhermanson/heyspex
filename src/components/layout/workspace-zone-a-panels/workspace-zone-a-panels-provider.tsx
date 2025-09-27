@@ -132,18 +132,18 @@ export function useResizablePanel() {
 export function WorkspaceZoneAPanelsProvider({ children }: { children: React.ReactNode }) {
    // Simplified state management following Zone B's pattern
    const [workspaceZoneA, setWorkspaceZoneA] = useState<WorkspaceZoneAState>({
-      isVisible: true,
+      isVisible: false, // Start hidden to show only app shell
       leftPanel: {
-         isOpen: true,
+         isOpen: false, // Start closed
          width: DEFAULT_LEFT_WIDTH,
          preferredWidth: DEFAULT_LEFT_WIDTH,
       },
       rightPanel: {
-         isOpen: true,
+         isOpen: false, // Start closed
          width: DEFAULT_RIGHT_WIDTH,
          preferredWidth: DEFAULT_RIGHT_WIDTH,
       },
-      leftState: 'open',
+      leftState: 'closed', // Start closed
    });
 
    const [workspaceZoneB, setWorkspaceZoneB] = useState<WorkspaceZoneBState>({
@@ -163,7 +163,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       isControlBarVisible: false,
       centerBottomSplit: 0,
       viewportWidth: typeof window !== 'undefined' ? window.innerWidth : FALLBACK_VIEWPORT_WIDTH,
-      workspaceZoneAMode: 'normal',
+      workspaceZoneAMode: 'hidden', // Start hidden to show only app shell
    });
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
@@ -271,6 +271,20 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             };
          }
 
+         // Load workspace zone A mode - only load saved preferences if they exist
+         const savedWorkspaceZoneAMode = localStorage.getItem('ui:workspaceZoneAMode');
+         const workspaceZoneAMode =
+            savedWorkspaceZoneAMode === 'normal' ||
+            savedWorkspaceZoneAMode === 'fullscreen' ||
+            savedWorkspaceZoneAMode === 'hidden'
+               ? (savedWorkspaceZoneAMode as WorkspaceZoneAMode)
+               : 'hidden'; // Default to hidden to show App Shell
+
+         console.log('🎨 Loading workspace zone A mode from localStorage:', {
+            savedWorkspaceZoneAMode,
+            workspaceZoneAMode,
+         });
+
          // Load workspace zone B state - only load saved preferences if they exist
          const savedBottomMode = localStorage.getItem('ui:workspaceZoneBMode');
          const savedBottomHeight = localStorage.getItem('ui:workspaceZoneBHeight');
@@ -354,6 +368,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             ...prev,
             centerBottomSplit,
             isMainFullscreen,
+            workspaceZoneAMode, // Load the saved workspace zone A mode
          }));
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
@@ -758,6 +773,13 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    // Set specific Workspace Zone A mode
    const setWorkspaceZoneAMode = useCallback((mode: WorkspaceZoneAMode) => {
       setUIState((prev) => ({ ...prev, workspaceZoneAMode: mode }));
+
+      // Save to localStorage
+      try {
+         localStorage.setItem('ui:workspaceZoneAMode', mode);
+      } catch (error) {
+         console.warn('Failed to save workspace zone A mode to localStorage:', error);
+      }
    }, []);
 
    // 3-way toggle for Workspace Zone A: normal -> fullscreen -> hidden -> normal
@@ -778,6 +800,15 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
                break;
             default:
                nextMode = 'normal';
+         }
+
+         console.log('🎨 Cycling workspace zone A mode:', { currentMode, nextMode });
+
+         // Save to localStorage
+         try {
+            localStorage.setItem('ui:workspaceZoneAMode', nextMode);
+         } catch (error) {
+            console.warn('Failed to save workspace zone A mode to localStorage:', error);
          }
 
          return { ...prev, workspaceZoneAMode: nextMode };

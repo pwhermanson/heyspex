@@ -22,6 +22,14 @@ export function getBrandedComponentConfig(): BrandedComponentConfig {
    const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
    const performanceMonitoring = process.env.NEXT_PUBLIC_PERFORMANCE_MONITORING === 'true';
 
+   console.log('🔍 Branded Component Config Debug:', {
+      NEXT_PUBLIC_BRANDED_COMPONENT: process.env.NEXT_PUBLIC_BRANDED_COMPONENT,
+      variant,
+      devMode,
+      performanceMonitoring,
+      isServer: typeof window === 'undefined',
+   });
+
    return {
       variant,
       devMode,
@@ -40,7 +48,12 @@ export function getBrandedComponentVariant(): BrandedComponentVariant {
  * Check if we should use the simple branded component
  */
 export function shouldUseSimpleBranded(): boolean {
-   return getBrandedComponentVariant() === 'simple';
+   const result = getBrandedComponentVariant() === 'simple';
+   console.log('🔍 shouldUseSimpleBranded called:', {
+      variant: getBrandedComponentVariant(),
+      result,
+   });
+   return result;
 }
 
 /**
