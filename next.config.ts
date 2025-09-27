@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
 
    // Use stable build ID for better caching
    generateBuildId: async () => {
-      return 'build-' + Date.now();
+      return 'build-' + (process.env.BUILD_ID || 'stable');
    },
 
    // Performance optimizations

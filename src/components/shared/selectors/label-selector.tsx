@@ -2,10 +2,10 @@
 
 import React from 'react';
 import BaseSelector from './base-selector';
-import { labels, LabelInterface } from '@/src/tests/test-data/labels';
-import { useIssuesStore } from '@/src/state/store/issues-store';
+import { labels, LabelInterface } from '@/tests/test-data/labels';
+import { useIssuesStore } from '@/state/store/issues-store';
 import { TagIcon } from 'lucide-react';
-import { cn } from '@/src/lib/lib/utils';
+import { cn } from '@/lib/lib/utils';
 
 interface LabelSelectorProps {
    /** Currently selected labels */

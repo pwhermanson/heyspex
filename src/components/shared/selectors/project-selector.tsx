@@ -2,10 +2,10 @@
 
 import React from 'react';
 import BaseSelector from './base-selector';
-import { projects, Project } from '@/src/tests/test-data/projects';
-import { useIssuesStore } from '@/src/state/store/issues-store';
+import { projects, Project } from '@/tests/test-data/projects';
+import { useIssuesStore } from '@/state/store/issues-store';
 import { FolderIcon } from 'lucide-react';
-import type { BaseSelectorProps } from '@/src/components/standards/prop-interface-patterns';
+import type { BaseSelectorProps } from '@/components/standards/prop-interface-patterns';
 
 interface ProjectSelectorProps
    extends Omit<

@@ -1,9 +1,9 @@
-import { groupIssuesByStatus, Issue, issues as mockIssues } from '@/src/tests/test-data/issues';
-import { LabelInterface } from '@/src/tests/test-data/labels';
-import { Priority } from '@/src/tests/test-data/priorities';
-import { Project } from '@/src/tests/test-data/projects';
-import { Status } from '@/src/tests/test-data/status';
-import { User } from '@/src/tests/test-data/users';
+import { groupIssuesByStatus, Issue, issues as mockIssues } from '@/tests/test-data/issues';
+import { LabelInterface } from '@/tests/test-data/labels';
+import { Priority } from '@/tests/test-data/priorities';
+import { Project } from '@/tests/test-data/projects';
+import { Status } from '@/tests/test-data/status';
+import { User } from '@/tests/test-data/users';
 import { create } from 'zustand';
 
 interface FilterOptions {
