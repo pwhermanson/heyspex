@@ -2,11 +2,11 @@
 
 import React from 'react';
 import BaseSelector from './base-selector';
-import { users, User } from '@/src/tests/test-data/users';
-import { useIssuesStore } from '@/src/state/store/issues-store';
+import { users, User } from '@/tests/test-data/users';
+import { useIssuesStore } from '@/state/store/issues-store';
 import { UserCircle } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/src/components/ui/avatar';
-import type { BaseSelectorProps } from '@/src/components/standards/prop-interface-patterns';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { BaseSelectorProps } from '@/components/standards/prop-interface-patterns';
 
 interface AssigneeSelectorProps
    extends Omit<
