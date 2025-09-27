@@ -24,11 +24,12 @@ export function WorkspaceZoneAPanelA() {
    const [open, setOpen] = React.useState(true);
    const pathname = usePathname();
    const isSettings = pathname.includes('/settings');
-   const { leftState } = useResizablePanel();
+   const { leftState, leftPanel } = useResizablePanel();
    const enableLeftRail = useFeatureFlag('enableLeftRail');
 
-   // When left rail is enabled, show text only when state is 'open'
-   const showText = !enableLeftRail || leftState === 'open';
+   // Responsive behavior like Panel B - adapt content based on available width
+   // Show text when panel is wide enough, hide when narrow
+   const showText = leftPanel.width > 200;
 
    return (
       <ResizablePanel side="left">

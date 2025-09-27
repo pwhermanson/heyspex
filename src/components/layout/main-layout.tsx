@@ -20,7 +20,7 @@ import { WorkspaceZoneBContainer } from '@/src/components/layout/workspace-zone-
 import { WorkspaceZoneAContainer } from '@/src/components/layout/workspace-zone-a-container';
 import { SplitHandle } from '@/src/components/layout/split-handle';
 import { PanelControlBar } from '@/src/components/layout/panel-control-bar';
-import { WorkspaceZoneAPanelsDragHandle } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-drag-handle';
+import { WorkspaceZoneADragHandle } from '@/src/components/layout/workspace-zone-a-drag-handle';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
@@ -77,6 +77,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       rightPanel,
       isWorkspaceZoneAVisible,
       isControlBarVisible,
+      workspaceZoneA,
    } = useResizablePanel();
 
    // Initialize workspace data
@@ -141,7 +142,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                         'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}
                   style={{
-                     gridTemplateColumns: 'var(--grid-template-columns, 244px 1fr 0px)',
+                     gridTemplateColumns: `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
                      gridTemplateAreas: '"sidebar main right-sidebar"',
                   }}
                >
@@ -257,37 +258,16 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   >
                      <WorkspaceZoneAPanelC />
                   </div>
+
+                  {/* Drag Handle between Panel A and Panel B */}
+                  <WorkspaceZoneADragHandle side="left" />
+
+                  {/* Drag Handle between Panel B and Panel C */}
+                  <WorkspaceZoneADragHandle side="right" />
                </div>
             </WorkspaceZoneAContainer>
 
-            {/* Drag handles positioned between sections */}
-            {!isMainFullscreen && isWorkspaceZoneAVisible && (
-               <>
-                  {/* Left drag handle - between Section A and B - only show when left sidebar is open */}
-                  {leftPanel.isOpen && (
-                     <div
-                        className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
-                        style={{
-                           left: 'var(--left-width, 244px)',
-                           transform: 'translateX(-50%)',
-                        }}
-                     >
-                        <WorkspaceZoneAPanelsDragHandle side="left" />
-                     </div>
-                  )}
-
-                  {/* Right drag handle - between Section B and C - always show for drag functionality */}
-                  <div
-                     className="absolute top-0 bottom-0 w-1 z-50 pointer-events-auto"
-                     style={{
-                        right: rightPanel.isOpen ? 'var(--right-width, 0px)' : '0px',
-                        transform: 'translateX(50%)',
-                     }}
-                  >
-                     <WorkspaceZoneAPanelsDragHandle side="right" />
-                  </div>
-               </>
-            )}
+            {/* Drag handles removed - will be re-implemented */}
          </div>
 
          {/* Workspace Zone B - Unified Container */}

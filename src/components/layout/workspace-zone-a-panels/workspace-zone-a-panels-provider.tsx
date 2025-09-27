@@ -95,7 +95,7 @@ type WorkspaceZoneAPanelsContext = {
 const WorkspaceZoneAPanelsContext = createContext<WorkspaceZoneAPanelsContext | null>(null);
 
 const MIN_WORKSPACE_ZONE_A_PANEL_WIDTH = 200;
-const MAX_WORKSPACE_ZONE_A_PANEL_WIDTH = 500;
+// No maximum width restriction - panels can be as wide as needed
 const DEFAULT_LEFT_WIDTH = 244;
 const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
@@ -217,15 +217,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             const preferredWidth = savedLeftPreferred ? parseInt(savedLeftPreferred, 10) : width;
 
             const validWidth =
-               !isNaN(width) &&
-               width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
-               width <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
+               !isNaN(width) && width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? width
                   : DEFAULT_LEFT_WIDTH;
             const validPreferred =
-               !isNaN(preferredWidth) &&
-               preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
-               preferredWidth <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
+               !isNaN(preferredWidth) && preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? preferredWidth
                   : validWidth;
 
@@ -257,15 +253,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             const preferredWidth = savedRightPreferred ? parseInt(savedRightPreferred, 10) : width;
 
             const validWidth =
-               !isNaN(width) &&
-               width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
-               width <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
+               !isNaN(width) && width >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? width
                   : DEFAULT_RIGHT_WIDTH;
             const validPreferred =
-               !isNaN(preferredWidth) &&
-               preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH &&
-               preferredWidth <= MAX_WORKSPACE_ZONE_A_PANEL_WIDTH
+               !isNaN(preferredWidth) && preferredWidth >= MIN_WORKSPACE_ZONE_A_PANEL_WIDTH
                   ? preferredWidth
                   : validWidth;
 
@@ -498,7 +490,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       (width: number) => {
          const clampedWidth = Math.max(
             MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
-            Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
+            width // Only minimum constraint, no maximum
          );
 
          setWorkspaceZoneA((prev) => {
@@ -596,7 +588,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       (width: number) => {
          const clampedWidth = Math.max(
             MIN_WORKSPACE_ZONE_A_PANEL_WIDTH,
-            Math.min(MAX_WORKSPACE_ZONE_A_PANEL_WIDTH, width)
+            width // Only minimum constraint, no maximum
          );
 
          setWorkspaceZoneA((prev) => {

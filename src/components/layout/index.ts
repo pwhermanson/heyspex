@@ -12,6 +12,9 @@ export * from './theme-provider';
 export * from './theme-toggle';
 export * from './global-control-bar';
 
+// Shared Components
+export * from './shared';
+
 // Headers
 export * from './headers/issues/filter';
 export * from './headers/issues/header-nav';
@@ -36,6 +39,7 @@ export * from './headers/teams/header';
 
 // Workspace Zone A Components
 export * from './workspace-zone-a-container';
+export * from './workspace-zone-a-drag-handle';
 
 // Workspace Zone A Panels
 export * from './workspace-zone-a-panels/workspace-zone-a-panel-a';
