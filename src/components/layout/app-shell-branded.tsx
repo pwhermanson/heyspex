@@ -88,7 +88,8 @@ const VISUAL_CONSTANTS = {
    FADE_TRANSITION_DURATION: '2.5s',
    QUICK_TRANSITION_DURATION: '0.4s',
    FILTER_TRANSITION_DURATION: '0.125s',
-   FILTER_FADE_TRANSITION_DURATION: '0.875s',
+   FILTER_FADE_TRANSITION_DURATION: '2.5s',
+   LOGO_BRIGHTNESS_TRANSITION_DURATION: '1.2s',
 
    // Glow effect values
    GLOW_OPACITY_1: 0.25,
@@ -193,28 +194,9 @@ const STYLE_GENERATORS = {
       linear-gradient(-45deg, rgba(59, 130, 246, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 0%, rgba(147, 51, 234, ${VISUAL_CONSTANTS.GRID_GRADIENT_OPACITY_3 * baseOpacity}) 100%)
    `,
 
-   // Generate logo filter styles
-   getLogoFilter: (
-      isFading: boolean,
-      isMouseOver: boolean,
-      isIdle: boolean,
-      shadowData: { x: number; y: number; blur: number; opacity: number },
-      swirlingColor: string
-   ) => {
-      if (isFading) {
-         return 'brightness(0) invert(1)'; // Black to white
-      } else if (isMouseOver && !isIdle) {
-         return `drop-shadow(${shadowData.x}px ${shadowData.y}px ${shadowData.blur}px ${swirlingColor}) brightness(1)`;
-      } else {
-         return 'brightness(0.7)';
-      }
-   },
+   // Logo filter logic moved to inline JSX for better control
 
-   // Generate transition styles
-   getTransitionStyle: (isFading: boolean) =>
-      isFading
-         ? `filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_FADE_TRANSITION_DURATION} ease-out`
-         : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
+   // Transition styles moved to inline JSX for better control
 } as const;
 
 export const AppShellBranded = React.memo(function AppShellBranded({
@@ -224,6 +206,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
    const [isMouseMoving, setIsMouseMoving] = useState(false);
    const [isIdle, setIsIdle] = useState(false);
    const [isFading, setIsFading] = useState(false);
+   const [isShadowFading, setIsShadowFading] = useState(false);
    const [isClient, setIsClient] = useState(false);
 
    // Ensure client-side rendering for interactivity
@@ -235,6 +218,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
    );
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
    const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+   const shadowFadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const logoRef = useRef<HTMLDivElement>(null);
 
@@ -247,6 +231,10 @@ export const AppShellBranded = React.memo(function AppShellBranded({
       if (fadeTimeoutRef.current) {
          clearTimeout(fadeTimeoutRef.current);
          fadeTimeoutRef.current = null;
+      }
+      if (shadowFadeTimeoutRef.current) {
+         clearTimeout(shadowFadeTimeoutRef.current);
+         shadowFadeTimeoutRef.current = null;
       }
    }, []);
 
@@ -273,6 +261,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          setIsMouseOver(true);
          setIsIdle(false);
          setIsFading(false);
+         setIsShadowFading(false);
 
          // Set new timeout for idle detection
          timeoutRef.current = setTimeout(() => {
@@ -281,6 +270,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
             // Start fade immediately after idle (total delay = 0.5 seconds)
             fadeTimeoutRef.current = setTimeout(() => {
                setIsFading(true);
+               setIsShadowFading(true); // Shadow fades at the same time as other effects
             }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
          }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
       },
@@ -407,26 +397,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
       };
    }, [isMouseOver, isFading, getGridLineOpacity]);
 
-   // Memoized filter and transition values for logo
-   const logoStyle = useMemo(() => {
-      const shadowData = getShadowOffset();
-      const swirlingColor = getSwirlingColor();
-      const filterValue = STYLE_GENERATORS.getLogoFilter(
-         isFading,
-         isMouseOver,
-         isIdle,
-         shadowData,
-         swirlingColor
-      );
-      const transitionValue = STYLE_GENERATORS.getTransitionStyle(isFading);
-
-      return {
-         filter: filterValue,
-         WebkitFilter: filterValue,
-         transition: transitionValue,
-         opacity: 1, // Always visible, just changes color
-      } as React.CSSProperties;
-   }, [isMouseOver, isIdle, isFading, getShadowOffset, getSwirlingColor]);
+   // Shadow and logo styling is now handled directly in JSX for better control
 
    const handleMouseLeave = useCallback(() => {
       // Only handle mouse events on client side
@@ -442,6 +413,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          // Start fade immediately after idle (total delay = 0.5 seconds)
          fadeTimeoutRef.current = setTimeout(() => {
             setIsFading(true);
+            setIsShadowFading(true); // Shadow fades at the same time as other effects
          }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
       }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
    }, [clearAllTimeouts, isClient]);
@@ -526,11 +498,38 @@ export const AppShellBranded = React.memo(function AppShellBranded({
                }}
             />
 
-            {/* Main logo with animated shadow */}
+            {/* Shadow layer - can fade independently */}
+            <div
+               className="h-auto w-auto max-w-[300px] absolute top-0 left-0 z-0"
+               style={{
+                  filter: `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()})`,
+                  WebkitFilter: `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()})`,
+                  transition: isShadowFading
+                     ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out, filter ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
+                     : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
+                  opacity: isShadowFading ? 0 : 1,
+               }}
+            >
+               <Image
+                  src="/heyspex-logo-stacked.png"
+                  alt=""
+                  width={VISUAL_CONSTANTS.LOGO_WIDTH}
+                  height={VISUAL_CONSTANTS.LOGO_HEIGHT}
+                  className="h-auto w-auto max-w-[300px]"
+                  priority
+               />
+            </div>
+
+            {/* Main logo - no shadow, just brightness changes */}
             <div
                ref={logoRef}
                className="h-auto w-auto max-w-[300px] relative"
-               style={{ ...logoStyle, zIndex: VISUAL_CONSTANTS.LOGO_Z_INDEX }}
+               style={{
+                  filter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
+                  WebkitFilter: isMouseOver && !isIdle ? 'brightness(1)' : 'brightness(0.7)',
+                  transition: `filter ${VISUAL_CONSTANTS.LOGO_BRIGHTNESS_TRANSITION_DURATION} ease-out, -webkit-filter ${VISUAL_CONSTANTS.LOGO_BRIGHTNESS_TRANSITION_DURATION} ease-out`,
+                  zIndex: VISUAL_CONSTANTS.LOGO_Z_INDEX,
+               }}
             >
                <Image
                   src="/heyspex-logo-stacked.png"

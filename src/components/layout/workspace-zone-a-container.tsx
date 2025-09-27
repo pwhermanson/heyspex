@@ -9,6 +9,7 @@ interface WorkspaceZoneAContainerProps {
    mode?: WorkspaceZoneAMode;
    children: React.ReactNode;
    className?: string;
+   dataBottomMode?: string;
 }
 
 export function WorkspaceZoneAContainer({
@@ -16,6 +17,7 @@ export function WorkspaceZoneAContainer({
    mode = 'normal',
    children,
    className,
+   dataBottomMode,
 }: WorkspaceZoneAContainerProps) {
    return (
       <div
@@ -25,6 +27,7 @@ export function WorkspaceZoneAContainer({
             mode === 'fullscreen' && 'workspace-zone-a-fullscreen',
             className
          )}
+         data-bottom-mode={dataBottomMode}
       >
          {children}
       </div>

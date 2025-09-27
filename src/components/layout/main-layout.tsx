@@ -142,7 +142,11 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
          {workspaceZoneAMode !== 'hidden' && (
             <div className="relative overflow-hidden z-10">
                {/* Workspace Zone A - Three-panel grid */}
-               <WorkspaceZoneAContainer isVisible={true} mode={workspaceZoneAMode}>
+               <WorkspaceZoneAContainer
+                  isVisible={true}
+                  mode={workspaceZoneAMode}
+                  dataBottomMode={safeBottomEnabled ? workspaceZoneB.mode : undefined}
+               >
                   <div
                      className={cn(
                         'grid w-full h-full overflow-hidden relative',
@@ -174,7 +178,17 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                            'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
                            workspaceZoneAMode === 'fullscreen' && 'p-0'
                         )}
-                        style={{ gridArea: 'main' }}
+                        style={{
+                           gridArea: 'main',
+                           // When workspace zone B is in push mode, constrain the height to available space
+                           maxHeight:
+                              safeBottomEnabled &&
+                              workspaceZoneB.mode === 'push' &&
+                              workspaceZoneB.isVisible &&
+                              !isMainFullscreen
+                                 ? `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarEnabled && isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`
+                                 : undefined,
+                        }}
                      >
                         <div
                            className={cn(
@@ -184,14 +198,22 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                                  ? 'grid'
                                  : 'flex flex-col items-center justify-start'
                            )}
-                           style={
-                              centerBottomSplit > 0
+                           style={{
+                              ...(centerBottomSplit > 0
                                  ? {
                                       gridTemplateRows: `1fr var(--center-bottom-split, ${centerBottomSplit}px)`,
                                       gridTemplateAreas: '"center" "bottom"',
                                    }
-                                 : undefined
-                           }
+                                 : {}),
+                              // Ensure the main content area respects the grid constraints
+                              maxHeight:
+                                 safeBottomEnabled &&
+                                 workspaceZoneB.mode === 'push' &&
+                                 workspaceZoneB.isVisible &&
+                                 !isMainFullscreen
+                                    ? '100%'
+                                    : undefined,
+                           }}
                            data-main-container
                         >
                            {/* Center Content Area */}

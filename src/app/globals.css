@@ -257,6 +257,20 @@
       transition: all var(--layout-motion-duration-medium) var(--layout-motion-easing);
    }
 
+   /* Workspace Zone A - Responsive to Zone B push mode */
+   .workspace-zone-a[data-bottom-mode='push'] {
+      max-height: calc(
+         100vh - var(--workspace-zone-b-height, 40px) - var(--control-bar-height, 0px)
+      );
+      overflow: hidden;
+   }
+
+   /* Ensure the main content area within Zone A respects the height constraint */
+   .workspace-zone-a[data-bottom-mode='push'] .workspace-zone-a-panel {
+      max-height: 100%;
+      overflow: auto;
+   }
+
    /* Workspace Zone A - Visible state (PRESERVES EXISTING VISUAL DESIGN) */
    .workspace-zone-a-visible {
       --left-width: 244px;

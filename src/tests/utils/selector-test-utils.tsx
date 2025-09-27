@@ -166,8 +166,7 @@ export const selectorTestUtils = {
    testCountDisplay: async <T extends Record<string, unknown>>(
       Component: React.ComponentType<T>,
       defaultProps: T,
-      showCounts: boolean,
-      expectedCounts: string[]
+      showCounts: boolean
    ) => {
       const user = userEvent.setup();
       render(<Component {...defaultProps} showCounts={showCounts} />);
