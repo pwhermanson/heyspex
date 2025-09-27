@@ -103,6 +103,20 @@ function getResizablePanelContext() {
             })
          );
       },
+      setWorkspaceZoneAMode: (mode: 'normal' | 'fullscreen' | 'hidden') => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'setWorkspaceZoneAMode', mode },
+            })
+         );
+      },
+      cycleWorkspaceZoneAMode: () => {
+         window.dispatchEvent(
+            new CustomEvent('panel-command', {
+               detail: { action: 'cycleWorkspaceZoneAMode' },
+            })
+         );
+      },
    };
 }
 
@@ -166,52 +180,11 @@ registerCommand({
    },
 });
 
-// Register Workspace Zone A Open command
-registerCommand({
-   id: 'workspace.zone.a.open',
-   title: '/workspace zone A open',
-   keywords: ['workspace', 'zone', 'main', 'content', 'open', 'show'],
-   shortcut: 'Ctrl+Shift+,',
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   run: (ctx: CommandContext) => {
-      const panelContext = getResizablePanelContext();
-      if (panelContext) {
-         // Toggle Workspace Zone A container (panels A, B, C)
-         panelContext.toggleWorkspaceZoneA();
-      }
-   },
-});
+// Old workspace zone A open command removed - replaced with new 3-way toggle system
 
-// Register Workspace Zone A Close command
-registerCommand({
-   id: 'workspace.zone.a.close',
-   title: '/workspace zone A close',
-   keywords: ['workspace', 'zone', 'main', 'content', 'close', 'hide'],
-   shortcut: 'Ctrl+Shift+1',
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   run: (ctx: CommandContext) => {
-      const panelContext = getResizablePanelContext();
-      if (panelContext) {
-         // Toggle Workspace Zone A container (panels A, B, C)
-         panelContext.toggleWorkspaceZoneA();
-      }
-   },
-});
+// Old workspace zone A close command removed - replaced with new 3-way toggle system
 
-// Register Workspace Zone A Toggle command
-registerCommand({
-   id: 'workspace.zone.a.toggle',
-   title: '/workspace zone A toggle',
-   keywords: ['workspace', 'zone', 'main', 'content', 'toggle'],
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   run: (ctx: CommandContext) => {
-      const panelContext = getResizablePanelContext();
-      if (panelContext) {
-         // Toggle Workspace Zone A container visibility
-         panelContext.toggleWorkspaceZoneA();
-      }
-   },
-});
+// Old workspace zone A toggle command removed - replaced with new 3-way toggle system
 
 // Register Control Bar Open command
 registerCommand({
@@ -259,24 +232,74 @@ registerCommand({
    },
 });
 
-// Register Panel B Fullscreen Toggle command
+// Register Workspace Zone A Open command
 registerCommand({
-   id: 'panel.fullscreen.toggle',
-   title: '/panel fullscreen toggle',
-   keywords: ['panel', 'fullscreen', 'expand', 'center', 'main', 'toggle'],
+   id: 'workspace.zone.a.open',
+   title: '/workspace zone A open',
+   keywords: ['workspace', 'zone', 'A', 'open', 'show', 'panels'],
+   shortcut: 'Ctrl+Shift+1',
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneAMode('normal');
+      }
+   },
+});
+
+// Register Workspace Zone A - 3-Sided Layout command
+registerCommand({
+   id: 'workspace.zone.a.normal',
+   title: '/workspace zone A 3-sided layout',
+   keywords: ['workspace', 'zone', 'A', '3-sided', 'layout', 'normal', 'panels'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneAMode('normal');
+      }
+   },
+});
+
+// Register Workspace Zone A - Panel B Fullscreen command
+registerCommand({
+   id: 'workspace.zone.a.fullscreen',
+   title: '/workspace zone A panel B fullscreen',
+   keywords: ['workspace', 'zone', 'A', 'panel', 'B', 'fullscreen', 'expand', 'center'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneAMode('fullscreen');
+      }
+   },
+});
+
+// Register Workspace Zone A - Close command
+registerCommand({
+   id: 'workspace.zone.a.close',
+   title: '/workspace zone A close',
+   keywords: ['workspace', 'zone', 'A', 'close', 'hide'],
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   run: (ctx: CommandContext) => {
+      const panelContext = getResizablePanelContext();
+      if (panelContext) {
+         panelContext.setWorkspaceZoneAMode('hidden');
+      }
+   },
+});
+
+// Register Workspace Zone A - Cycle Toggle command (3-way toggle)
+registerCommand({
+   id: 'workspace.zone.a.cycle',
+   title: '/workspace zone A cycle toggle',
+   keywords: ['workspace', 'zone', 'A', 'cycle', 'toggle', '3-way'],
    shortcut: 'Ctrl+Shift+5',
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    run: (ctx: CommandContext) => {
       const panelContext = getResizablePanelContext();
       if (panelContext) {
-         // Toggle Panel B fullscreen mode (push Panels A and C off viewport)
-         // We need to get the current state from the context, but since we can't access it directly,
-         // we'll dispatch a toggle event that the provider can handle
-         window.dispatchEvent(
-            new CustomEvent('panel-command', {
-               detail: { action: 'toggleMainFullscreen' },
-            })
-         );
+         panelContext.cycleWorkspaceZoneAMode();
       }
    },
 });

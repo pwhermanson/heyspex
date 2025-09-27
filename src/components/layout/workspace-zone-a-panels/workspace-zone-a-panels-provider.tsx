@@ -38,13 +38,16 @@ type DragState = {
    dragSide: 'left' | 'right' | null;
 };
 
+// Workspace Zone A mode for 3-way toggle
+export type WorkspaceZoneAMode = 'normal' | 'fullscreen' | 'hidden';
+
 // Simplified UI state
 type UIState = {
    isHydrated: boolean;
-   isMainFullscreen: boolean;
    isControlBarVisible: boolean;
    centerBottomSplit: number;
    viewportWidth: number;
+   workspaceZoneAMode: WorkspaceZoneAMode;
 };
 
 // Simplified context type following Zone B's pattern
@@ -157,10 +160,10 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
 
    const [uiState, setUIState] = useState<UIState>({
       isHydrated: false,
-      isMainFullscreen: false,
       isControlBarVisible: false,
       centerBottomSplit: 0,
       viewportWidth: typeof window !== 'undefined' ? window.innerWidth : FALLBACK_VIEWPORT_WIDTH,
+      workspaceZoneAMode: 'normal',
    });
 
    const enableLeftRail = useFeatureFlag('enableLeftRail');
@@ -752,42 +755,59 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setUIState((prev) => ({ ...prev, centerBottomSplit: height }));
    }, []);
 
+   // Set specific Workspace Zone A mode
+   const setWorkspaceZoneAMode = useCallback((mode: WorkspaceZoneAMode) => {
+      setUIState((prev) => ({ ...prev, workspaceZoneAMode: mode }));
+   }, []);
+
+   // 3-way toggle for Workspace Zone A: normal -> fullscreen -> hidden -> normal
+   const cycleWorkspaceZoneAMode = useCallback(() => {
+      setUIState((prev) => {
+         const currentMode = prev.workspaceZoneAMode;
+         let nextMode: WorkspaceZoneAMode;
+
+         switch (currentMode) {
+            case 'normal':
+               nextMode = 'fullscreen';
+               break;
+            case 'fullscreen':
+               nextMode = 'hidden';
+               break;
+            case 'hidden':
+               nextMode = 'normal';
+               break;
+            default:
+               nextMode = 'normal';
+         }
+
+         return { ...prev, workspaceZoneAMode: nextMode };
+      });
+   }, []);
+
    const setMainFullscreen = useCallback(
       (fullscreen: boolean) => {
-         setUIState((prev) => ({ ...prev, isMainFullscreen: fullscreen }));
-         try {
-            localStorage.setItem('ui:mainFullscreen', fullscreen.toString());
-         } catch {}
-         // When entering fullscreen, close sidebars but keep control bar and workspace zone B visible
-         // This will make Panel B go full width and push Panels A and C off viewport
+         // Legacy function - now maps to new 3-way toggle system
          if (fullscreen) {
-            setLeftPanelOpen(false);
-            setWorkspaceZoneAPanelCOpen(false);
-            // Keep workspace zone B visible - don't hide it
+            setWorkspaceZoneAMode('fullscreen');
          } else {
-            // On exit, restore sidebars to their previous state
-            // Workspace zone B remains visible
+            setWorkspaceZoneAMode('normal');
          }
-         // CSS classes now handle layout automatically
       },
-      [setLeftPanelOpen, setWorkspaceZoneAPanelCOpen]
+      [setWorkspaceZoneAMode]
    );
 
-   const setWorkspaceZoneAVisible = useCallback((visible: boolean) => {
-      setWorkspaceZoneA((prev) => ({ ...prev, isVisible: visible }));
-      try {
-         localStorage.setItem('ui:workspaceZoneAVisible', visible.toString());
-      } catch (error) {
-         console.warn('Failed to save workspace zone A visibility to localStorage:', error);
-      }
-   }, []);
+   const setWorkspaceZoneAVisible = useCallback(
+      (visible: boolean) => {
+         // Legacy function - now uses 3-way toggle
+         setWorkspaceZoneAMode(visible ? 'normal' : 'hidden');
+      },
+      [setWorkspaceZoneAMode]
+   );
 
    const toggleWorkspaceZoneA = useCallback(() => {
-      setWorkspaceZoneA((prev) => ({
-         ...prev,
-         isVisible: !prev.isVisible,
-      }));
-   }, []);
+      // Legacy function - now uses 3-way toggle
+      cycleWorkspaceZoneAMode();
+   }, [cycleWorkspaceZoneAMode]);
 
    const setControlBarVisible = useCallback((visible: boolean) => {
       setUIState((prev) => ({ ...prev, isControlBarVisible: visible }));
@@ -812,18 +832,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          const isNumpad2 = event.code === 'Numpad2';
          const isTopDigit8 = event.shiftKey && event.code === 'Digit8';
          const isNumpad8 = event.code === 'Numpad8';
-         const isComma = event.shiftKey && event.key === ',';
 
-         // Ctrl+Shift+5 or Ctrl+Numpad5 - Toggle Panel B fullscreen (push Panels A and C off viewport)
+         // Ctrl+Shift+5 or Ctrl+Numpad5 - 3-way toggle: normal -> fullscreen -> hidden -> normal
          if (isCtrlLike && !event.altKey && (isTopDigit5 || isNumpad5)) {
             event.preventDefault();
-            setMainFullscreen(!uiState.isMainFullscreen);
-         }
-
-         // Ctrl+Shift+, - Toggle workspace zone A
-         if (isCtrlLike && !event.altKey && isComma) {
-            event.preventDefault();
-            toggleWorkspaceZoneA();
+            cycleWorkspaceZoneAMode();
          }
 
          if (isCtrlLike && !event.altKey && (isTopDigit2 || isNumpad2)) {
@@ -858,9 +871,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setWorkspaceZoneBHeight,
       setWorkspaceZoneBVisible,
       toggleControlBar,
-      toggleWorkspaceZoneA,
       setMainFullscreen,
-      uiState.isMainFullscreen,
+      cycleWorkspaceZoneAMode,
    ]);
 
    // Listen for panel command events from command palette
@@ -935,7 +947,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          }
 
          if (action === 'toggleWorkspaceZoneA') {
-            toggleWorkspaceZoneA();
+            // Legacy action - now cycles through 3-way toggle
+            cycleWorkspaceZoneAMode();
          }
 
          if (action === 'setControlBarVisible') {
@@ -944,6 +957,17 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
 
          if (action === 'toggleControlBar') {
             toggleControlBar();
+         }
+
+         if (action === 'setWorkspaceZoneAMode') {
+            const mode = event.detail.mode;
+            if (mode === 'normal' || mode === 'fullscreen' || mode === 'hidden') {
+               setWorkspaceZoneAMode(mode);
+            }
+         }
+
+         if (action === 'cycleWorkspaceZoneAMode') {
+            cycleWorkspaceZoneAMode();
          }
       };
 
@@ -965,7 +989,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setControlBarVisible,
       toggleControlBar,
       uiState.centerBottomSplit,
-      uiState.isMainFullscreen,
+      setWorkspaceZoneAMode,
+      cycleWorkspaceZoneAMode,
    ]);
 
    const contextValue = React.useMemo(
@@ -1010,15 +1035,20 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setDragSide: (side: 'left' | 'right' | null) =>
             setDragState((prev) => ({ ...prev, dragSide: side })),
          isHydrated: uiState.isHydrated,
-         isMainFullscreen: uiState.isMainFullscreen,
+         isMainFullscreen: uiState.workspaceZoneAMode === 'fullscreen',
          setMainFullscreen,
-         isWorkspaceZoneAVisible: workspaceZoneA.isVisible,
+         isWorkspaceZoneAVisible: uiState.workspaceZoneAMode !== 'hidden',
          setWorkspaceZoneAVisible: (visible: boolean) =>
-            setWorkspaceZoneA((prev) => ({ ...prev, isVisible: visible })),
+            setWorkspaceZoneAMode(visible ? 'normal' : 'hidden'),
          isTogglingWorkspaceZoneA: false, // Removed complex toggle tracking
          isControlBarVisible: uiState.isControlBarVisible,
          setControlBarVisible,
          toggleControlBar,
+
+         // New 3-way toggle functionality
+         workspaceZoneAMode: uiState.workspaceZoneAMode,
+         cycleWorkspaceZoneAMode,
+         setWorkspaceZoneAMode,
       }),
       [
          workspaceZoneA,
@@ -1046,6 +1076,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setMainFullscreen,
          setControlBarVisible,
          toggleControlBar,
+         cycleWorkspaceZoneAMode,
+         setWorkspaceZoneAMode,
       ]
    );
 

@@ -269,11 +269,7 @@
 
    /* Workspace Zone A - Hidden state (PRESERVES EXISTING VISUAL DESIGN) */
    .workspace-zone-a-hidden {
-      --left-width: 0px;
-      --right-width: 0px;
-      --grid-template-columns: 0px 1fr 0px;
-      --sidebar-left-width: 0px;
-      --sidebar-right-width: 0px;
+      display: none !important;
    }
 
    /* Workspace Zone A - Fullscreen state (Panel B full width, Panels A and C hidden) */
@@ -283,6 +279,12 @@
       --grid-template-columns: 0px 1fr 0px;
       --sidebar-left-width: 0px;
       --sidebar-right-width: 0px;
+   }
+
+   /* Workspace Zone A - Fullscreen state specific styling */
+   .workspace-zone-a.workspace-zone-a-fullscreen {
+      /* Ensure the container is visible but panels A and C are hidden */
+      display: block;
    }
 
    /* Disable transitions during toggle - unified approach */

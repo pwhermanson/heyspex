@@ -78,6 +78,8 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
       isWorkspaceZoneAVisible,
       isControlBarVisible,
       workspaceZoneA,
+      workspaceZoneAMode,
+      setWorkspaceZoneAMode,
    } = useResizablePanel();
 
    // Initialize workspace data
@@ -92,7 +94,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
 
    // Calculate grid rows based on workspace zone B mode and visibility
    const getGridRows = () => {
-      if (isMainFullscreen) {
+      if (workspaceZoneAMode === 'fullscreen') {
          return '1fr';
       }
 
@@ -134,18 +136,21 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
          {/* Main Area - contains the three-panel layout */}
          <div className="relative overflow-hidden z-10">
             {/* Workspace Zone A - Three-panel grid */}
-            <WorkspaceZoneAContainer isVisible={isWorkspaceZoneAVisible}>
+            <WorkspaceZoneAContainer
+               isVisible={workspaceZoneAMode !== 'hidden'}
+               mode={workspaceZoneAMode}
+            >
                <div
                   className={cn(
                      'grid w-full h-full overflow-hidden relative',
                      !isDragging &&
-                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none',
-                     isMainFullscreen && 'workspace-zone-a-fullscreen'
+                        'transition-[grid-template-columns] layout-transition-long motion-reduce:transition-none'
                   )}
                   style={{
-                     gridTemplateColumns: isMainFullscreen
-                        ? '0px 1fr 0px'
-                        : `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
+                     gridTemplateColumns:
+                        workspaceZoneAMode === 'fullscreen'
+                           ? '0px 1fr 0px'
+                           : `${workspaceZoneA.leftPanel.width}px 1fr ${workspaceZoneA.rightPanel.width}px`,
                      gridTemplateAreas: '"sidebar main right-sidebar"',
                   }}
                >
@@ -153,7 +158,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   <div
                      className={cn(
                         'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
-                        isMainFullscreen && 'p-0'
+                        workspaceZoneAMode === 'fullscreen' && 'p-0'
                      )}
                      style={{ gridArea: 'sidebar' }}
                   >
@@ -164,7 +169,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   <div
                      className={cn(
                         'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
-                        isMainFullscreen && 'p-0'
+                        workspaceZoneAMode === 'fullscreen' && 'p-0'
                      )}
                      style={{ gridArea: 'main' }}
                   >
@@ -201,7 +206,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                            <div
                               className={cn(
                                  'overflow-auto w-full',
-                                 isMainFullscreen
+                                 workspaceZoneAMode === 'fullscreen'
                                     ? 'h-full'
                                     : isEmptyHeader(header)
                                       ? 'h-full'
@@ -255,7 +260,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   <div
                      className={cn(
                         'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
-                        isMainFullscreen && 'p-0'
+                        workspaceZoneAMode === 'fullscreen' && 'p-0'
                      )}
                      style={{ gridArea: 'right-sidebar' }}
                   >
@@ -281,6 +286,7 @@ function LayoutGrid({ children, header }: MainLayoutProps) {
                   onModeChange={isHydrated ? setWorkspaceZoneBMode : () => {}}
                   height={workspaceZoneB.height}
                   isOverlay={workspaceZoneB.mode === 'overlay'}
+                  onClose={isHydrated ? () => setWorkspaceZoneAMode('hidden') : undefined}
                   onDragStart={undefined}
                   isDragging={isDragging}
                   isWorkspaceZoneAHidden={!isWorkspaceZoneAVisible}
