@@ -4,7 +4,9 @@
  * Provides elegant state management for workspace zones with configurable state cycles
  */
 
-export type StateMachineConfig<T> = {
+import { useState, useCallback } from 'react';
+
+export type StateMachineConfig<T extends string> = {
    states: T[];
    initialState: T;
    transitions: Record<T, T>;

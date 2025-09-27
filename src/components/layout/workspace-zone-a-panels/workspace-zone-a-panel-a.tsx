@@ -11,7 +11,7 @@ import { NavAccount } from '@/src/components/layout/workspace-zone-a-panels/nav-
 import { NavFeatures } from '@/src/components/layout/workspace-zone-a-panels/nav-features';
 import { NavTeamsSettings } from '@/src/components/layout/workspace-zone-a-panels/nav-teams-settings';
 import { Button } from '@/src/components/ui/button';
-import { ResizablePanel } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-resizable';
+import { WorkspaceZoneAResizablePanel } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panels-resizable';
 import { WorkspaceZoneAPanelATrigger } from '@/src/components/layout/workspace-zone-a-panels/workspace-zone-a-panel-a-trigger';
 import Link from 'next/link';
 import { X } from 'lucide-react';
@@ -32,7 +32,7 @@ export function WorkspaceZoneAPanelA() {
    const showText = leftPanel.width > 200;
 
    return (
-      <ResizablePanel side="left">
+      <WorkspaceZoneAResizablePanel side="left">
          {/* Workspace Zone A Panel A Header with Toggle Icon */}
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted">
             <div className="flex-1" />
@@ -139,6 +139,6 @@ export function WorkspaceZoneAPanelA() {
                </div>
             </div>
          </div>
-      </ResizablePanel>
+      </WorkspaceZoneAResizablePanel>
    );
 }

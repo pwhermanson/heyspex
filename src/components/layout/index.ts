@@ -1,6 +1,5 @@
 // Layout Components exports
 export * from './workspace-zone-b-mode-toggle';
-export * from './workspace-zone-b-toggle-button';
 export * from './workspace-zone-b';
 export * from './workspace-zone-b-drag-handle';
 export * from './layout-config-provider';
@@ -38,7 +37,6 @@ export * from './headers/teams/header-options';
 export * from './headers/teams/header';
 
 // Workspace Zone A Components
-export * from './workspace-zone-a-container';
 export * from './workspace-zone-a-drag-handle';
 
 // Workspace Zone A Panels
@@ -58,6 +56,5 @@ export * from './workspace-zone-a-panels/workspace-zone-a-panels-resizable';
 export * from './workspace-zone-a-panels/workspace-zone-a-panel-c-provider';
 export * from './workspace-zone-a-panels/workspace-zone-a-panel-c-trigger';
 export * from './workspace-zone-a-panels/workspace-zone-a-panel-c';
-export * from './workspace-zone-a-panels/workspace-zone-a-panels-drag-handle';
 export * from './workspace-zone-a-panels/workspace-zone-a-panels-toggle-button';
 export * from './workspace-zone-a-panels/create-new-issue';

@@ -3,10 +3,9 @@
 import { Button } from '@/src/components/ui/button';
 import { Input } from '@/src/components/ui/input';
 import { Bot, Settings, HelpCircle, MessageCircle } from 'lucide-react';
-import { ResizablePanel } from './workspace-zone-a-panels-resizable';
+import { WorkspaceZoneAResizablePanel } from './workspace-zone-a-panels-resizable';
 import { WorkspaceZoneAPanelCTrigger } from './workspace-zone-a-panel-c-trigger';
 import { useResizablePanel } from './workspace-zone-a-panels-provider';
-import { cn } from '@/src/lib/lib/utils';
 
 export function WorkspaceZoneAPanelC() {
    const { rightPanel } = useResizablePanel();
@@ -16,7 +15,7 @@ export function WorkspaceZoneAPanelC() {
    const showText = rightPanel.width > 200;
 
    return (
-      <ResizablePanel side="right">
+      <WorkspaceZoneAResizablePanel side="right">
          {/* Workspace Zone A Panel C Header with Toggle Icon */}
          <div className="panel-control-bar w-full flex justify-between items-center border-b py-1.5 px-6 h-10 bg-muted">
             {showText && <h2 className="text-lg font-semibold">Workspace Zone A Panel C</h2>}
@@ -116,6 +115,6 @@ export function WorkspaceZoneAPanelC() {
                </div>
             )}
          </div>
-      </ResizablePanel>
+      </WorkspaceZoneAResizablePanel>
    );
 }

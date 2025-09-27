@@ -18,8 +18,7 @@ export function WorkspaceZoneBDragHandle({
    className,
    mode = 'push',
 }: WorkspaceZoneBDragHandleProps) {
-   const { workspaceZoneB, setWorkspaceZoneBHeight, dragState, setDragState, uiState } =
-      useResizablePanel();
+   const { workspaceZoneB, setWorkspaceZoneBHeight, dragState, setDragState } = useResizablePanel();
 
    const handleMouseDown = React.useCallback(
       (event: React.MouseEvent) => {

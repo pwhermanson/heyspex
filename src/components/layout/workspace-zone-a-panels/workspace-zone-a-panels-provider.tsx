@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useFeatureFlag } from '@/src/lib/hooks/use-feature-flag';
 import { setFeatureFlag } from '@/src/lib/lib/feature-flags';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useStateMachine } from '@/src/lib/state-machines/zone-state-machine';
 
 // Simplified state structures following Zone B's pattern
 type WorkspaceZoneAPanelState = {
@@ -69,12 +70,18 @@ type WorkspaceZoneAPanelsContext = {
    // Simplified drag state
    dragState: DragState;
    setDragState: (state: DragState | ((prev: DragState) => DragState)) => void;
+   isDragging: boolean;
+   setIsDragging: (dragging: boolean) => void;
 
    // Simplified UI state
    uiState: UIState;
    setUIState: (state: UIState | ((prev: UIState) => UIState)) => void;
 
    // Individual panel controls (for backward compatibility)
+   leftPanel: WorkspaceZoneAPanelState;
+   rightPanel: WorkspaceZoneAPanelState;
+   leftState: WorkspaceZoneAPanelAState;
+   setLeftState: (state: WorkspaceZoneAPanelAState) => void;
    toggleLeftPanel: () => void;
    setLeftPanelWidth: (width: number) => void;
    setLeftPanelOpen: (open: boolean) => void;
@@ -89,10 +96,21 @@ type WorkspaceZoneAPanelsContext = {
    setWorkspaceZoneBOverlayPosition: (position: number) => void;
 
    // UI controls (for backward compatibility)
+   centerBottomSplit: number;
    setCenterBottomSplit: (height: number) => void;
+   isMainFullscreen: boolean;
    setMainFullscreen: (fullscreen: boolean) => void;
+   isWorkspaceZoneAVisible: boolean;
+   setWorkspaceZoneAVisible: (visible: boolean) => void;
+   isControlBarVisible: boolean;
+   isHydrated: boolean;
    setControlBarVisible: (visible: boolean) => void;
    toggleControlBar: () => void;
+
+   // Workspace Zone A mode controls
+   workspaceZoneAMode: WorkspaceZoneAMode;
+   setWorkspaceZoneAMode: (mode: WorkspaceZoneAMode) => void;
+   cycleWorkspaceZoneAMode: () => void;
 };
 
 const WorkspaceZoneAPanelsContext = createContext<WorkspaceZoneAPanelsContext | null>(null);
@@ -100,9 +118,7 @@ const WorkspaceZoneAPanelsContext = createContext<WorkspaceZoneAPanelsContext | 
 const MIN_WORKSPACE_ZONE_A_PANEL_WIDTH = 200;
 // No maximum width restriction - panels can be as wide as needed
 const DEFAULT_LEFT_WIDTH = 244;
-const LEFT_COLLAPSED_WIDTH = 64;
 const DEFAULT_RIGHT_WIDTH = 320;
-const RIGHT_COLLAPSED_WIDTH = 64;
 
 // Viewport breaking point constants
 const RIGHT_PANEL_VIEWPORT_BREAKING_POINT = 0.2; // 20% of viewport width
@@ -143,7 +159,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          width: DEFAULT_RIGHT_WIDTH,
          preferredWidth: DEFAULT_RIGHT_WIDTH,
       },
-      leftState: 'closed', // Start closed
+      leftState: 'collapsed', // Start collapsed
    });
 
    const [workspaceZoneB, setWorkspaceZoneB] = useState<WorkspaceZoneBState>({
@@ -166,6 +182,17 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       workspaceZoneAMode: 'hidden', // Start hidden to show only app shell
    });
 
+   // State machine for elegant 3-way toggle management
+   const { transition: stateMachineTransition, setState: setStateMachineState } = useStateMachine({
+      states: ['normal', 'fullscreen', 'hidden'],
+      initialState: 'hidden', // Match the initial UI state
+      transitions: {
+         normal: 'fullscreen',
+         fullscreen: 'hidden',
+         hidden: 'normal',
+      },
+   });
+
    const enableLeftRail = useFeatureFlag('enableLeftRail');
    const enableBottomSplit = useFeatureFlag('enableBottomSplit');
    // Keep latest values in refs for a stable keydown listener
@@ -177,14 +204,6 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    useEffect(() => {
       workspaceZoneBHeightRef.current = workspaceZoneB.height;
    }, [workspaceZoneB.height]);
-
-   // Calculate if right panel should be collapsed based on viewport width
-   const shouldCollapseRightPanel = useCallback(() => {
-      const currentViewportWidth =
-         typeof window !== 'undefined' ? window.innerWidth : uiState.viewportWidth;
-      const breakingPointWidth = currentViewportWidth * RIGHT_PANEL_VIEWPORT_BREAKING_POINT;
-      return workspaceZoneA.rightPanel.width <= breakingPointWidth;
-   }, [workspaceZoneA.rightPanel.width, uiState.viewportWidth]);
 
    // Debounced save to localStorage
    const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -370,10 +389,13 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
             isMainFullscreen,
             workspaceZoneAMode, // Load the saved workspace zone A mode
          }));
+
+         // Synchronize state machine with loaded state
+         setStateMachineState(workspaceZoneAMode);
       } catch (error) {
          console.warn('Failed to load sidebar state from localStorage:', error);
       }
-   }, []);
+   }, [setStateMachineState]);
 
    useEffect(() => {
       if (!uiState.isHydrated) {
@@ -771,49 +793,43 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    }, []);
 
    // Set specific Workspace Zone A mode
-   const setWorkspaceZoneAMode = useCallback((mode: WorkspaceZoneAMode) => {
-      setUIState((prev) => ({ ...prev, workspaceZoneAMode: mode }));
+   const setWorkspaceZoneAMode = useCallback(
+      (mode: WorkspaceZoneAMode) => {
+         setUIState((prev) => ({ ...prev, workspaceZoneAMode: mode }));
 
-      // Save to localStorage
-      try {
-         localStorage.setItem('ui:workspaceZoneAMode', mode);
-      } catch (error) {
-         console.warn('Failed to save workspace zone A mode to localStorage:', error);
-      }
-   }, []);
-
-   // 3-way toggle for Workspace Zone A: normal -> fullscreen -> hidden -> normal
-   const cycleWorkspaceZoneAMode = useCallback(() => {
-      setUIState((prev) => {
-         const currentMode = prev.workspaceZoneAMode;
-         let nextMode: WorkspaceZoneAMode;
-
-         switch (currentMode) {
-            case 'normal':
-               nextMode = 'fullscreen';
-               break;
-            case 'fullscreen':
-               nextMode = 'hidden';
-               break;
-            case 'hidden':
-               nextMode = 'normal';
-               break;
-            default:
-               nextMode = 'normal';
-         }
-
-         console.log('🎨 Cycling workspace zone A mode:', { currentMode, nextMode });
+         // Synchronize state machine with the new mode
+         setStateMachineState(mode);
 
          // Save to localStorage
          try {
-            localStorage.setItem('ui:workspaceZoneAMode', nextMode);
+            localStorage.setItem('ui:workspaceZoneAMode', mode);
          } catch (error) {
             console.warn('Failed to save workspace zone A mode to localStorage:', error);
          }
+      },
+      [setStateMachineState]
+   );
 
-         return { ...prev, workspaceZoneAMode: nextMode };
+   // 3-way toggle for Workspace Zone A: normal -> fullscreen -> hidden -> normal
+   // Now using elegant state machine pattern instead of manual switch statement
+   const cycleWorkspaceZoneAMode = useCallback(() => {
+      const nextMode = stateMachineTransition();
+
+      console.log('🎨 Cycling workspace zone A mode (state machine):', {
+         currentMode: uiState.workspaceZoneAMode,
+         nextMode,
       });
-   }, []);
+
+      // Update UI state to match state machine
+      setUIState((prev) => ({ ...prev, workspaceZoneAMode: nextMode }));
+
+      // Save to localStorage
+      try {
+         localStorage.setItem('ui:workspaceZoneAMode', nextMode);
+      } catch (error) {
+         console.warn('Failed to save workspace zone A mode to localStorage:', error);
+      }
+   }, [stateMachineTransition, uiState.workspaceZoneAMode]);
 
    const setMainFullscreen = useCallback(
       (fullscreen: boolean) => {
@@ -970,7 +986,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          }
 
          if (action === 'toggleMainFullscreen') {
-            setMainFullscreen(!uiState.isMainFullscreen);
+            setMainFullscreen(!(uiState.workspaceZoneAMode === 'fullscreen'));
          }
 
          if (action === 'setWorkspaceZoneAVisible') {
@@ -1020,6 +1036,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       setControlBarVisible,
       toggleControlBar,
       uiState.centerBottomSplit,
+      uiState.workspaceZoneAMode,
       setWorkspaceZoneAMode,
       cycleWorkspaceZoneAMode,
    ]);

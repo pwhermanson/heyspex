@@ -4,6 +4,8 @@
  * Provides elegant CSS variable management and dynamic styling for workspace zones
  */
 
+import React from 'react';
+
 export interface ZoneStyleConfig {
    zone: 'a' | 'b' | 'c';
    state: 'visible' | 'hidden' | 'fullscreen' | 'normal';

@@ -62,7 +62,7 @@ export interface BaseZoneToggleButtonProps {
    isVisible: boolean;
    onToggle: () => void;
    className?: string;
-   size?: 'sm' | 'md' | 'lg';
+   size?: 'default' | 'lg' | 'sm' | 'xxs' | 'xs' | 'icon';
    variant?: 'ghost' | 'outline' | 'default';
    showLabel?: boolean;
 }
@@ -297,14 +297,6 @@ export function validateZoneConfig(config: BaseZoneConfig): string[] {
 // ============================================================================
 
 export const ZoneManagement = {
-   // Types
-   BaseZoneState,
-   ZoneVisibilityMode,
-   ZonePositionMode,
-   BaseZoneConfig,
-   BaseZoneContainerProps,
-   BaseZoneToggleButtonProps,
-
    // Utilities
    getZoneVisibilityClasses,
    getZoneModeClasses,

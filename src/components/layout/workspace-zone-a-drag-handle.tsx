@@ -14,7 +14,6 @@ interface WorkspaceZoneADragHandleProps {
 
 export function WorkspaceZoneADragHandle({
    onMouseDown,
-   isDragging = false,
    className,
    side,
 }: WorkspaceZoneADragHandleProps) {
@@ -41,8 +40,6 @@ export function WorkspaceZoneADragHandle({
          const startLeftWidth = workspaceZoneA.leftPanel.width;
          const startRightWidth = workspaceZoneA.rightPanel.width;
 
-         // Get viewport width for calculations
-         const viewportWidth = window.innerWidth;
          const minPanelWidth = 200;
          // No maximum width restriction - panels can be as wide as needed
 

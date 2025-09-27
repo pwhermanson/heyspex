@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/lib/utils';
 import { BaseZoneToggleButtonProps } from '@/lib/zone-management';
 
 // ============================================================================
@@ -45,7 +45,7 @@ export function BaseZoneToggleButton({
    labelVisible,
    labelHidden,
    className,
-   size = 'md',
+   size = 'sm',
    variant = 'ghost',
    showLabel = false,
    'data-testid': testId,
@@ -91,11 +91,10 @@ export function BaseZoneToggleButton({
  *
  * Specialized toggle button for Workspace Zone A with appropriate icons and labels.
  */
-export interface WorkspaceZoneAToggleButtonProps
-   extends Omit<
-      BaseZoneToggleButtonComponentProps,
-      'zoneName' | 'iconVisible' | 'iconHidden' | 'labelVisible' | 'labelHidden'
-   > {}
+export type WorkspaceZoneAToggleButtonProps = Omit<
+   BaseZoneToggleButtonComponentProps,
+   'zoneName' | 'iconVisible' | 'iconHidden' | 'labelVisible' | 'labelHidden'
+>;
 
 export function WorkspaceZoneAToggleButton(props: WorkspaceZoneAToggleButtonProps) {
    // Import icons dynamically to avoid circular dependencies
@@ -125,11 +124,10 @@ export function WorkspaceZoneAToggleButton(props: WorkspaceZoneAToggleButtonProp
  *
  * Specialized toggle button for Workspace Zone B with appropriate icons and labels.
  */
-export interface WorkspaceZoneBToggleButtonProps
-   extends Omit<
-      BaseZoneToggleButtonComponentProps,
-      'zoneName' | 'iconVisible' | 'iconHidden' | 'labelVisible' | 'labelHidden'
-   > {}
+export type WorkspaceZoneBToggleButtonProps = Omit<
+   BaseZoneToggleButtonComponentProps,
+   'zoneName' | 'iconVisible' | 'iconHidden' | 'labelVisible' | 'labelHidden'
+>;
 
 export function WorkspaceZoneBToggleButton(props: WorkspaceZoneBToggleButtonProps) {
    // Import icons dynamically to avoid circular dependencies
@@ -153,14 +151,3 @@ export function WorkspaceZoneBToggleButton(props: WorkspaceZoneBToggleButtonProp
       </React.Suspense>
    );
 }
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-   BaseZoneToggleButton,
-   type BaseZoneToggleButtonComponentProps,
-   type WorkspaceZoneAToggleButtonProps,
-   type WorkspaceZoneBToggleButtonProps,
-};

@@ -9,7 +9,6 @@
 import React from 'react';
 import { useStateMachine } from '@/src/lib/state-machines/zone-state-machine';
 import { buildWorkspaceZoneAClasses } from '@/src/lib/css/zone-class-builder';
-import { useZoneStyles } from '@/src/lib/css/zone-styles';
 import { WorkspaceZoneAToggle } from './shared/unified-zone-toggle';
 import { cn } from '@/src/lib/lib/utils';
 
@@ -20,7 +19,7 @@ interface RefactoredWorkspaceZoneAProps {
 
 export function RefactoredWorkspaceZoneA({ children, className }: RefactoredWorkspaceZoneAProps) {
    // Elegant state management with state machine
-   const { currentState, transition, setState } = useStateMachine({
+   const { currentState, setState } = useStateMachine({
       states: ['normal', 'fullscreen', 'hidden'],
       initialState: 'normal',
       transitions: {
@@ -33,24 +32,9 @@ export function RefactoredWorkspaceZoneA({ children, className }: RefactoredWork
    // Elegant CSS class generation
    const zoneClasses = buildWorkspaceZoneAClasses(currentState);
 
-   // Elegant CSS variable management
-   const { applyStyles } = useZoneStyles({
-      zone: 'a',
-      state: currentState === 'normal' ? 'visible' : currentState,
-      dimensions: {
-         leftWidth: currentState === 'normal' ? 244 : 0,
-         rightWidth: currentState === 'normal' ? 320 : 0,
-      },
-   });
-
    // Elegant event handlers
    const handleStateChange = (newState: 'normal' | 'fullscreen' | 'hidden') => {
       setState(newState);
-   };
-
-   const handleCycle = () => {
-      const newState = transition();
-      // State is automatically updated by the state machine
    };
 
    return (

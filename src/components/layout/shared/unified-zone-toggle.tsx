@@ -9,13 +9,12 @@ import React from 'react';
 import { Button } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/lib/utils';
 import { useStateMachine } from '@/src/lib/state-machines/zone-state-machine';
-import { buildZoneClasses } from '@/src/lib/css/zone-class-builder';
 
 export type ToggleType = 'binary' | 'cycle' | 'mode';
 export type ToggleSize = 'sm' | 'md' | 'lg';
 export type ToggleVariant = 'ghost' | 'outline' | 'default';
 
-export interface ToggleConfig<T = string> {
+export interface ToggleConfig<T extends string = string> {
    type: ToggleType;
    states: T[];
    initialState: T;
@@ -25,7 +24,7 @@ export interface ToggleConfig<T = string> {
    descriptions: Record<T, string>;
 }
 
-export interface UnifiedZoneToggleProps<T = string> {
+export interface UnifiedZoneToggleProps<T extends string = string> {
    'config': ToggleConfig<T>;
    'currentState': T;
    'onStateChange': (state: T) => void;
@@ -45,12 +44,11 @@ export function UnifiedZoneToggle<T extends string>({
    size = 'md',
    variant = 'ghost',
    showLabel = false,
-   showDescription = false,
    className,
    disabled = false,
    'data-testid': testId,
 }: UnifiedZoneToggleProps<T>) {
-   const { transition, setState } = useStateMachine({
+   const { transition } = useStateMachine({
       states: config.states,
       initialState: config.initialState,
       transitions: config.transitions || createDefaultTransitions(config.states),
@@ -71,7 +69,7 @@ export function UnifiedZoneToggle<T extends string>({
       }
    };
 
-   const Icon = config.icons[currentState];
+   const Icon = config.icons[currentState] as React.ComponentType<{ className?: string }>;
    const label = config.labels[currentState];
    const description = config.descriptions[currentState];
 

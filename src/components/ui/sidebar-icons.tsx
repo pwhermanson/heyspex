@@ -54,7 +54,7 @@ export const PanelRightOpenIcon = ({ size = 24, color = 'white' }: PanelIconProp
    </svg>
 );
 
-export const FullWidthLayoutIcon = ({ size = 24, color = 'white' }: SidebarIconProps) => (
+export const FullWidthLayoutIcon = ({ size = 24, color = 'white' }: PanelIconProps) => (
    <svg
       width={size}
       height={size}
@@ -69,7 +69,7 @@ export const FullWidthLayoutIcon = ({ size = 24, color = 'white' }: SidebarIconP
    </svg>
 );
 
-export const TwoSplitLayoutIcon = ({ size = 24, color = 'white' }: SidebarIconProps) => (
+export const TwoSplitLayoutIcon = ({ size = 24, color = 'white' }: PanelIconProps) => (
    <svg
       width={size}
       height={size}

@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { cn } from '@/src/lib/lib/utils';
-import { useResizablePanel } from './workspace-zone-a-panels-provider';
 
 interface WorkspaceZoneAPanelsResizableProps {
    side: 'left' | 'right';
@@ -10,7 +9,11 @@ interface WorkspaceZoneAPanelsResizableProps {
    className?: string;
 }
 
-export function ResizablePanel({ side, children, className }: WorkspaceZoneAPanelsResizableProps) {
+export function WorkspaceZoneAResizablePanel({
+   side,
+   children,
+   className,
+}: WorkspaceZoneAPanelsResizableProps) {
    // Always show the panel content, but make it responsive to width like Panel B
    // Instead of collapsing, adapt the content based on available space
    const content = (

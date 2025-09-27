@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/lib/utils';
 import {
    BaseZoneContainerProps,
    getZoneVisibilityClasses,
@@ -96,8 +96,7 @@ export function BaseZoneContainer({
  * Specialized container for Workspace Zone A that uses the base container
  * with Zone A specific configuration.
  */
-export interface WorkspaceZoneAContainerProps
-   extends Omit<BaseZoneContainerComponentProps, 'zoneName'> {}
+export type WorkspaceZoneAContainerProps = Omit<BaseZoneContainerComponentProps, 'zoneName'>;
 
 export function WorkspaceZoneAContainer(props: WorkspaceZoneAContainerProps) {
    return <BaseZoneContainer {...props} zoneName="a" zIndexKey="MAIN_CONTENT" />;
@@ -150,14 +149,3 @@ export function WorkspaceZoneBContainer({
       />
    );
 }
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-   BaseZoneContainer,
-   type BaseZoneContainerComponentProps,
-   type WorkspaceZoneAContainerProps,
-   type WorkspaceZoneBContainerProps,
-};

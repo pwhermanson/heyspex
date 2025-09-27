@@ -71,8 +71,6 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
       isMainFullscreen,
       centerBottomSplit,
       setCenterBottomSplit,
-      leftPanel,
-      rightPanel,
       isWorkspaceZoneAVisible,
       isControlBarVisible,
       workspaceZoneA,

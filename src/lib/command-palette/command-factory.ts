@@ -5,10 +5,10 @@
  * and reduced boilerplate
  */
 
-import { registerCommand } from './registry';
-import type { CommandContext } from './registry';
+import { registerCommand } from '../lib/command-palette/registry';
+import type { CommandContext } from '../lib/command-palette/registry';
 
-export interface CommandDefinition<T = any> {
+export interface CommandDefinition<T = unknown> {
    id: string;
    title: string;
    keywords: string[];
@@ -19,33 +19,33 @@ export interface CommandDefinition<T = any> {
    category?: string;
 }
 
-export interface CommandGroup {
+export interface CommandGroup<T = unknown> {
    id: string;
    title: string;
-   commands: CommandDefinition[];
+   commands: CommandDefinition<T>[];
 }
 
 // Context providers registry
-const contextProviders = new Map<string, () => any>();
+const contextProviders = new Map<string, () => unknown>();
 
 export function registerContextProvider<T>(key: string, provider: () => T) {
-   contextProviders.set(key, provider);
+   contextProviders.set(key, provider as () => unknown);
 }
 
 export function getContext<T>(key: string): T | null {
    const provider = contextProviders.get(key);
-   return provider ? provider() : null;
+   return provider ? (provider() as T) : null;
 }
 
 // Command factory
-export function createCommand<T = any>(definition: CommandDefinition<T>) {
+export function createCommand<T = unknown>(definition: CommandDefinition<T>) {
    return registerCommand({
       id: definition.id,
       title: definition.title,
       keywords: definition.keywords,
       shortcut: definition.shortcut,
       guard: definition.guard,
-      run: async (ctx: CommandContext) => {
+      run: async () => {
          const context = getContext<T>(definition.id.split('.')[0]);
          if (context) {
             await definition.action(context);
@@ -55,12 +55,20 @@ export function createCommand<T = any>(definition: CommandDefinition<T>) {
 }
 
 // Batch command registration
-export function registerCommandGroup(group: CommandGroup) {
+export function registerCommandGroup<T = unknown>(group: CommandGroup<T>) {
    group.commands.forEach(createCommand);
 }
 
+// Workspace zone context type
+export interface WorkspaceZoneContext {
+   cycleWorkspaceZoneAMode: () => void;
+   setWorkspaceZoneAMode: (mode: 'normal' | 'fullscreen' | 'hidden') => void;
+   setWorkspaceZoneBVisible: (visible: boolean) => void;
+   setWorkspaceZoneBMode: (mode: 'push' | 'overlay') => void;
+}
+
 // Workspace zone commands factory
-export function createWorkspaceZoneCommands(zoneContext: any) {
+export function createWorkspaceZoneCommands(zoneContext: WorkspaceZoneContext) {
    const commands: CommandDefinition[] = [
       {
          id: 'workspace.zone.a.cycle',

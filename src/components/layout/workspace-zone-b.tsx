@@ -113,11 +113,11 @@ export function WorkspaceZoneB({
    const isClient = typeof window !== 'undefined';
    const [windowHeight, setWindowHeight] = React.useState(isClient ? window.innerHeight : 1000);
 
-   const getMainTop = () => {
+   const getMainTop = React.useCallback(() => {
       if (!isClient) return 56;
       const el = document.querySelector('[data-main-container]') as HTMLElement | null;
       return el ? Math.round(el.getBoundingClientRect().top) : 56;
-   };
+   }, [isClient]);
 
    const pushMaxHeight = Math.max(40, Math.round(windowHeight * 0.5));
    const maxHeight =
@@ -148,6 +148,7 @@ export function WorkspaceZoneB({
       height,
       maxHeight,
       setWorkspaceZoneBHeight,
+      getMainTop,
    ]);
 
    const handleToggleFull = () => {

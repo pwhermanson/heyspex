@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Maximize2 } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
-import { cn } from '@/src/lib/lib/utils';
 
 export function PanelControlBar() {
    // Fullscreen functionality removed - icon is now non-functional

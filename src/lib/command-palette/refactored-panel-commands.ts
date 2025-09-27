@@ -4,8 +4,8 @@
  * Demonstrates elegant command registration with the new factory pattern
  */
 
-import { createCommand, registerCommandGroup, registerContextProvider } from './command-factory';
-import type { CommandDefinition } from './command-factory';
+import { registerCommandGroup, registerContextProvider } from './command-factory';
+import type { CommandDefinition, WorkspaceZoneContext } from './command-factory';
 
 // Register context provider for workspace zones
 registerContextProvider('workspace', () => {
@@ -28,7 +28,7 @@ registerContextProvider('workspace', () => {
 });
 
 // Elegant command definitions
-const workspaceCommands: CommandDefinition[] = [
+const workspaceCommands: CommandDefinition<WorkspaceZoneContext>[] = [
    {
       id: 'workspace.zone.a.cycle',
       title: '/workspace zone A cycle toggle',
@@ -90,7 +90,7 @@ const workspaceCommands: CommandDefinition[] = [
 ];
 
 // Register all commands at once
-registerCommandGroup({
+registerCommandGroup<WorkspaceZoneContext>({
    id: 'workspace',
    title: 'Workspace Commands',
    commands: workspaceCommands,
