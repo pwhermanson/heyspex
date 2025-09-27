@@ -2,8 +2,8 @@
 
 import React from 'react';
 import BaseSelector from './base-selector';
-import { priorities, Priority } from '@/src/tests/test-data/priorities';
-import { useIssuesStore } from '@/src/state/store/issues-store';
+import { priorities, Priority } from '@/tests/test-data/priorities';
+import { useIssuesStore } from '@/state/store/issues-store';
 import type { BaseSelectorProps } from '@/src/components/standards/prop-interface-patterns';
 
 interface PrioritySelectorProps

@@ -53,8 +53,8 @@ const nextConfig: NextConfig = {
       // Enable faster refresh
       optimizeCss: true,
 
-      // Enable webpack caching
-      webpackBuildWorker: true,
+      // Disable webpackBuildWorker - causes build hangs on Windows
+      // webpackBuildWorker: true,
    },
 
    // Compiler optimizations

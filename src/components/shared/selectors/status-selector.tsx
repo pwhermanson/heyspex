@@ -2,10 +2,10 @@
 
 import React from 'react';
 import BaseSelector from './base-selector';
-import { status as allStatus, Status } from '@/src/tests/test-data/status';
-import { useIssuesStore } from '@/src/state/store/issues-store';
-import { renderStatusIcon } from '@/src/lib/lib/status-utils';
-import type { BaseSelectorProps } from '@/src/components/standards/prop-interface-patterns';
+import { status as allStatus, Status } from '@/tests/test-data/status';
+import { useIssuesStore } from '@/state/store/issues-store';
+import { renderStatusIcon } from '@/lib/lib/status-utils';
+import type { BaseSelectorProps } from '@/components/standards/prop-interface-patterns';
 
 interface StatusSelectorProps
    extends Omit<
