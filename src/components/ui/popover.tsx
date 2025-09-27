@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
-import { cn } from '@/src/lib/lib/utils';
-import { ZIndex } from '@/src/lib/z-index-management';
+import { cn } from '@/lib/lib/utils';
+import { ZIndex } from '@/lib/z-index-management';
 
 function Popover({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
    return <PopoverPrimitive.Root data-slot="popover" {...props} />;

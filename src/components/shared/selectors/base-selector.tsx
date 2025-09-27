@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useId, useMemo, useCallback } from 'react';
+import React, { useState, useId, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
    Command,
@@ -87,14 +87,8 @@ export function BaseSelector<T>({
    const [isOpen, setIsOpen] = useState(false);
    const [searchQuery, setSearchQuery] = useState('');
 
-   // Filter items based on search query
-   const filteredItems = useMemo(() => {
-      if (!searchable || !searchQuery) return items;
-
-      return items.filter((item) =>
-         getItemLabel(item).toLowerCase().includes(searchQuery.toLowerCase())
-      );
-   }, [items, searchQuery, searchable, getItemLabel]);
+   // Use items directly - Command component handles filtering internally
+   const filteredItems = items;
 
    // Handle item selection
    const handleItemSelect = useCallback(
@@ -210,7 +204,7 @@ export function BaseSelector<T>({
                            return (
                               <CommandItem
                                  key={itemKey}
-                                 value={itemKey}
+                                 value={itemLabel}
                                  onSelect={() => handleItemSelect(item)}
                                  className="flex items-center justify-between"
                                  disabled={isDisabled}

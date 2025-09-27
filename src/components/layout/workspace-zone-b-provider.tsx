@@ -209,7 +209,7 @@ export function WorkspaceZoneBProvider({ children }: { children: React.ReactNode
             return newState;
          });
       },
-      [workspaceZoneB.mode]
+      [workspaceZoneB.mode, workspaceZoneB.height]
    );
 
    const setWorkspaceZoneBVisible = useCallback((visible: boolean) => {

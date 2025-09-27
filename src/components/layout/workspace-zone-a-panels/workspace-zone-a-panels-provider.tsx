@@ -677,7 +677,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       },
       [saveToLocalStorage, uiState.viewportWidth]
    );
-   // Bottom bar management functions
+   // Workspace Zone B management functions
    const setWorkspaceZoneBMode = useCallback((mode: WorkspaceZoneBMode) => {
       setWorkspaceZoneB((prev) => {
          const newState = { ...prev, mode };

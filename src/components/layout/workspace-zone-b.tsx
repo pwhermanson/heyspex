@@ -199,7 +199,7 @@ export function WorkspaceZoneB({
          }}
          role="contentinfo"
       >
-         {/* Bottom Bar Header with Controls */}
+         {/* Workspace Zone B Header with Controls */}
          <div className="workspace-zone-control-bar flex items-center justify-between px-4 py-2 border-b min-h-[40px] bg-muted">
             <div className="flex items-center gap-3">
                <span className="text-xs text-muted-foreground">Workspace Zone B</span>
@@ -307,7 +307,7 @@ export function WorkspaceZoneB({
             mode={effectiveMode}
          />
 
-         {/* Bottom Bar Content - only show if not collapsed */}
+         {/* Workspace Zone B Content - only show if not collapsed */}
          {!isCollapsed && (
             <div className="flex-1 overflow-auto">
                {children ? (

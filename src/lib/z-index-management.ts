@@ -48,7 +48,6 @@ export const Z_INDEX_LAYERS = {
    GLOBAL_CONTROL_BAR: 20,
    PANEL_CONTROL_BAR: 20,
    SCREEN_CONTROL_BAR: 10, // Note: Lower than panel control bar
-   BOTTOM_BAR: 20,
    WORKSPACE_ZONE_B: 20,
 
    // Interactive layers (30-39)
@@ -117,7 +116,6 @@ export const Z_INDEX_CATEGORIES = {
       GLOBAL_CONTROL_BAR: Z_INDEX_LAYERS.GLOBAL_CONTROL_BAR,
       PANEL_CONTROL_BAR: Z_INDEX_LAYERS.PANEL_CONTROL_BAR,
       SCREEN_CONTROL_BAR: Z_INDEX_LAYERS.SCREEN_CONTROL_BAR,
-      BOTTOM_BAR: Z_INDEX_LAYERS.BOTTOM_BAR,
       WORKSPACE_ZONE_B: Z_INDEX_LAYERS.WORKSPACE_ZONE_B,
    },
 
@@ -301,7 +299,6 @@ export const Z_INDEX_CSS_VARS = {
    '--z-global-control-bar': Z_INDEX_LAYERS.GLOBAL_CONTROL_BAR,
    '--z-panel-control-bar': Z_INDEX_LAYERS.PANEL_CONTROL_BAR,
    '--z-screen-control-bar': Z_INDEX_LAYERS.SCREEN_CONTROL_BAR,
-   '--z-bottom-bar': Z_INDEX_LAYERS.BOTTOM_BAR,
    '--z-workspace-zone-b': Z_INDEX_LAYERS.WORKSPACE_ZONE_B,
    '--z-interactive-elements': Z_INDEX_LAYERS.INTERACTIVE_ELEMENTS,
    '--z-buttons': Z_INDEX_LAYERS.BUTTONS,

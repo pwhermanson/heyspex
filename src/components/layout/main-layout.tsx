@@ -26,6 +26,7 @@ import { cn } from '@/src/lib/lib/utils';
 import { CommandPaletteModal } from '@/src/components/command-palette/command-palette-modal';
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
 import { useWorkspaceInitialization } from '@/src/lib/hooks/use-workspace-initialization';
+import { useWorkspaceZoneBCSSVariables } from '@/src/lib';
 import { StableAppShell } from '@/src/components/layout/stable-app-shell';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
@@ -88,6 +89,14 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
    const isBottomSplitEnabled = useFeatureFlag('enableBottomSplit');
    const safeBottomEnabled = isHydrated && isBottomSplitEnabled;
 
+   // Update CSS variables for Workspace Zone B dynamically
+   useWorkspaceZoneBCSSVariables({
+      isEnabled: safeBottomEnabled,
+      mode: workspaceZoneB.mode,
+      isVisible: workspaceZoneB.isVisible,
+      height: workspaceZoneB.height,
+   });
+
    // Calculate grid rows based on workspace zone B mode and visibility
    const getGridRows = () => {
       if (workspaceZoneAMode === 'fullscreen') {
@@ -109,7 +118,7 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
          !isMainFullscreen;
 
       if (shouldReserveBottomRow) {
-         rows.push('var(--bottombar-height, 40px)');
+         rows.push('var(--workspace-zone-b-height, 40px)');
       }
 
       return rows.join(' ');

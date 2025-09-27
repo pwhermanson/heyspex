@@ -217,7 +217,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             };
          });
       }
-   }, [enableLeftRail, saveToLocalStorage, updateLeftRailState]);
+   }, [enableLeftRail, savePanelStateToLocalStorage, updateLeftRailState]);
 
    const setLeftPanelOpen = useCallback(
       (open: boolean) => {
@@ -250,7 +250,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             });
          }
       },
-      [enableLeftRail, saveToLocalStorage, updateLeftRailState]
+      [enableLeftRail, savePanelStateToLocalStorage, updateLeftRailState]
    );
 
    const setLeftPanelWidth = useCallback(
@@ -273,7 +273,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             return prev;
          });
       },
-      [saveToLocalStorage]
+      [savePanelStateToLocalStorage]
    );
 
    // Right panel controls
@@ -293,7 +293,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             rightPanel: newRightPanel,
          };
       });
-   }, [saveToLocalStorage]);
+   }, [savePanelStateToLocalStorage]);
 
    const setWorkspaceZoneAPanelCOpen = useCallback(
       (open: boolean) => {
@@ -311,7 +311,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             };
          });
       },
-      [saveToLocalStorage]
+      [savePanelStateToLocalStorage]
    );
 
    const setWorkspaceZoneAPanelCWidth = useCallback(
@@ -362,7 +362,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
             return prev;
          });
       },
-      [saveToLocalStorage]
+      [savePanelStateToLocalStorage]
    );
 
    // Load Zone A state from localStorage on hydration
@@ -440,7 +440,7 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
       } catch (error) {
          console.warn('Failed to load Zone A state from localStorage:', error);
       }
-   }, []);
+   }, [loadFromLocalStorage, setStateMachineState]);
 
    // Save Zone A state to localStorage
    useEffect(() => {

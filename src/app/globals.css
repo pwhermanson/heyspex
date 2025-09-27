@@ -24,7 +24,6 @@
    --z-global-control-bar: 20;
    --z-panel-control-bar: 20;
    --z-screen-control-bar: 10;
-   --z-bottom-bar: 20;
    --z-workspace-zone-b: 20;
    --z-interactive-elements: 30;
    --z-buttons: 30;
@@ -418,7 +417,7 @@ input[type='search'] {
    --right-hidden: 0px;
    --right-width: var(--right-hidden);
    --control-bar-height: 56px;
-   --bottombar-height: 40px;
+   --workspace-zone-b-height: 40px;
    --center-bottom-split: 0px;
    --layout-motion-duration-short: 160ms;
    --layout-motion-duration-medium: 240ms;

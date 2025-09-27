@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
-import { cn } from '@/src/lib/lib/utils';
-import { ZIndex } from '@/src/lib/z-index-management';
+import { cn } from '@/lib/lib/utils';
+import { ZIndex } from '@/lib/z-index-management';
 
 function TooltipProvider({
    delayDuration = 0,

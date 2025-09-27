@@ -13,7 +13,7 @@ Perfect — I’ve taken your uploaded `refactor-os.md` and merged in the **Sing
 <!--
 Cursor One Line prompt for getting started:
 
-Act as a senior refactor engineer: use refactor-os.md as the rulebook for all refactoring. Load refactor-plan.md, auto-select the next unchecked task (or the task id set by `next:`), re-validate the plan before any edits, enforce single-task focus, run preflight and phased commits, typecheck and lint with zero new warnings, run build and tests after each change, open a draft PR with evidence and rollback steps, check off the PR checklist in real time, and on completion mark the corresponding plan checkbox to [x] with date, commit sha, and notes.
+Act as a senior refactor engineer: use @refactor-os.md as the rulebook for all refactoring. Load @refactor-plan.md, auto-select the next unchecked task (or the task id set by `next:`), re-validate the plan before any edits, enforce single-task focus, run preflight and phased commits, typecheck and lint with zero new warnings, run build and tests after each change, open a draft PR with evidence and rollback steps, check off the PR checklist in real time, and on completion mark the corresponding plan checkbox to [x] with date, commit sha, and notes.
 -->
 
 ````markdown

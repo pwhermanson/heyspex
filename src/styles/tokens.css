@@ -9,7 +9,7 @@
       --right-hidden: 0px;
       --right-width: var(--right-hidden);
       --control-bar-height: 56px;
-      --bottombar-height: 40px;
+      --workspace-zone-b-height: 40px;
       --center-bottom-split: 0px;
 
       /* Motion and Animation Variables */
