@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { Team, teams } from '@/src/tests/test-data/teams';
-import { User } from '@/src/tests/test-data/users';
-import { Project } from '@/src/tests/test-data/projects';
+import { Team, teams } from '../../../tests/test-data/teams';
+import { User } from '../../../tests/test-data/users';
+import { Project } from '../../../tests/test-data/projects';
 
 interface TeamsDataState {
    // Data
