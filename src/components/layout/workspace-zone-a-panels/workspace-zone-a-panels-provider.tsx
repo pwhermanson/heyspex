@@ -832,21 +832,33 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       // When transitioning to hidden, automatically transition Workspace Zone B to fullscreen
       if (nextMode === 'hidden') {
          console.log(
-            '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated'
+            '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated',
+            { currentMode: workspaceZoneB.mode }
          );
 
-         // If Zone B is already in overlay mode, just expand it to fullscreen
-         if (workspaceZoneB.mode === 'overlay') {
-            const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-            setWorkspaceZoneBHeight(viewportHeight);
-         } else {
-            // If Zone B is not in overlay mode, change mode first, then set height
-            setWorkspaceZoneBMode('overlay');
-            setTimeout(() => {
-               const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-               setWorkspaceZoneBHeight(viewportHeight);
-            }, 0);
-         }
+         // Set both mode and height in a single state update to avoid race conditions
+         const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+         setWorkspaceZoneB((prev) => {
+            const newState = {
+               ...prev,
+               mode: 'overlay' as WorkspaceZoneBMode,
+               height: viewportHeight,
+            };
+
+            // Save to localStorage
+            try {
+               localStorage.setItem('ui:workspaceZoneBMode', 'overlay');
+               localStorage.setItem('ui:workspaceZoneBHeight', viewportHeight.toString());
+            } catch (error) {
+               console.warn('Failed to save workspace zone B state to localStorage:', error);
+            }
+
+            console.log(
+               '🔄 Setting Zone B to overlay mode with fullscreen height:',
+               viewportHeight
+            );
+            return newState;
+         });
       }
 
       // Save to localStorage
