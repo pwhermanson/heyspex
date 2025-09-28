@@ -177,11 +177,11 @@ export function WorkspaceZoneBProvider({ children }: { children: React.ReactNode
    const setWorkspaceZoneBHeight = useCallback(
       (height: number) => {
          // Helper function to get main container top position (same logic as WorkspaceZoneB component)
-         const getMainTop = () => {
-            if (typeof window === 'undefined') return 56;
-            const el = document.querySelector('[data-main-container]') as HTMLElement | null;
-            return el ? Math.round(el.getBoundingClientRect().top) : 56;
-         };
+         // const getMainTop = () => {
+         //    if (typeof window === 'undefined') return 56;
+         //    const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+         //    return el ? Math.round(el.getBoundingClientRect().top) : 56;
+         // };
 
          // For height changes, use same limits as WorkspaceZoneB full screen button
          const maxHeight =

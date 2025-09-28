@@ -73,11 +73,11 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
       isMainFullscreen,
       centerBottomSplit,
       setCenterBottomSplit,
-      isWorkspaceZoneAVisible,
+      // isWorkspaceZoneAVisible, // Unused for now
       isControlBarVisible,
       workspaceZoneA,
       workspaceZoneAMode,
-      setWorkspaceZoneAMode,
+      // setWorkspaceZoneAMode, // Unused for now
    } = useResizablePanel();
 
    // Initialize workspace data

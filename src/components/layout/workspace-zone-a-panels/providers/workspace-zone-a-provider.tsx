@@ -167,6 +167,15 @@ export function WorkspaceZoneAProvider({ children }: { children: React.ReactNode
          // The actual transition will be handled by the WorkspaceZoneAPanelsProvider
       }
 
+      // When transitioning from normal to hidden, automatically transition Workspace Zone B to fullscreen
+      if (workspaceZoneAMode === 'normal' && nextMode === 'hidden') {
+         console.log(
+            '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated'
+         );
+         // Note: This provider doesn't have direct access to setWorkspaceZoneBMode
+         // The actual transition will be handled by the WorkspaceZoneAPanelsProvider
+      }
+
       // Save to localStorage
       try {
          saveToLocalStorage('ui:workspaceZoneAMode', nextMode);

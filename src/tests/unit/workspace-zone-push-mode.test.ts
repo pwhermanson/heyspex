@@ -118,8 +118,8 @@ describe('Workspace Zone Push Mode', () => {
          };
 
          const isControlBarVisible = true;
-         const controlBarHeight = 56;
-         const viewportHeight = 1000;
+         // const controlBarHeight = 56;
+         // const viewportHeight = 1000;
 
          // Calculate expected maxHeight for panels A and C
          const expectedMaxHeight = `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`;
@@ -141,7 +141,7 @@ describe('Workspace Zone Push Mode', () => {
             height: 200,
          };
 
-         const isMainFullscreen = true; // Panel B is in fullscreen mode
+         // const isMainFullscreen = true; // Panel B is in fullscreen mode
          const isControlBarVisible = true;
 
          // Calculate expected maxHeight for panels A and C (should apply regardless of fullscreen mode)

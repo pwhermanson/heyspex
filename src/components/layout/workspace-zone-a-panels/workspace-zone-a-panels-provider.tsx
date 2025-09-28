@@ -711,11 +711,11 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    const setWorkspaceZoneBHeight = useCallback(
       (height: number) => {
          // Helper function to get main container top position (same logic as WorkspaceZoneB component)
-         const getMainTop = () => {
-            if (typeof window === 'undefined') return 56;
-            const el = document.querySelector('[data-main-container]') as HTMLElement | null;
-            return el ? Math.round(el.getBoundingClientRect().top) : 56;
-         };
+         // const getMainTop = () => {
+         //    if (typeof window === 'undefined') return 56;
+         //    const el = document.querySelector('[data-main-container]') as HTMLElement | null;
+         //    return el ? Math.round(el.getBoundingClientRect().top) : 56;
+         // };
 
          // For height changes, use same limits as WorkspaceZoneB full screen button
          const maxHeight =
@@ -829,13 +829,29 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setWorkspaceZoneBMode('push');
       }
 
+      // When transitioning from normal to hidden, automatically transition Workspace Zone B to fullscreen
+      if (uiState.workspaceZoneAMode === 'normal' && nextMode === 'hidden') {
+         console.log(
+            '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated'
+         );
+         setWorkspaceZoneBMode('overlay');
+         // Set Zone B to fullscreen height
+         const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+         setWorkspaceZoneBHeight(viewportHeight);
+      }
+
       // Save to localStorage
       try {
          localStorage.setItem('ui:workspaceZoneAMode', nextMode);
       } catch (error) {
          console.warn('Failed to save workspace zone A mode to localStorage:', error);
       }
-   }, [stateMachineTransition, uiState.workspaceZoneAMode, setWorkspaceZoneBMode]);
+   }, [
+      stateMachineTransition,
+      uiState.workspaceZoneAMode,
+      setWorkspaceZoneBMode,
+      setWorkspaceZoneBHeight,
+   ]);
 
    const setMainFullscreen = useCallback(
       (fullscreen: boolean) => {
