@@ -28,20 +28,14 @@ import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 import { ZIndex } from '@/src/lib/z-index-management';
+import { useShadow, ShadowLayer } from './shadow';
 
 interface AppShellBrandedProps {
    className?: string;
 }
 
-// Visual effect constants
+// Visual effect constants (shadow constants moved to separate module)
 const VISUAL_CONSTANTS = {
-   // Shadow effects
-   SHADOW_OFFSET_DIVISOR: 20,
-   MAX_SHADOW_DISTANCE: 3000,
-   MAX_SHADOW_BLUR: 15,
-   OPACITY_FADE_DISTANCE: 400,
-   MIN_OPACITY: 0.1,
-
    // Edge effects
    EDGE_FADE_DISTANCE: 100,
 
@@ -56,9 +50,6 @@ const VISUAL_CONSTANTS = {
    IDLE_TIMEOUT: 500,
    FADE_DELAY: 0,
 
-   // Color animation
-   COLOR_ROTATION_SPEED: 0.3,
-
    // Logo dimensions
    LOGO_WIDTH: 300,
    LOGO_HEIGHT: 273,
@@ -68,16 +59,6 @@ const VISUAL_CONSTANTS = {
    SWIRL_PHASE_MULTIPLIER: 0.5,
    SWIRL_PHASE_OFFSET: 0.5,
    TIME_DIVISOR: 1000,
-
-   // Color palette
-   COLOR_PALETTE: [
-      [59, 130, 246], // Blue
-      [34, 197, 94], // Green
-      [147, 51, 234], // Purple
-      [236, 72, 153], // Pink
-      [249, 115, 22], // Orange
-      [234, 179, 8], // Yellow
-   ],
 
    // Grid gradient opacities
    GRID_GRADIENT_OPACITY_1: 0.03,
@@ -116,7 +97,7 @@ const VISUAL_CONSTANTS = {
    // Default values
    DEFAULT_OPACITY: 1,
    DEFAULT_INTENSITY: 1,
-   DEFAULT_MOUSE_POSITION: { x: 0, y: 0 } as const,
+   MIN_OPACITY: 0.1,
 } as const;
 
 // Reusable mask styles
@@ -213,14 +194,26 @@ export const AppShellBranded = React.memo(function AppShellBranded({
    React.useEffect(() => {
       setIsClient(true);
    }, []);
-   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>(
-      VISUAL_CONSTANTS.DEFAULT_MOUSE_POSITION
-   );
+
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
    const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-   const shadowFadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const logoRef = useRef<HTMLDivElement>(null);
+
+   // Use the new shadow system
+   const {
+      shadowFilter,
+      shadowOpacity,
+      mousePosition,
+      handleMouseMove: shadowHandleMouseMove,
+      handleMouseLeave: shadowHandleMouseLeave,
+   } = useShadow({
+      logoRef,
+      containerRef,
+      isClient,
+      isMouseOver,
+      isShadowFading,
+   });
 
    // Helper function to clear all timeouts
    const clearAllTimeouts = useCallback(() => {
@@ -232,10 +225,6 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          clearTimeout(fadeTimeoutRef.current);
          fadeTimeoutRef.current = null;
       }
-      if (shadowFadeTimeoutRef.current) {
-         clearTimeout(shadowFadeTimeoutRef.current);
-         shadowFadeTimeoutRef.current = null;
-      }
    }, []);
 
    const handleMouseMove = useCallback(
@@ -243,13 +232,8 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          // Only handle mouse events on client side
          if (!isClient) return;
 
-         // Always update mouse position immediately for smooth tracking
-         if (containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            setMousePosition({ x, y });
-         }
+         // Delegate shadow handling to the shadow system
+         shadowHandleMouseMove(e);
 
          // Set mouse moving state immediately
          setIsMouseMoving(true);
@@ -274,134 +258,135 @@ export const AppShellBranded = React.memo(function AppShellBranded({
             }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
          }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
       },
-      [clearAllTimeouts, isClient]
+      [clearAllTimeouts, isClient, shadowHandleMouseMove]
    );
 
-   // Helper function to get logo center and distance from mouse (memoized)
-   const getLogoCenterAndDistance = useCallback(() => {
-      if (!logoRef.current || !containerRef.current) return null;
+   // Get container dimensions for performance optimization
+   const containerDimensions = useMemo(() => {
+      if (!containerRef.current || !isClient) return { width: 0, height: 0 };
 
-      const logoRect = logoRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
+      try {
+         const rect = containerRef.current.getBoundingClientRect();
+         return { width: rect.width, height: rect.height };
+      } catch (error) {
+         console.warn('Error getting container dimensions:', error);
+         return { width: 0, height: 0 };
+      }
+   }, [isClient]);
 
-      // Get logo center relative to container
-      const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
-      const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
+   // Get logo data from shadow system - no need to duplicate calculation
+   const logoData = useMemo(() => {
+      if (!logoRef.current || !containerRef.current || !isClient) return null;
 
-      // Calculate distance from mouse to logo center
-      const distance = Math.sqrt(
-         Math.pow(mousePosition.x - logoCenterX, 2) + Math.pow(mousePosition.y - logoCenterY, 2)
-      );
+      try {
+         const logoRect = logoRef.current.getBoundingClientRect();
+         const containerRect = containerRef.current.getBoundingClientRect();
 
-      return { logoCenterX, logoCenterY, distance };
-   }, [mousePosition.x, mousePosition.y]);
+         // Validate rects have valid dimensions
+         if (
+            logoRect.width === 0 ||
+            logoRect.height === 0 ||
+            containerRect.width === 0 ||
+            containerRect.height === 0
+         ) {
+            return null;
+         }
 
-   // Calculate shadow offset, blur, and opacity based on logo's actual center (memoized)
-   const getShadowOffset = useCallback(() => {
-      const logoData = getLogoCenterAndDistance();
-      if (!logoData) return { x: 0, y: 0, blur: 0, opacity: 1 };
+         // Get logo center relative to container
+         const logoCenterX = logoRect.left + logoRect.width / 2 - containerRect.left;
+         const logoCenterY = logoRect.top + logoRect.height / 2 - containerRect.top;
 
-      const { logoCenterX, logoCenterY, distance } = logoData;
-
-      // Shadow follows mouse position - offset from logo center
-      const offsetX = -(mousePosition.x - logoCenterX) / 20;
-      const offsetY = -(mousePosition.y - logoCenterY) / 20;
-
-      // Blur increases with distance from logo
-      const maxDistance = 3000;
-      const blur = Math.min(Math.pow(distance / maxDistance, 2) * 15, 15);
-
-      // Opacity decreases with distance from logo
-      const opacityDistance = 400;
-      const opacity = Math.max(1 - distance / opacityDistance, 0.1);
-
-      return { x: offsetX, y: offsetY, blur, opacity };
-   }, [getLogoCenterAndDistance, mousePosition.x, mousePosition.y]);
-
-   // Calculate swirling color based on time and position (memoized)
-   const getSwirlingColor = useCallback(() => {
-      const time = Date.now() / 1000;
-      const angle = (time * 0.3) % (Math.PI * 2);
-
-      // Animate through color palette over time
-      const swirlPhase = Math.sin(angle) * 0.5 + 0.5;
-
-      const colors = [
-         [59, 130, 246], // Blue
-         [34, 197, 94], // Green
-         [147, 51, 234], // Purple
-         [236, 72, 153], // Pink
-         [249, 115, 22], // Orange
-         [234, 179, 8], // Yellow
-      ];
-
-      // Smooth color transition between palette colors
-      const colorIndex = (swirlPhase * (colors.length - 1)) % colors.length;
-      const currentColorIndex = Math.floor(colorIndex);
-      const nextColorIndex = (currentColorIndex + 1) % colors.length;
-      const blendFactor = colorIndex - currentColorIndex;
-
-      const currentColor = colors[currentColorIndex];
-      const nextColor = colors[nextColorIndex];
-
-      const r = Math.round(currentColor[0] * (1 - blendFactor) + nextColor[0] * blendFactor);
-      const g = Math.round(currentColor[1] * (1 - blendFactor) + nextColor[1] * blendFactor);
-      const b = Math.round(currentColor[2] * (1 - blendFactor) + nextColor[2] * blendFactor);
-
-      return `rgba(${r}, ${g}, ${b}, ${getShadowOffset().opacity})`;
-   }, [getShadowOffset]);
+         return { logoCenterX, logoCenterY };
+      } catch (error) {
+         console.warn('Error calculating logo data:', error);
+         return null;
+      }
+   }, [logoRef, containerRef, isClient]);
 
    // Calculate glow intensity based on distance from logo (memoized)
-   const getGlowIntensity = useCallback(() => {
-      const logoData = getLogoCenterAndDistance();
-      if (!logoData) return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
+   const glowIntensity = useMemo(() => {
+      if (!logoData || !isClient) return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
 
-      const { distance } = logoData;
+      try {
+         // Use shadow system's mouse position for accurate distance calculation
+         const deltaX = mousePosition.x - logoData.logoCenterX;
+         const deltaY = mousePosition.y - logoData.logoCenterY;
+         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-      // Dim the glow as mouse gets closer (max distance of 200px for full glow)
-      const maxDistance = VISUAL_CONSTANTS.GLOW_MAX_DISTANCE;
-      const intensity = Math.min(distance / maxDistance, 1);
+         // Calculate intensity based on distance (closer = more intense)
+         const maxDistance = Math.max(containerDimensions.width, containerDimensions.height) / 2;
 
-      return Math.max(intensity, VISUAL_CONSTANTS.GLOW_MIN_INTENSITY); // Minimum 10% intensity
-   }, [getLogoCenterAndDistance]);
+         // Prevent division by zero
+         if (maxDistance === 0) return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
+
+         const normalizedDistance = Math.min(distance / maxDistance, 1);
+         const intensity = VISUAL_CONSTANTS.DEFAULT_INTENSITY * (1 - normalizedDistance * 0.7);
+
+         return Math.max(intensity, VISUAL_CONSTANTS.DEFAULT_INTENSITY * 0.3);
+      } catch (error) {
+         console.warn('Error calculating glow intensity:', error);
+         return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
+      }
+   }, [logoData, mousePosition, isClient, containerDimensions]);
 
    // Calculate grid line opacity based on distance from logo (memoized)
-   const getGridLineOpacity = useCallback(() => {
-      const logoData = getLogoCenterAndDistance();
-      if (!logoData) return VISUAL_CONSTANTS.DEFAULT_OPACITY;
+   const gridLineOpacity = useMemo(() => {
+      if (!logoData || !isClient) return VISUAL_CONSTANTS.DEFAULT_OPACITY;
 
-      const { distance } = logoData;
+      try {
+         // Use shadow system's mouse position for accurate distance calculation
+         const deltaX = mousePosition.x - logoData.logoCenterX;
+         const deltaY = mousePosition.y - logoData.logoCenterY;
+         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-      // Lower opacity as mouse gets closer (max distance of 300px for full opacity)
-      const maxDistance = VISUAL_CONSTANTS.GRID_MAX_DISTANCE;
-      const opacity = Math.min(distance / maxDistance, 1);
+         // Calculate opacity based on distance (closer = more visible)
+         const maxDistance = Math.max(containerDimensions.width, containerDimensions.height) / 2;
 
-      return Math.max(opacity, VISUAL_CONSTANTS.MIN_OPACITY); // Minimum 10% opacity
-   }, [getLogoCenterAndDistance]);
+         // Prevent division by zero
+         if (maxDistance === 0) return VISUAL_CONSTANTS.DEFAULT_OPACITY;
 
-   // Get glow intensity (already memoized via useCallback)
-   const glowIntensity = getGlowIntensity();
+         const normalizedDistance = Math.min(distance / maxDistance, 1);
+         const opacity = VISUAL_CONSTANTS.DEFAULT_OPACITY * (1 - normalizedDistance * 0.5);
+
+         return Math.max(opacity, VISUAL_CONSTANTS.DEFAULT_OPACITY * 0.2);
+      } catch (error) {
+         console.warn('Error calculating grid line opacity:', error);
+         return VISUAL_CONSTANTS.DEFAULT_OPACITY;
+      }
+   }, [logoData, mousePosition, isClient, containerDimensions]);
 
    // Memoized grid background style with smooth fade-in
    const gridBackgroundStyle = useMemo(() => {
-      const baseOpacity = getGridLineOpacity();
-      const gridOpacity = isMouseOver ? baseOpacity : 0;
+      try {
+         const baseOpacity = gridLineOpacity;
+         const gridOpacity = isMouseOver ? baseOpacity : 0;
 
-      return {
-         backgroundImage: STYLE_GENERATORS.getGridBackgroundImage(baseOpacity),
-         ...MASK_STYLES,
-         transition: isFading
-            ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
-            : `opacity ${VISUAL_CONSTANTS.QUICK_TRANSITION_DURATION} ease-out`,
-         opacity: isFading ? 0 : gridOpacity,
-      };
-   }, [isMouseOver, isFading, getGridLineOpacity]);
+         return {
+            backgroundImage: STYLE_GENERATORS.getGridBackgroundImage(baseOpacity),
+            ...MASK_STYLES,
+            transition: isFading
+               ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
+               : `opacity ${VISUAL_CONSTANTS.QUICK_TRANSITION_DURATION} ease-out`,
+            opacity: isFading ? 0 : gridOpacity,
+         };
+      } catch (error) {
+         console.warn('Error calculating grid background style:', error);
+         return {
+            backgroundImage: 'none',
+            ...MASK_STYLES,
+            opacity: 0,
+         };
+      }
+   }, [isMouseOver, isFading, gridLineOpacity]);
 
    // Shadow and logo styling is now handled directly in JSX for better control
 
    const handleMouseLeave = useCallback(() => {
       // Only handle mouse events on client side
       if (!isClient) return;
+
+      // Delegate shadow handling to the shadow system
+      shadowHandleMouseLeave();
 
       // Clear existing timeouts
       clearAllTimeouts();
@@ -416,7 +401,7 @@ export const AppShellBranded = React.memo(function AppShellBranded({
             setIsShadowFading(true); // Shadow fades at the same time as other effects
          }, VISUAL_CONSTANTS.FADE_DELAY); // No additional delay - fade starts immediately after idle
       }, VISUAL_CONSTANTS.IDLE_TIMEOUT); // 0.5 second idle timeout
-   }, [clearAllTimeouts, isClient]);
+   }, [clearAllTimeouts, isClient, shadowHandleMouseLeave]);
 
    // Cleanup timeouts on unmount
    useEffect(() => {
@@ -448,14 +433,14 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          <div className="absolute inset-0" style={gridBackgroundStyle} />
 
          {/* Mouse-following glow effect - only render when client is ready */}
-         {isClient && isMouseOver && (
+         {isClient && isMouseOver && logoData && (
             <div
                className="absolute inset-0 pointer-events-none"
                style={{
                   ...COMPONENT_STYLES.glowEffect,
                   background: STYLE_GENERATORS.getGlowRadialGradient(
-                     mousePosition.x,
-                     mousePosition.y,
+                     logoData.logoCenterX,
+                     logoData.logoCenterY,
                      glowIntensity
                   ),
                   transition: isFading
@@ -498,27 +483,15 @@ export const AppShellBranded = React.memo(function AppShellBranded({
                }}
             />
 
-            {/* Shadow layer - can fade independently */}
-            <div
-               className="h-auto w-auto max-w-[300px] absolute top-0 left-0 z-0"
-               style={{
-                  filter: `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()})`,
-                  WebkitFilter: `drop-shadow(${getShadowOffset().x}px ${getShadowOffset().y}px ${getShadowOffset().blur}px ${getSwirlingColor()})`,
-                  transition: isShadowFading
-                     ? `opacity ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out, filter ${VISUAL_CONSTANTS.FADE_TRANSITION_DURATION} ease-out`
-                     : `filter ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out`,
-                  opacity: isShadowFading ? 0 : 1,
-               }}
-            >
-               <Image
-                  src="/heyspex-logo-stacked.png"
-                  alt=""
-                  width={VISUAL_CONSTANTS.LOGO_WIDTH}
-                  height={VISUAL_CONSTANTS.LOGO_HEIGHT}
-                  className="h-auto w-auto max-w-[300px]"
-                  priority
-               />
-            </div>
+            {/* Shadow layer - optimized with new shadow system */}
+            <ShadowLayer
+               shadowFilter={shadowFilter}
+               shadowOpacity={shadowOpacity}
+               isShadowFading={isShadowFading}
+               logoWidth={VISUAL_CONSTANTS.LOGO_WIDTH}
+               logoHeight={VISUAL_CONSTANTS.LOGO_HEIGHT}
+               logoSrc="/heyspex-logo-stacked.png"
+            />
 
             {/* Main logo - no shadow, just brightness changes */}
             <div
