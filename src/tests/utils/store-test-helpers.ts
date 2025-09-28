@@ -1,6 +1,5 @@
 import { useFilterStore } from '@/state/store/filter-store';
 import { useIssuesStore } from '@/state/store/issues-store';
-import { useIssuesFilterStore } from '@/features/inbox/state/issues-filter-store';
 import { groupIssuesByStatus, issues as mockIssues } from '@/tests/test-data/issues';
 
 /**

@@ -62,6 +62,9 @@ const nextConfig: NextConfig = {
       removeConsole: process.env.NODE_ENV === 'production',
    },
 
+   // Add this for portable builds
+   output: 'standalone',
+
    // Image optimization
    images: {
       formats: ['image/webp', 'image/avif'],

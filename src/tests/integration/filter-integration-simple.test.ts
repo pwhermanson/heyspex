@@ -169,8 +169,8 @@ describe('Filter Integration: Core Store Functionality', () => {
          const issuesStore = useIssuesStore.getState();
 
          // Set undefined filter values
-         filterStore.setFilter('status', undefined as any);
-         filterStore.setFilter('assignee', null as any);
+         filterStore.setFilter('status', undefined as string | undefined);
+         filterStore.setFilter('assignee', null as string | null);
 
          // Should not be considered active filters
          expect(filterStore.hasActiveFilters()).toBe(false);
