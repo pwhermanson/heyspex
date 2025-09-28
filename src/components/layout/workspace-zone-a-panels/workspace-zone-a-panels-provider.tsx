@@ -823,13 +823,19 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       // Update UI state to match state machine
       setUIState((prev) => ({ ...prev, workspaceZoneAMode: nextMode }));
 
+      // When transitioning from hidden to normal, automatically transition Workspace Zone B from overlay to push mode
+      if (uiState.workspaceZoneAMode === 'hidden' && nextMode === 'normal') {
+         console.log('🔄 Auto-transitioning Workspace Zone B from overlay to push mode');
+         setWorkspaceZoneBMode('push');
+      }
+
       // Save to localStorage
       try {
          localStorage.setItem('ui:workspaceZoneAMode', nextMode);
       } catch (error) {
          console.warn('Failed to save workspace zone A mode to localStorage:', error);
       }
-   }, [stateMachineTransition, uiState.workspaceZoneAMode]);
+   }, [stateMachineTransition, uiState.workspaceZoneAMode, setWorkspaceZoneBMode]);
 
    const setMainFullscreen = useCallback(
       (fullscreen: boolean) => {

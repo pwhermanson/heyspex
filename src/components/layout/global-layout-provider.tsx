@@ -180,6 +180,13 @@ export function GlobalLayoutProvider({ children }: { children: React.ReactNode }
       // Update UI state to match state machine
       setUIState((prev) => ({ ...prev, workspaceZoneAMode: nextMode }));
 
+      // When transitioning from hidden to normal, automatically transition Workspace Zone B from overlay to push mode
+      if (uiState.workspaceZoneAMode === 'hidden' && nextMode === 'normal') {
+         console.log('🔄 Auto-transitioning Workspace Zone B from overlay to push mode');
+         // Note: This provider doesn't have direct access to setWorkspaceZoneBMode
+         // The actual transition will be handled by the WorkspaceZoneAPanelsProvider
+      }
+
       // Save to localStorage
       try {
          localStorage.setItem('ui:workspaceZoneAMode', nextMode);
