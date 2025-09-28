@@ -95,15 +95,9 @@ export function WorkspaceZoneB({
    const isCollapsed = height <= 40; // Consider collapsed if height is 40px or less
    const { setWorkspaceZoneBHeight, isControlBarVisible } = useResizablePanel();
 
-   // When Workspace Zone A is hidden, force overlay mode
+   // When Workspace Zone A is hidden, use overlay mode for display purposes only
+   // This doesn't change the actual mode state, just affects how it's rendered
    const effectiveMode = isWorkspaceZoneAHidden ? 'overlay' : mode;
-
-   // Automatically switch to overlay mode when Workspace Zone A is hidden
-   React.useEffect(() => {
-      if (isWorkspaceZoneAHidden && mode !== 'overlay') {
-         onModeChange('overlay');
-      }
-   }, [isWorkspaceZoneAHidden, mode, onModeChange]);
 
    // Section D layout state: 'full' | '2-split' | '3-split'
    const [sectionDLayout, setSectionDLayout] = React.useState<'full' | '2-split' | '3-split'>(
@@ -123,7 +117,9 @@ export function WorkspaceZoneB({
    const maxHeight =
       effectiveMode === 'overlay'
          ? isClient
-            ? Math.max(40, windowHeight - getMainTop())
+            ? isWorkspaceZoneAHidden
+               ? windowHeight // Full viewport height when workspace zone A is hidden (fullscreen)
+               : Math.max(40, windowHeight - getMainTop()) // Normal overlay height when workspace zone A is visible
             : height
          : pushMaxHeight;
    const isFull = height >= maxHeight - 1;
@@ -133,7 +129,9 @@ export function WorkspaceZoneB({
       if (effectiveMode !== 'overlay' || !isClient) return;
 
       // Calculate the new max height based on current control bar visibility
-      const newMaxHeight = Math.max(40, windowHeight - getMainTop());
+      const newMaxHeight = isWorkspaceZoneAHidden
+         ? windowHeight // Full viewport height when workspace zone A is hidden (fullscreen)
+         : Math.max(40, windowHeight - getMainTop()); // Normal overlay height when workspace zone A is visible
 
       // If we're currently at full height, update to the new max height
       // to take advantage of the additional space when control bar visibility changes
@@ -149,6 +147,7 @@ export function WorkspaceZoneB({
       maxHeight,
       setWorkspaceZoneBHeight,
       getMainTop,
+      isWorkspaceZoneAHidden,
    ]);
 
    const handleToggleFull = () => {

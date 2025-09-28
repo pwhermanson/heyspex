@@ -21,6 +21,9 @@ export function WorkspaceZoneBContainer({
 
    if (isOverlay) {
       // Overlay mode - fixed positioning
+      // When height is full viewport height, position from top instead of bottom
+      const isFullscreen = typeof window !== 'undefined' && height >= window.innerHeight - 10;
+
       return (
          <div
             className={cn(
@@ -29,7 +32,7 @@ export function WorkspaceZoneBContainer({
                className
             )}
             style={{
-               bottom: '0px',
+               [isFullscreen ? 'top' : 'bottom']: '0px',
                height: `${height}px`,
                backgroundColor: 'var(--workspace-zone-b-bg) !important',
                background: 'var(--workspace-zone-b-bg) !important',

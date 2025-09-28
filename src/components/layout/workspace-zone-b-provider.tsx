@@ -186,7 +186,7 @@ export function WorkspaceZoneBProvider({ children }: { children: React.ReactNode
          // For height changes, use same limits as WorkspaceZoneB full screen button
          const maxHeight =
             workspaceZoneB.mode === 'overlay'
-               ? Math.max(MIN_BOTTOM_HEIGHT, window.innerHeight - getMainTop())
+               ? Math.max(MIN_BOTTOM_HEIGHT, window.innerHeight) // Use full viewport height for overlay mode
                : getPushModeMaxHeight();
 
          const clampedHeight = Math.max(MIN_BOTTOM_HEIGHT, Math.min(maxHeight, height));

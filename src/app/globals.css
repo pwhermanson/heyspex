@@ -255,6 +255,12 @@
       margin-bottom: 8px;
    }
 
+   /* Workspace Zone A fullscreen mode styling - 8px spacing above and below */
+   .workspace-zone-a-fullscreen-spacing {
+      margin-top: 8px;
+      margin-bottom: 8px;
+   }
+
    /* Workspace Zone A - Base styling */
    .workspace-zone-a {
       position: relative;

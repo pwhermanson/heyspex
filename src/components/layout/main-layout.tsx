@@ -67,6 +67,7 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
       isDragging,
       workspaceZoneB,
       setWorkspaceZoneBMode,
+      setWorkspaceZoneBVisible,
       // setWorkspaceZoneBHeight, // Unused for now
       isHydrated,
       isMainFullscreen,
@@ -151,7 +152,9 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                      safeBottomEnabled &&
                         workspaceZoneB.mode === 'push' &&
                         workspaceZoneB.isVisible &&
-                        'workspace-zone-a-push-mode'
+                        'workspace-zone-a-push-mode',
+                     // Apply fullscreen spacing when in fullscreen mode
+                     workspaceZoneAMode === 'fullscreen' && 'workspace-zone-a-fullscreen-spacing'
                   )}
                >
                   <div
@@ -192,8 +195,10 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                      {/* Main Content Area */}
                      <div
                         className={cn(
-                           'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1 w-full relative',
-                           workspaceZoneAMode === 'fullscreen' && 'p-0'
+                           'overflow-hidden w-full relative',
+                           workspaceZoneAMode === 'fullscreen'
+                              ? 'px-2'
+                              : 'lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-1'
                         )}
                         style={{
                            gridArea: 'main',
@@ -211,6 +216,7 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                            className={cn(
                               'overflow-hidden workspace-zone-a-panel h-full',
                               !isMainFullscreen && 'lg:border lg:rounded-md',
+                              workspaceZoneAMode === 'fullscreen' && 'border rounded-md',
                               centerBottomSplit > 0
                                  ? 'grid'
                                  : 'flex flex-col items-center justify-start'
@@ -339,10 +345,10 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                   onModeChange={isHydrated ? setWorkspaceZoneBMode : () => {}}
                   height={workspaceZoneB.height}
                   isOverlay={workspaceZoneB.mode === 'overlay'}
-                  onClose={isHydrated ? () => setWorkspaceZoneAMode('hidden') : undefined}
+                  onClose={isHydrated ? () => setWorkspaceZoneBVisible(false) : undefined}
                   onDragStart={undefined}
                   isDragging={isDragging}
-                  isWorkspaceZoneAHidden={!isWorkspaceZoneAVisible}
+                  isWorkspaceZoneAHidden={workspaceZoneAMode === 'hidden'}
                />
             </WorkspaceZoneBContainer>
          )}
