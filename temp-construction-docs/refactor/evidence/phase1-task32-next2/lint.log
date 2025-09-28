@@ -1,0 +1,5 @@
+
+> heyspex@0.1.0 lint
+> cross-env TSESTREE_NO_TS_VERSION_WARNING=1 next lint --max-warnings=0
+
+✔ No ESLint warnings or errors

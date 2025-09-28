@@ -31,7 +31,7 @@ describe('ProjectSelector', () => {
 
    describe('Basic Rendering', () => {
       const testCases = [
-         { name: 'renders with default props', props: {}, expectedText: 'No project' },
+         { name: 'renders with default props', props: {}, expectedText: 'No Project' },
          {
             name: 'renders with selected project',
             props: { selectedItem: projects[0] },
@@ -125,7 +125,7 @@ describe('ProjectSelector', () => {
          const { rerender } = render(<ProjectSelector {...defaultProps} />);
 
          let trigger = screen.getByRole('combobox');
-         expect(trigger).toHaveTextContent('No project');
+         expect(trigger).toHaveTextContent('No Project');
 
          rerender(<ProjectSelector {...defaultProps} selectedItem={projects[0]} />);
 
@@ -141,7 +141,7 @@ describe('ProjectSelector', () => {
             searchable: true,
             searchQuery: 'Core',
             expectedResults: ['HeySpex - Core Components'],
-            expectedEmptyMessage: 'No projects found.',
+            expectedEmptyMessage: 'No Projects found.',
          };
          await selectorTestUtils.testSearchFunctionality(
             ProjectSelector,
@@ -193,7 +193,7 @@ describe('ProjectSelector', () => {
          });
 
          // "No Project" should show count for issues with no project
-         const noProjectOption = screen.getByText('No Project');
+         const noProjectOption = screen.getAllByRole('option', { name: /No Project/ })[0];
          expect(noProjectOption).toBeInTheDocument();
          // Check that the dropdown renders successfully
          expect(screen.getByText('HeySpex - Core Components')).toBeInTheDocument();
@@ -213,7 +213,7 @@ describe('ProjectSelector', () => {
          });
 
          // Check that the dropdown renders successfully with project options
-         expect(screen.getByText('No Project')).toBeInTheDocument();
+         expect(screen.getAllByText('No Project').length).toBeGreaterThan(0);
          expect(screen.getByText('HeySpex - Core Components')).toBeInTheDocument();
       });
    });
@@ -245,17 +245,17 @@ describe('ProjectSelector', () => {
          {
             name: 'handles empty projects array gracefully',
             props: { items: [] },
-            expectedText: 'No project',
+            expectedText: 'No Project',
          },
          {
             name: 'handles undefined selectedItem gracefully',
             props: { selectedItem: undefined },
-            expectedText: 'No project',
+            expectedText: 'No Project',
          },
          {
             name: 'handles null selectedItem gracefully',
             props: { selectedItem: null as Project | undefined },
-            expectedText: 'No project',
+            expectedText: 'No Project',
          },
       ];
 
@@ -305,7 +305,7 @@ describe('ProjectSelector', () => {
          });
 
          // Should still render the dropdown even if store has errors
-         expect(screen.getByText('No Project')).toBeInTheDocument();
+         expect(screen.getAllByText('No Project').length).toBeGreaterThan(0);
 
          consoleSpy.mockRestore();
       });

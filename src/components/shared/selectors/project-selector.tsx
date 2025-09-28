@@ -75,7 +75,7 @@ export function ProjectSelector({
          emptyMessage="No projects found."
          triggerVariant={triggerVariant}
          triggerSize={triggerSize}
-         placeholder="No project"
+         placeholder="No Project"
          {...props}
       />
    );

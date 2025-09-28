@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { User, users } from '../../../tests/test-data/users';
 
+const cloneMembers = () =>
+   users.map((member) => ({
+      ...member,
+      teamIds: [...member.teamIds],
+   }));
+
 interface MembersDataState {
    // Data
    members: User[];
@@ -24,11 +30,14 @@ interface MembersDataState {
    // Status management
    updateMemberStatus: (id: string, status: User['status']) => void;
    updateMemberRole: (id: string, role: User['role']) => void;
+
+   // Store maintenance
+   resetStore: () => void;
 }
 
 export const useMembersDataStore = create<MembersDataState>((set, get) => ({
    // Initial state
-   members: users,
+   members: cloneMembers(),
 
    // Actions
    getAllMembers: () => {
@@ -86,9 +95,17 @@ export const useMembersDataStore = create<MembersDataState>((set, get) => ({
    // Team management
    addMemberToTeam: (memberId, teamId) => {
       set((state) => ({
-         members: state.members.map((member) =>
-            member.id === memberId ? { ...member, teamIds: [...member.teamIds, teamId] } : member
-         ),
+         members: state.members.map((member) => {
+            if (member.id !== memberId) {
+               return member;
+            }
+
+            if (member.teamIds.includes(teamId)) {
+               return member;
+            }
+
+            return { ...member, teamIds: [...member.teamIds, teamId] };
+         }),
       }));
    },
 
@@ -116,4 +133,11 @@ export const useMembersDataStore = create<MembersDataState>((set, get) => ({
          members: state.members.map((member) => (member.id === id ? { ...member, role } : member)),
       }));
    },
+
+   resetStore: () => {
+      set({ members: cloneMembers() });
+   },
 }));
+export const resetMembersDataStore = () => {
+   useMembersDataStore.getState().resetStore();
+};

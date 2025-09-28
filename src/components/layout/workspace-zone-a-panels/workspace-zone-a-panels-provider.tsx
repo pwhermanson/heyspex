@@ -872,7 +872,6 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       uiState.workspaceZoneAMode,
       workspaceZoneB.mode,
       setWorkspaceZoneBMode,
-      setWorkspaceZoneBHeight,
    ]);
 
    const setMainFullscreen = useCallback(
@@ -959,8 +958,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          } as AddEventListenerOptions);
    }, [
       toggleWorkspaceZoneB,
-      setWorkspaceZoneBHeight,
       setWorkspaceZoneBVisible,
+      setWorkspaceZoneBHeight,
       toggleControlBar,
       setMainFullscreen,
       cycleWorkspaceZoneAMode,
@@ -1066,8 +1065,8 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
       return () => window.removeEventListener('panel-command', handlePanelCommand as EventListener);
    }, [
       workspaceZoneB.isVisible,
-      setWorkspaceZoneBHeight,
       setWorkspaceZoneBVisible,
+      setWorkspaceZoneBHeight,
       setCenterBottomSplit,
       setWorkspaceZoneBMode,
       setLeftPanelOpen,

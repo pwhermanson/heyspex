@@ -1,0 +1,1097 @@
+
+> heyspex@0.1.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/pwher/dev-projects/heyspex[39m
+
+ [32m✓[39m src/tests/unit/workspace-zone-push-mode.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/lib/lib/command-palette/__tests__/search-engine.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/tests/integration/filter-stores.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tests/unit/vitest-config.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mInitial State (Documentation Tests)[2m > [22m[2mshould initialize with mock data
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mInitial State (Documentation Tests)[2m > [22m[2mshould have correct member types
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/layout-views-store.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetAllMembers[2m > [22m[2mshould return all members
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/settings-store.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetAllMembers[2m > [22m[2mshould return a new array reference
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/layout-settings-store.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMemberById[2m > [22m[2mshould return member by valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMemberById[2m > [22m[2mshould return undefined for invalid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMemberById[2m > [22m[2mshould return undefined for empty id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMembersByTeam[2m > [22m[2mshould return members for valid team id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMembersByTeam[2m > [22m[2mshould return empty array for nonexistent team
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMembersByTeam[2m > [22m[2mshould return empty array for empty team id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMembersByRole[2m > [22m[2mshould return members for valid role
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetMembersByRole[2m > [22m[2mshould return empty array for nonexistent role
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Retrieval Functions (Documentation Tests)[2m > [22m[2mgetOnlineMembers[2m > [22m[2mshould return only online members
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2maddMember[2m > [22m[2mshould add new member with generated id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2maddMember[2m > [22m[2mshould add member to state
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/layout-shortcuts-store.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 62[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2maddMember[2m > [22m[2mshould return the added member
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mupdateMember[2m > [22m[2mshould update member with valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mupdateMember[2m > [22m[2mshould update multiple properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mupdateMember[2m > [22m[2mshould not affect other members
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/layout-sections-store.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mupdateMember[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mremoveMember[2m > [22m[2mshould remove member with valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mremoveMember[2m > [22m[2mshould not affect other members
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mMember Management (Documentation Tests)[2m > [22m[2mremoveMember[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2maddMemberToTeam[2m > [22m[2mshould add member to team
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2maddMemberToTeam[2m > [22m[2mshould not duplicate existing team
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2maddMemberToTeam[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2mremoveMemberFromTeam[2m > [22m[2mshould remove member from team
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2mremoveMemberFromTeam[2m > [22m[2mshould not affect other teams
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mTeam Management (Documentation Tests)[2m > [22m[2mremoveMemberFromTeam[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberStatus[2m > [22m[2mshould update member status
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberStatus[2m > [22m[2mshould not affect other member properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberStatus[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberRole[2m > [22m[2mshould update member role
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberRole[2m > [22m[2mshould not affect other member properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mStatus Management (Documentation Tests)[2m > [22m[2mupdateMemberRole[2m > [22m[2mshould handle non-existent member gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mEdge Cases (Documentation Tests)[2m > [22m[2mshould handle rapid consecutive operations
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mEdge Cases (Documentation Tests)[2m > [22m[2mshould handle operations on newly added members
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mEdge Cases (Documentation Tests)[2m > [22m[2mshould maintain data integrity across operations
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mIntegration (Documentation Tests)[2m > [22m[2mshould work correctly with multiple store instances
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/members-data-store.test.ts[2m > [22m[2museMembersDataStore[2m > [22m[2mIntegration (Documentation Tests)[2m > [22m[2mshould persist across re-renders
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mInitial State[2m > [22m[2mshould initialize with mock project data
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/members-data-store.test.ts [2m([22m[2m48 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mInitial State[2m > [22m[2mshould have correct project types
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetAllProjects[2m > [22m[2mshould return all projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetAllProjects[2m > [22m[2mshould return a new array reference
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectById[2m > [22m[2mshould return project by valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectById[2m > [22m[2mshould return undefined for invalid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectById[2m > [22m[2mshould return undefined for empty id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectsByTeam[2m > [22m[2mshould return projects for all teams (current implementation)
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectsByTeam[2m > [22m[2mshould handle empty team id gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectsByLead[2m > [22m[2mshould return projects for valid lead id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectsByLead[2m > [22m[2mshould return empty array for lead with no projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetProjectsByLead[2m > [22m[2mshould return empty array for empty lead id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetActiveProjects[2m > [22m[2mshould return only active projects (not completed)
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Retrieval Functions[2m > [22m[2mgetCompletedProjects[2m > [22m[2mshould return only completed projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2maddProject[2m > [22m[2mshould add new project with generated id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2maddProject[2m > [22m[2mshould add project to state
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2maddProject[2m > [22m[2mshould return the added project
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mupdateProject[2m > [22m[2mshould update project with valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mupdateProject[2m > [22m[2mshould update multiple properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mupdateProject[2m > [22m[2mshould not affect other projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mupdateProject[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mdeleteProject[2m > [22m[2mshould remove project with valid id
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mdeleteProject[2m > [22m[2mshould not affect other projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Management[2m > [22m[2mdeleteProject[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Lead Management[2m > [22m[2msetProjectLead[2m > [22m[2mshould update project lead
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Lead Management[2m > [22m[2msetProjectLead[2m > [22m[2mshould not affect other project properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Lead Management[2m > [22m[2msetProjectLead[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Lead Management[2m > [22m[2mremoveProjectLead[2m > [22m[2mshould log warning for lead removal attempt
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Lead Management[2m > [22m[2mremoveProjectLead[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectStatus[2m > [22m[2mshould update project status
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectStatus[2m > [22m[2mshould not affect other project properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectStatus[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectProgress[2m > [22m[2mshould update project progress
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectProgress[2m > [22m[2mshould handle zero progress
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectProgress[2m > [22m[2mshould handle 100% progress
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/unit/teams-data-store.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectProgress[2m > [22m[2mshould not affect other project properties
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Status Management[2m > [22m[2mupdateProjectProgress[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Team Management[2m > [22m[2maddProjectToTeam[2m > [22m[2mshould log team addition
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Team Management[2m > [22m[2maddProjectToTeam[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Team Management[2m > [22m[2mremoveProjectFromTeam[2m > [22m[2mshould log team removal
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mProject Team Management[2m > [22m[2mremoveProjectFromTeam[2m > [22m[2mshould handle non-existent project gracefully
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle rapid consecutive operations
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle operations on newly added projects
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mEdge Cases[2m > [22m[2mshould maintain data integrity across operations
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mIntegration[2m > [22m[2mshould work correctly with multiple store instances
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2museProjectsDataStore[2m > [22m[2mIntegration[2m > [22m[2mshould persist across re-renders
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | src/tests/unit/projects-data-store.test.ts[2m > [22m[2mProjects Store Business Logic (Pure Functions)[2m > [22m[2mBusiness Logic[2m > [22m[2mshould handle edge cases correctly
+[22m[39mCannot remove lead from project nonexistent - lead is required
+Adding project nonexistent to team TEAM
+Removing project nonexistent from team
+
+ [32m✓[39m src/tests/unit/projects-data-store.test.ts [2m([22m[2m56 tests[22m[2m)[22m[32m 93[2mms[22m[39m
+ [32m✓[39m src/components/shared/selectors/__tests__/selector-consolidation.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 513[2mms[22m[39m
+ [32m✓[39m src/tests/unit/label-selector.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[33m 1794[2mms[22m[39m
+ [32m✓[39m src/tests/unit/base-selector.test.tsx [2m([22m[2m31 tests[22m[2m)[22m[33m 2631[2mms[22m[39m
+   [33m[2m✓[22m[39m BaseSelector[2m > [22mSearch Functionality[2m > [22mfilters items based on search query [33m 326[2mms[22m[39m
+   [33m[2m✓[22m[39m BaseSelector[2m > [22mSearch Functionality[2m > [22mshows empty message when no items match search [33m 356[2mms[22m[39m
+   [33m[2m✓[22m[39m BaseSelector[2m > [22mSearch Functionality[2m > [22mclears search when item is selected [33m 432[2mms[22m[39m
+ [32m✓[39m src/tests/unit/assignee-selector.test.tsx [2m([22m[2m33 tests[22m[2m)[22m[33m 2985[2mms[22m[39m
+   [33m[2m✓[22m[39m AssigneeSelector[2m > [22mSearch Functionality[2m > [22mshows empty message when no assignees match search [33m 370[2mms[22m[39m
+ [32m✓[39m src/tests/unit/priority-selector.test.tsx [2m([22m[2m34 tests[22m[2m)[22m[33m 3121[2mms[22m[39m
+   [33m[2m✓[22m[39m PrioritySelector[2m > [22mSearch Functionality[2m > [22mshows empty message when no priorities match search [33m 324[2mms[22m[39m
+ [32m✓[39m src/tests/unit/status-selector.test.tsx [2m([22m[2m34 tests[22m[2m)[22m[33m 3180[2mms[22m[39m
+   [33m[2m✓[22m[39m StatusSelector[2m > [22mSearch Functionality[2m > [22mshows empty message when no statuses match search [33m 338[2mms[22m[39m
+ [32m✓[39m src/tests/unit/project-selector.test.tsx [2m([22m[2m29 tests[22m[2m)[22m[33m 5253[2mms[22m[39m
+   [33m[2m✓[22m[39m ProjectSelector[2m > [22mSelection Behavior[2m > [22mcalls onSelectionChange when project is selected [33m 3039[2mms[22m[39m
+   [33m[2m✓[22m[39m ProjectSelector[2m > [22mCount Display[2m > [22mshows correct count for "No Project" option [33m 347[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m      Tests [22m [1m[32m472 passed[39m[22m[90m (472)[39m
+[2m   Start at [22m 14:01:26
+[2m   Duration [22m 7.68s[2m (transform 2.24s, setup 4.07s, collect 10.45s, tests 20.00s, environment 19.33s, prepare 2.59s)[22m
+

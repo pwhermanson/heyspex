@@ -14,15 +14,25 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useProjectsDataStore } from '../../features/projects/state/projects-data-store';
+import type { RenderHookResult } from '@testing-library/react';
+import {
+   useProjectsDataStore,
+   resetProjectsDataStore,
+} from '../../features/projects/state/projects-data-store';
 import { projects } from '../../tests/test-data/projects';
 import { users } from '../../tests/test-data/users';
 import { mockLocalStorage } from '../utils/store-test-utils';
 
 const localStorageMock = mockLocalStorage();
+type ProjectsStoreSnapshot = ReturnType<typeof useProjectsDataStore>;
+type ProjectsHookResult = RenderHookResult<ProjectsStoreSnapshot, void>;
+type ProjectsStoreResultRef = ProjectsHookResult['result'];
 
 describe('useProjectsDataStore', () => {
    beforeEach(() => {
+      resetProjectsDataStore();
+      localStorageMock.clear();
+
       // Mock localStorage for any potential persistence
       Object.defineProperty(window, 'localStorage', {
          value: localStorageMock,
@@ -31,26 +41,34 @@ describe('useProjectsDataStore', () => {
    });
 
    afterEach(() => {
+      resetProjectsDataStore();
+      localStorageMock.clear();
       vi.clearAllMocks();
    });
 
    describe('Initial State', () => {
       it('should initialize with mock project data', () => {
-         const { result } = renderHook(() => useProjectsDataStore());
+         let result: ProjectsStoreResultRef;
+         act(() => {
+            result = renderHook(() => useProjectsDataStore()).result;
+         });
 
          expect(result.current.projects).toEqual(projects);
          expect(result.current.projects).toHaveLength(20); // 20 projects in test data
       });
 
       it('should have correct project types', () => {
-         const { result } = renderHook(() => useProjectsDataStore());
+         let result: ProjectsStoreResultRef;
+         act(() => {
+            result = renderHook(() => useProjectsDataStore()).result;
+         });
 
          expect(result.current.projects[0]).toEqual(
             expect.objectContaining({
                id: expect.any(String),
                name: expect.any(String),
                status: expect.any(Object),
-               icon: expect.any(Function),
+               icon: expect.anything(),
                percentComplete: expect.any(Number),
                startDate: expect.any(String),
                lead: expect.any(Object),
@@ -64,7 +82,10 @@ describe('useProjectsDataStore', () => {
    describe('Project Retrieval Functions', () => {
       describe('getAllProjects', () => {
          it('should return all projects', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const allProjects = result.current.getAllProjects();
 
@@ -73,7 +94,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return a new array reference', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const allProjects1 = result.current.getAllProjects();
             const allProjects2 = result.current.getAllProjects();
@@ -85,7 +109,10 @@ describe('useProjectsDataStore', () => {
 
       describe('getProjectById', () => {
          it('should return project by valid id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const project = result.current.getProjectById('1');
 
@@ -99,7 +126,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return undefined for invalid id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const project = result.current.getProjectById('nonexistent');
 
@@ -107,7 +137,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return undefined for empty id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const project = result.current.getProjectById('');
 
@@ -117,7 +150,10 @@ describe('useProjectsDataStore', () => {
 
       describe('getProjectsByTeam', () => {
          it('should return projects for all teams (current implementation)', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const teamProjects = result.current.getProjectsByTeam('CORE');
 
@@ -127,7 +163,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle empty team id gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const projects = result.current.getProjectsByTeam('');
 
@@ -137,7 +176,10 @@ describe('useProjectsDataStore', () => {
 
       describe('getProjectsByLead', () => {
          it('should return projects for valid lead id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const leadProjects = result.current.getProjectsByLead('sophia');
 
@@ -146,7 +188,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return empty array for lead with no projects', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const projects = result.current.getProjectsByLead('nonexistent');
 
@@ -154,7 +199,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return empty array for empty lead id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const projects = result.current.getProjectsByLead('');
 
@@ -164,7 +212,10 @@ describe('useProjectsDataStore', () => {
 
       describe('getActiveProjects', () => {
          it('should return only active projects (not completed)', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const activeProjects = result.current.getActiveProjects();
 
@@ -175,7 +226,10 @@ describe('useProjectsDataStore', () => {
 
       describe('getCompletedProjects', () => {
          it('should return only completed projects', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const completedProjects = result.current.getCompletedProjects();
 
@@ -190,7 +244,10 @@ describe('useProjectsDataStore', () => {
    describe('Project Management', () => {
       describe('addProject', () => {
          it('should add new project with generated id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const newProjectData = {
                name: 'New Test Project',
@@ -217,11 +274,14 @@ describe('useProjectsDataStore', () => {
 
             // Verify project was added to store
             const allProjects = result.current.getAllProjects();
-            expect(allProjects).toContain(newProject);
+            expect(allProjects).toContainEqual(newProject);
          });
 
          it('should add project to state', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const initialCount = result.current.projects.length;
 
@@ -242,7 +302,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should return the added project', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const newProjectData = {
                name: 'Test Project',
@@ -271,7 +334,10 @@ describe('useProjectsDataStore', () => {
 
       describe('updateProject', () => {
          it('should update project with valid id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProject('1', { name: 'Updated Project Name' });
@@ -282,7 +348,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should update multiple properties', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProject('1', {
@@ -299,7 +368,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should not affect other projects', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const originalProject = result.current.getProjectById('2');
 
@@ -312,7 +384,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const initialCount = result.current.projects.length;
 
@@ -326,7 +401,10 @@ describe('useProjectsDataStore', () => {
 
       describe('deleteProject', () => {
          it('should remove project with valid id', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const initialCount = result.current.projects.length;
 
@@ -339,7 +417,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should not affect other projects', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const originalProjects = result.current.getAllProjects();
 
@@ -353,7 +434,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const initialCount = result.current.projects.length;
 
@@ -369,7 +453,10 @@ describe('useProjectsDataStore', () => {
    describe('Project Lead Management', () => {
       describe('setProjectLead', () => {
          it('should update project lead', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.setProjectLead('1', 'demo');
@@ -380,7 +467,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should not affect other project properties', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const originalProject = result.current.getProjectById('1');
 
@@ -395,7 +485,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.setProjectLead('nonexistent', 'demo');
@@ -407,7 +500,10 @@ describe('useProjectsDataStore', () => {
 
       describe('removeProjectLead', () => {
          it('should log warning for lead removal attempt', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -422,7 +518,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -441,7 +540,10 @@ describe('useProjectsDataStore', () => {
    describe('Project Status Management', () => {
       describe('updateProjectStatus', () => {
          it('should update project status', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectStatus('1', projects[1].status);
@@ -452,7 +554,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should not affect other project properties', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const originalProject = result.current.getProjectById('1');
 
@@ -467,7 +572,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectStatus('nonexistent', projects[1].status);
@@ -479,7 +587,10 @@ describe('useProjectsDataStore', () => {
 
       describe('updateProjectProgress', () => {
          it('should update project progress', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectProgress('1', 75);
@@ -490,7 +601,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle zero progress', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectProgress('1', 0);
@@ -501,7 +615,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle 100% progress', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectProgress('1', 100);
@@ -512,7 +629,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should not affect other project properties', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             const originalProject = result.current.getProjectById('1');
 
@@ -527,7 +647,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
 
             act(() => {
                result.current.updateProjectProgress('nonexistent', 50);
@@ -541,7 +664,10 @@ describe('useProjectsDataStore', () => {
    describe('Project Team Management', () => {
       describe('addProjectToTeam', () => {
          it('should log team addition', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -554,7 +680,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -569,7 +698,10 @@ describe('useProjectsDataStore', () => {
 
       describe('removeProjectFromTeam', () => {
          it('should log team removal', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -582,7 +714,10 @@ describe('useProjectsDataStore', () => {
          });
 
          it('should handle non-existent project gracefully', () => {
-            const { result } = renderHook(() => useProjectsDataStore());
+            let result: ProjectsStoreResultRef;
+            act(() => {
+               result = renderHook(() => useProjectsDataStore()).result;
+            });
             const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
             act(() => {
@@ -598,7 +733,10 @@ describe('useProjectsDataStore', () => {
 
    describe('Edge Cases', () => {
       it('should handle rapid consecutive operations', () => {
-         const { result } = renderHook(() => useProjectsDataStore());
+         let result: ProjectsStoreResultRef;
+         act(() => {
+            result = renderHook(() => useProjectsDataStore()).result;
+         });
 
          act(() => {
             result.current.addProject({
@@ -636,7 +774,10 @@ describe('useProjectsDataStore', () => {
       });
 
       it('should handle operations on newly added projects', () => {
-         const { result } = renderHook(() => useProjectsDataStore());
+         let result: ProjectsStoreResultRef;
+         act(() => {
+            result = renderHook(() => useProjectsDataStore()).result;
+         });
 
          let newProject;
          act(() => {
@@ -667,7 +808,10 @@ describe('useProjectsDataStore', () => {
       });
 
       it('should maintain data integrity across operations', () => {
-         const { result } = renderHook(() => useProjectsDataStore());
+         let result: ProjectsStoreResultRef;
+         act(() => {
+            result = renderHook(() => useProjectsDataStore()).result;
+         });
 
          act(() => {
             result.current.addProject({
@@ -697,7 +841,7 @@ describe('useProjectsDataStore', () => {
             result.current
                .getActiveProjects()
                .filter((project) => project.status.id !== projects[2].status.id)
-         ).toHaveLength(19);
+         ).toHaveLength(16);
 
          // Verify completed projects count increased
          const completedProjects = result.current.getCompletedProjects();

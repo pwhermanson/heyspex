@@ -1,0 +1,13 @@
+{
+   "timestamp": "2025-09-28T12:52:32",
+   "branch": "refactor0926",
+   "notes": "Preflight per refactor-os.md before stabilizing test suites.",
+   "worktree_clean": true,
+   "baseline_commands": [
+      "npx tsc --noEmit",
+      "npm run lint -- --max-warnings=0",
+      "npm test",
+      "npm run build"
+   ],
+   "task": "phase1-task32-next1"
+}

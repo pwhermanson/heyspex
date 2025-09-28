@@ -1,12 +1,12 @@
 /**
  * Members Data Store Tests - Documentation Tests
  *
- * 🚨 IMPORTANT: These tests document FUTURE functionality!
+ * IMPORTANT: These tests document FUTURE functionality!
  *
  * Current Status:
- * ✅ Store is fully implemented and functional
- * ❌ UI components still use static mock data (don't call store yet)
- * ❌ No database integration (everything is mock data)
+ * - Store is fully implemented and functional
+ * - UI components still use static mock data (don't call store yet)
+ * - No database integration (everything is mock data)
  *
  * These tests are **NOT** failing because of bugs - they're **feature requests**!
  * They test functionality that should exist when UI components are connected to the store.
@@ -18,21 +18,32 @@
  * When ready to connect UI to store, search for components using static `users` data
  * and replace with `useMembersDataStore()` hook.
  *
- * 🎯 CURRENT FOCUS: Testing pure business logic (bottom section)
+ * CURRENT FOCUS: Testing pure business logic (bottom section)
  * The React hook tests above are documentation for future UI integration.
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useMembersDataStore } from '../../features/members/state/members-data-store';
+import type { RenderHookResult } from '@testing-library/react';
+import {
+   useMembersDataStore,
+   resetMembersDataStore,
+} from '../../features/members/state/members-data-store';
 import { users } from '../../tests/test-data/users';
 import { User } from '../../tests/test-data/users';
 import { mockLocalStorage } from '../utils/store-test-utils';
 
 const localStorageMock = mockLocalStorage();
+type MembersStoreSnapshot = ReturnType<typeof useMembersDataStore>;
+type MembersHookResult = RenderHookResult<MembersStoreSnapshot, void>;
+type MembersStoreResultRef = MembersHookResult['result'];
+type MembersStoreRerender = MembersHookResult['rerender'];
 
 describe('useMembersDataStore', () => {
    beforeEach(() => {
+      resetMembersDataStore();
+      localStorageMock.clear();
+
       // Mock localStorage for any potential persistence
       Object.defineProperty(window, 'localStorage', {
          value: localStorageMock,
@@ -41,19 +52,27 @@ describe('useMembersDataStore', () => {
    });
 
    afterEach(() => {
+      resetMembersDataStore();
+      localStorageMock.clear();
       vi.clearAllMocks();
    });
 
    describe('Initial State (Documentation Tests)', () => {
       it('should initialize with mock data', () => {
-         const { result } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         act(() => {
+            result = renderHook(() => useMembersDataStore()).result;
+         });
 
          expect(result.current.members).toEqual(users);
          expect(result.current.members).toHaveLength(21); // 21 users in test data
       });
 
       it('should have correct member types', () => {
-         const { result } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         act(() => {
+            result = renderHook(() => useMembersDataStore()).result;
+         });
 
          expect(result.current.members[0]).toEqual(
             expect.objectContaining({
@@ -73,7 +92,10 @@ describe('useMembersDataStore', () => {
    describe('Member Retrieval Functions (Documentation Tests)', () => {
       describe('getAllMembers', () => {
          it('should return all members', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const allMembers = result.current.getAllMembers();
 
@@ -82,7 +104,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return a new array reference', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const allMembers1 = result.current.getAllMembers();
             const allMembers2 = result.current.getAllMembers();
@@ -94,7 +119,10 @@ describe('useMembersDataStore', () => {
 
       describe('getMemberById', () => {
          it('should return member by valid id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const member = result.current.getMemberById('demo');
 
@@ -109,7 +137,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return undefined for invalid id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const member = result.current.getMemberById('nonexistent');
 
@@ -117,7 +148,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return undefined for empty id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const member = result.current.getMemberById('');
 
@@ -127,7 +161,10 @@ describe('useMembersDataStore', () => {
 
       describe('getMembersByTeam', () => {
          it('should return members for valid team id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const coreMembers = result.current.getMembersByTeam('CORE');
 
@@ -136,7 +173,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return empty array for nonexistent team', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const members = result.current.getMembersByTeam('NONEXISTENT');
 
@@ -144,7 +184,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return empty array for empty team id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const members = result.current.getMembersByTeam('');
 
@@ -154,7 +197,10 @@ describe('useMembersDataStore', () => {
 
       describe('getMembersByRole', () => {
          it('should return members for valid role', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const adminMembers = result.current.getMembersByRole('Admin');
 
@@ -163,7 +209,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return empty array for nonexistent role', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const members = result.current.getMembersByRole('Nonexistent');
 
@@ -173,7 +222,10 @@ describe('useMembersDataStore', () => {
 
       describe('getOnlineMembers', () => {
          it('should return only online members', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const onlineMembers = result.current.getOnlineMembers();
 
@@ -186,7 +238,10 @@ describe('useMembersDataStore', () => {
    describe('Member Management (Documentation Tests)', () => {
       describe('addMember', () => {
          it('should add new member with generated id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const newMemberData = {
                name: 'New Member',
@@ -216,7 +271,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should add member to state', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const initialCount = result.current.members.length;
 
@@ -236,7 +294,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should return the added member', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const newMemberData = {
                name: 'Test Member',
@@ -264,7 +325,10 @@ describe('useMembersDataStore', () => {
 
       describe('updateMember', () => {
          it('should update member with valid id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMember('demo', { name: 'Updated Demo User' });
@@ -275,7 +339,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should update multiple properties', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMember('demo', {
@@ -292,7 +359,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not affect other members', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMember('demo', { name: 'Updated Demo User' });
@@ -302,7 +372,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const initialCount = result.current.members.length;
 
@@ -316,7 +389,10 @@ describe('useMembersDataStore', () => {
 
       describe('removeMember', () => {
          it('should remove member with valid id', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const initialCount = result.current.members.length;
 
@@ -329,7 +405,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not affect other members', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.removeMember('demo');
@@ -341,7 +420,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             const initialCount = result.current.members.length;
 
@@ -357,7 +439,10 @@ describe('useMembersDataStore', () => {
    describe('Team Management (Documentation Tests)', () => {
       describe('addMemberToTeam', () => {
          it('should add member to team', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.addMemberToTeam('demo', 'NEW_TEAM');
@@ -371,7 +456,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not duplicate existing team', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             let originalMember;
             act(() => {
@@ -390,7 +478,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.addMemberToTeam('nonexistent', 'TEAM');
@@ -402,7 +493,10 @@ describe('useMembersDataStore', () => {
 
       describe('removeMemberFromTeam', () => {
          it('should remove member from team', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.removeMemberFromTeam('demo', 'CORE');
@@ -416,7 +510,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not affect other teams', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             let originalMember;
             act(() => {
@@ -435,7 +532,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.removeMemberFromTeam('nonexistent', 'TEAM');
@@ -449,7 +549,10 @@ describe('useMembersDataStore', () => {
    describe('Status Management (Documentation Tests)', () => {
       describe('updateMemberStatus', () => {
          it('should update member status', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             // First, check the initial state
             let initialMember;
@@ -471,7 +574,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not affect other member properties', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             let originalMember;
             act(() => {
@@ -492,7 +598,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMemberStatus('nonexistent', 'online');
@@ -504,7 +613,10 @@ describe('useMembersDataStore', () => {
 
       describe('updateMemberRole', () => {
          it('should update member role', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMemberRole('demo', 'Guest');
@@ -518,7 +630,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should not affect other member properties', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             let originalMember;
             act(() => {
@@ -539,7 +654,10 @@ describe('useMembersDataStore', () => {
          });
 
          it('should handle non-existent member gracefully', () => {
-            const { result } = renderHook(() => useMembersDataStore());
+            let result: MembersStoreResultRef;
+            act(() => {
+               result = renderHook(() => useMembersDataStore()).result;
+            });
 
             act(() => {
                result.current.updateMemberRole('nonexistent', 'Admin');
@@ -552,7 +670,10 @@ describe('useMembersDataStore', () => {
 
    describe('Edge Cases (Documentation Tests)', () => {
       it('should handle rapid consecutive operations', () => {
-         const { result } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         act(() => {
+            result = renderHook(() => useMembersDataStore()).result;
+         });
 
          act(() => {
             result.current.addMember({
@@ -589,7 +710,10 @@ describe('useMembersDataStore', () => {
       });
 
       it('should handle operations on newly added members', () => {
-         const { result } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         act(() => {
+            result = renderHook(() => useMembersDataStore()).result;
+         });
 
          let newMember;
          act(() => {
@@ -617,7 +741,10 @@ describe('useMembersDataStore', () => {
       });
 
       it('should maintain data integrity across operations', () => {
-         const { result } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         act(() => {
+            result = renderHook(() => useMembersDataStore()).result;
+         });
 
          const originalOnlineMembers = result.current.getOnlineMembers();
 
@@ -645,16 +772,21 @@ describe('useMembersDataStore', () => {
          expect(updatedDemo?.teamIds).toContain('NEW_TEAM');
          expect(result.current.members).toHaveLength(22); // 21 original + 1 new
 
-         // Verify online members count increased
+         // Verify online member count accounts for status changes
          const newOnlineMembers = result.current.getOnlineMembers();
-         expect(newOnlineMembers).toHaveLength(originalOnlineMembers.length + 1);
+         // Demo user moved to 'away', so net online count stays consistent
+         expect(newOnlineMembers).toHaveLength(originalOnlineMembers.length);
       });
    });
 
    describe('Integration (Documentation Tests)', () => {
       it('should work correctly with multiple store instances', () => {
-         const { result: result1 } = renderHook(() => useMembersDataStore());
-         const { result: result2 } = renderHook(() => useMembersDataStore());
+         let result1: MembersStoreResultRef;
+         let result2: MembersStoreResultRef;
+         act(() => {
+            result1 = renderHook(() => useMembersDataStore()).result;
+            result2 = renderHook(() => useMembersDataStore()).result;
+         });
 
          // Both should have same initial state
          expect(result1.current.members).toEqual(result2.current.members);
@@ -679,7 +811,13 @@ describe('useMembersDataStore', () => {
       });
 
       it('should persist across re-renders', () => {
-         const { result, rerender } = renderHook(() => useMembersDataStore());
+         let result: MembersStoreResultRef;
+         let rerender: MembersStoreRerender;
+         act(() => {
+            const hookResult = renderHook(() => useMembersDataStore());
+            result = hookResult.result;
+            rerender = hookResult.rerender;
+         });
 
          const initialMembers = [...result.current.members];
 
@@ -747,9 +885,17 @@ describe('Members Store Business Logic (Pure Functions)', () => {
          },
 
          addMemberToTeam: (memberId: string, teamId: string) => {
-            members = members.map((member: User) =>
-               member.id === memberId ? { ...member, teamIds: [...member.teamIds, teamId] } : member
-            );
+            members = members.map((member: User) => {
+               if (member.id !== memberId) {
+                  return member;
+               }
+
+               if (member.teamIds.includes(teamId)) {
+                  return member;
+               }
+
+               return { ...member, teamIds: [...member.teamIds, teamId] };
+            });
          },
 
          removeMemberFromTeam: (memberId: string, teamId: string) => {
@@ -777,7 +923,7 @@ describe('Members Store Business Logic (Pure Functions)', () => {
    describe('Business Logic', () => {
       it('should initialize with correct data', () => {
          const store = createTestStore();
-         expect(store.getMembers()).toHaveLength(21); // 21 users in test data
+         expect(store.getMembers()).toHaveLength(users.length); // 21 users in test data
       });
 
       it('should add member correctly', () => {
@@ -793,7 +939,7 @@ describe('Members Store Business Logic (Pure Functions)', () => {
             teamIds: [],
          });
 
-         expect(store.getMembers()).toHaveLength(21);
+         expect(store.getMembers()).toHaveLength(users.length + 1);
          expect(newMember.name).toBe('Test Member');
       });
 
@@ -865,13 +1011,13 @@ describe('Members Store Business Logic (Pure Functions)', () => {
          store.removeMemberFromTeam('nonexistent', 'TEAM');
 
          // Should not throw errors
-         expect(store.getMembers()).toHaveLength(21); // Should remain unchanged
+         expect(store.getMembers()).toHaveLength(users.length); // Should remain unchanged
       });
    });
 });
 
 /**
- * 🚀 ROADMAP: Connecting UI to Store
+ * ROADMAP: Connecting UI to Store
  *
  * The store is ready! Here's what needs to happen next:
  *
@@ -902,7 +1048,7 @@ describe('Members Store Business Logic (Pure Functions)', () => {
  * -------------------------
  * Remove "Documentation Tests" label and verify all tests pass with real UI integration.
  *
- * 🎯 Files to Update (search for 'import { users }'):
+ * Files to Update (search for 'import { users }'):
  * - src/features/members/components/*
  * - src/features/teams/components/*
  * - src/components/shared/* (any using user data)
