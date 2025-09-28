@@ -30,7 +30,7 @@ import { cn } from '@/src/lib/lib/utils';
 import { ZIndex } from '@/src/lib/z-index-management';
 import { useShadow, ShadowLayer } from './shadow';
 
-interface AppShellBrandedProps {
+export interface AppShellBrandedProps {
    className?: string;
 }
 
@@ -313,16 +313,17 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          const deltaY = mousePosition.y - logoData.logoCenterY;
          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-         // Calculate intensity based on distance (closer = more intense)
+         // Calculate intensity based on distance (closer = less intense, farther = more intense)
          const maxDistance = Math.max(containerDimensions.width, containerDimensions.height) / 2;
 
          // Prevent division by zero
          if (maxDistance === 0) return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
 
          const normalizedDistance = Math.min(distance / maxDistance, 1);
-         const intensity = VISUAL_CONSTANTS.DEFAULT_INTENSITY * (1 - normalizedDistance * 0.7);
+         // Invert the calculation: closer to logo = lower intensity
+         const intensity = VISUAL_CONSTANTS.DEFAULT_INTENSITY * normalizedDistance;
 
-         return Math.max(intensity, VISUAL_CONSTANTS.DEFAULT_INTENSITY * 0.3);
+         return Math.max(intensity, VISUAL_CONSTANTS.DEFAULT_INTENSITY * 0.1);
       } catch (error) {
          console.warn('Error calculating glow intensity:', error);
          return VISUAL_CONSTANTS.DEFAULT_INTENSITY;
@@ -339,16 +340,17 @@ export const AppShellBranded = React.memo(function AppShellBranded({
          const deltaY = mousePosition.y - logoData.logoCenterY;
          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-         // Calculate opacity based on distance (closer = more visible)
+         // Calculate opacity based on distance (closer = less visible, farther = more visible)
          const maxDistance = Math.max(containerDimensions.width, containerDimensions.height) / 2;
 
          // Prevent division by zero
          if (maxDistance === 0) return VISUAL_CONSTANTS.DEFAULT_OPACITY;
 
          const normalizedDistance = Math.min(distance / maxDistance, 1);
-         const opacity = VISUAL_CONSTANTS.DEFAULT_OPACITY * (1 - normalizedDistance * 0.5);
+         // Invert the calculation: closer to logo = lower opacity
+         const opacity = VISUAL_CONSTANTS.DEFAULT_OPACITY * normalizedDistance;
 
-         return Math.max(opacity, VISUAL_CONSTANTS.DEFAULT_OPACITY * 0.2);
+         return Math.max(opacity, VISUAL_CONSTANTS.DEFAULT_OPACITY * 0.1);
       } catch (error) {
          console.warn('Error calculating grid line opacity:', error);
          return VISUAL_CONSTANTS.DEFAULT_OPACITY;
@@ -439,8 +441,8 @@ export const AppShellBranded = React.memo(function AppShellBranded({
                style={{
                   ...COMPONENT_STYLES.glowEffect,
                   background: STYLE_GENERATORS.getGlowRadialGradient(
-                     logoData.logoCenterX,
-                     logoData.logoCenterY,
+                     mousePosition.x,
+                     mousePosition.y,
                      glowIntensity
                   ),
                   transition: isFading

@@ -24,7 +24,7 @@ import Image from 'next/image';
 import { cn } from '@/src/lib/lib/utils';
 import { ZIndex } from '@/src/lib/z-index-management';
 
-interface AppShellBrandedSimpleProps {
+export interface AppShellBrandedSimpleProps {
    className?: string;
 }
 

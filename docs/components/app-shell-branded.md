@@ -1,46 +1,88 @@
-# App Shell Branded Component Documentation
+# App Shell Branded System Documentation
 
-> **📁 Implementation File:** [`src/components/layout/app-shell-branded.tsx`](../../src/components/layout/app-shell-branded.tsx)  
+> **📁 Implementation Directory:** [`src/components/layout/app-shell-branded/`](../../src/components/layout/app-shell-branded/)  
 > **🔗 Related Documentation:** [App Shell Terminology](../../docs/terminology.md#11-app-shell-branded)
 
 ## Overview
 
-The `AppShellBranded` component is a sophisticated interactive logo display that serves as the main landing page element. It creates dynamic visual effects based on mouse movement and hover states, featuring multi-layer animations, distance-based calculations, and smooth state transitions.
+The App Shell Branded system is a sophisticated interactive logo display that serves as the main landing page element. It creates dynamic visual effects based on mouse movement and hover states, featuring multi-layer animations, distance-based calculations, and smooth state transitions.
 
-## File Location
+## Directory Structure
 
 ```
-src/components/layout/app-shell-branded.tsx
+src/components/layout/app-shell-branded/
+├── index.ts                    # Centralized exports
+├── README.md                   # System documentation
+├── app-shell-branded.tsx       # Main interactive component
+├── app-shell-branded-simple.tsx # Simplified fallback component
+├── stable-app-shell.tsx        # Wrapper with SSR handling
+└── shadow/                     # Shadow system module
+    ├── index.ts               # Shadow system exports
+    ├── shadow-constants.ts    # Configuration constants
+    ├── shadow-calculations.ts # Math calculations & utilities
+    ├── shadow-layer.tsx       # Shadow rendering component
+    └── use-shadow.ts          # Custom hook for shadow logic
 ```
 
-> **💡 Quick Reference:** The component file contains comprehensive JSDoc comments at the top with a high-level overview and cross-reference to this documentation.
+> **💡 Quick Reference:** Each component file contains comprehensive JSDoc comments with detailed implementation information and cross-references to this documentation.
+
+## System Architecture
+
+The App Shell Branded system consists of multiple components working together:
+
+### Component Hierarchy
+
+```
+StableAppShell (stable-app-shell.tsx)
+├── AppShellBranded (app-shell-branded.tsx) ← Main interactive component
+└── AppShellBrandedSimple (app-shell-branded-simple.tsx) ← Fallback component
+```
+
+### Shadow System Integration
+
+The main component integrates with a dedicated shadow system:
+
+```
+AppShellBranded
+├── useShadow Hook (use-shadow.ts) ← Mouse tracking & calculations
+├── ShadowLayer Component (shadow-layer.tsx) ← Shadow rendering
+├── Shadow Calculations (shadow-calculations.ts) ← Math utilities
+└── Shadow Constants (shadow-constants.ts) ← Configuration
+```
 
 ## High-Level Purpose
 
-The component provides an engaging, interactive logo experience with:
+The system provides an engaging, interactive logo experience with:
 
 - Real-time mouse tracking and visual feedback
 - Multi-layer visual effects (shadows, glows, grids)
 - Animated color transitions
 - Smooth state management (idle, active, fading)
 - Performance-optimized calculations
+- SSR-compatible rendering with fallback components
 
 ## Core Functionality
 
 ### 1. Interactive Mouse Tracking System
 
-- **Real-time mouse position tracking** with immediate visual response
+- **Real-time mouse position tracking** with immediate visual response (via `useShadow` hook)
 - **Distance-based calculations** from mouse to logo center
 - **Smooth state transitions** between idle, active, and fading states
 - **Timeout management** for idle detection and fade effects
 
 ### 2. Multi-Layer Visual Effects System
 
-- **Dynamic shadow effects** that follow mouse movement
+- **Dynamic shadow effects** that follow mouse movement (via `ShadowLayer` component)
 - **Radial glow effects** with intensity based on distance
 - **Animated color transitions** through a predefined palette
 - **Grid background patterns** with opacity based on mouse proximity
 - **Explosive hover effects** with CSS animations
+
+### 3. Component Variants
+
+- **`AppShellBranded`**: Full interactive version with all effects
+- **`AppShellBrandedSimple`**: Simplified version for performance/SSR
+- **`StableAppShell`**: Wrapper that manages which variant to use
 
 ## High-Level Functions & Methods
 
@@ -280,27 +322,91 @@ const STYLE_GENERATORS = {
 - State transition logic
 - Ref management system
 
-## Usage Example
+## Usage Examples
+
+### Basic Usage
 
 ```tsx
-import { AppShellBranded } from '@/src/components/layout/app-shell-branded';
+import { StableAppShell } from '@/src/components/layout/app-shell-branded';
 
 function LandingPage() {
    return (
       <div className="h-screen">
-         <AppShellBranded className="custom-styles" />
+         <StableAppShell className="custom-styles" />
       </div>
    );
 }
 ```
 
-> **📝 Implementation Notes:** See the actual implementation in [`app-shell-branded.tsx`](../../src/components/layout/app-shell-branded.tsx) for complete code examples and detailed inline documentation.
+### Direct Component Usage
 
-## Props Interface
+```tsx
+import { AppShellBranded, AppShellBrandedSimple } from '@/src/components/layout/app-shell-branded';
+
+function LandingPage() {
+   const [isClient, setIsClient] = useState(false);
+
+   useEffect(() => {
+      setIsClient(true);
+   }, []);
+
+   return (
+      <div className="h-screen">
+         {isClient ? (
+            <AppShellBranded className="custom-styles" />
+         ) : (
+            <AppShellBrandedSimple className="custom-styles" />
+         )}
+      </div>
+   );
+}
+```
+
+### Shadow System Usage
+
+```tsx
+import { useShadow, ShadowLayer } from '@/src/components/layout/app-shell-branded';
+
+function CustomComponent() {
+   const { mousePosition, shadowData } = useShadow();
+
+   return (
+      <div>
+         <ShadowLayer logoSrc="/logo.png" logoWidth={300} logoHeight={273} />
+      </div>
+   );
+}
+```
+
+> **📝 Implementation Notes:** See the actual implementation in the [`app-shell-branded/`](../../src/components/layout/app-shell-branded/) directory for complete code examples and detailed inline documentation.
+
+## Props Interfaces
+
+### AppShellBrandedProps
 
 ```typescript
 interface AppShellBrandedProps {
    className?: string; // Optional additional CSS classes
+}
+```
+
+### AppShellBrandedSimpleProps
+
+```typescript
+interface AppShellBrandedSimpleProps {
+   className?: string; // Optional additional CSS classes
+}
+```
+
+### ShadowLayerProps
+
+```typescript
+interface ShadowLayerProps {
+   logoSrc: string;
+   logoWidth: number;
+   logoHeight: number;
+   logoSrcSet?: string;
+   className?: string;
 }
 ```
 
@@ -352,9 +458,27 @@ The component manages 5 primary states:
 
 ## Related Files & Documentation
 
-- **📁 Component Implementation:** [`src/components/layout/app-shell-branded.tsx`](../../src/components/layout/app-shell-branded.tsx)
+- **📁 System Implementation:** [`src/components/layout/app-shell-branded/`](../../src/components/layout/app-shell-branded/)
 - **📚 Terminology Definition:** [App Shell Branded](../../docs/terminology.md#11-app-shell-branded)
 - **🏗️ Layout System:** [Layout System Specification](../../docs/layout-system.md)
 - **📋 Component Standards:** [Component Architecture Standards](../../components/standards/component-architecture.md)
+- **📖 System README:** [App Shell Branded README](../../src/components/layout/app-shell-branded/README.md)
 
-> **🔄 Cross-References:** This documentation and the component file contain bidirectional references for easy navigation between implementation details and conceptual understanding.
+## Recent Changes & Improvements
+
+### ✅ **System Reorganization (Latest)**
+
+- **Consolidated Architecture**: All App Shell Branded components moved to dedicated directory
+- **Shadow System Integration**: Modular shadow system with separate concerns
+- **CSS Parsing Fix**: Resolved template literal syntax issues in CSS class names
+- **Performance Optimization**: Improved memoization and state management
+- **Error Handling**: Added comprehensive error boundaries and edge case protection
+
+### 🔧 **Technical Improvements**
+
+- **State Consolidation**: Unified mouse position tracking across all components
+- **Code Deduplication**: Removed duplicate calculation functions
+- **Type Safety**: Enhanced TypeScript interfaces and exports
+- **Documentation**: Updated comprehensive system documentation
+
+> **🔄 Cross-References:** This documentation and the component files contain bidirectional references for easy navigation between implementation details and conceptual understanding.

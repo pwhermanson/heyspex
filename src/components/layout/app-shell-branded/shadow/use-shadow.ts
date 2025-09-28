@@ -53,6 +53,7 @@ export function useShadow({
    const [mousePosition, setMousePosition] = useState<MousePosition>(
       SHADOW_CONSTANTS.DEFAULT_MOUSE_POSITION
    );
+   const [hasMouseMoved, setHasMouseMoved] = useState(false);
 
    // Refs for performance optimization
    const lastUpdateTimeRef = useRef<number>(0);
@@ -69,6 +70,7 @@ export function useShadow({
 
       lastUpdateTimeRef.current = now;
       setMousePosition({ x, y });
+      setHasMouseMoved(true);
    }, []);
 
    // Calculate logo data with memoization
@@ -128,10 +130,10 @@ export function useShadow({
       return generateShadowFilter(shadowOffset, swirlingColor);
    }, [shadowOffset, swirlingColor]);
 
-   // Calculate shadow opacity based on fade state
+   // Calculate shadow opacity based on fade state, mouse over state, and mouse movement
    const shadowOpacity = useMemo(() => {
-      return isShadowFading ? 0 : 1;
-   }, [isShadowFading]);
+      return isShadowFading || !isMouseOver || !hasMouseMoved ? 0 : 1;
+   }, [isShadowFading, isMouseOver, hasMouseMoved]);
 
    // Optimized mouse move handler with requestAnimationFrame
    const handleMouseMove = useCallback(
@@ -167,6 +169,9 @@ export function useShadow({
          clearInterval(colorUpdateIntervalRef.current);
          colorUpdateIntervalRef.current = null;
       }
+
+      // Reset mouse movement state
+      setHasMouseMoved(false);
    }, []);
 
    // Cleanup on unmount

@@ -11,6 +11,9 @@ export * from './theme-provider';
 export * from './theme-toggle';
 export * from './global-control-bar';
 
+// App Shell Branded System
+export * from './app-shell-branded';
+
 // Shared Components
 export * from './shared';
 
