@@ -54,6 +54,7 @@ export function useShadow({
       SHADOW_CONSTANTS.DEFAULT_MOUSE_POSITION
    );
    const [hasMouseMoved, setHasMouseMoved] = useState(false);
+   const [shouldShowShadow, setShouldShowShadow] = useState(false);
 
    // Refs for performance optimization
    const lastUpdateTimeRef = useRef<number>(0);
@@ -130,10 +131,24 @@ export function useShadow({
       return generateShadowFilter(shadowOffset, swirlingColor);
    }, [shadowOffset, swirlingColor]);
 
-   // Calculate shadow opacity based on fade state, mouse over state, and mouse movement
+   // Manage shadow visibility state
+   useEffect(() => {
+      if (isMouseOver && hasMouseMoved) {
+         setShouldShowShadow(true);
+      } else if (isShadowFading) {
+         // Keep shadow visible during fade, let CSS transition handle the opacity
+         setShouldShowShadow(true);
+      } else if (!isMouseOver && !isShadowFading) {
+         // Hide shadow after fade is complete
+         setShouldShowShadow(false);
+      }
+   }, [isMouseOver, hasMouseMoved, isShadowFading]);
+
+   // Calculate shadow opacity based on fade state and visibility
    const shadowOpacity = useMemo(() => {
-      return isShadowFading || !isMouseOver || !hasMouseMoved ? 0 : 1;
-   }, [isShadowFading, isMouseOver, hasMouseMoved]);
+      if (!shouldShowShadow) return 0;
+      return isShadowFading ? 0 : 1;
+   }, [isShadowFading, shouldShowShadow]);
 
    // Optimized mouse move handler with requestAnimationFrame
    const handleMouseMove = useCallback(
