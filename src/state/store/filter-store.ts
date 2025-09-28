@@ -22,12 +22,13 @@ export const useFilterStore = create<FilterState>((set, get) => ({
 
    // Actions
    setFilter: (type, ids) => {
-      set((state) => ({
-         filters: {
+      set((state) => {
+         const newFilters = {
             ...state.filters,
             [type]: ids,
-         },
-      }));
+         };
+         return { filters: newFilters };
+      });
    },
 
    toggleFilter: (type, id) => {

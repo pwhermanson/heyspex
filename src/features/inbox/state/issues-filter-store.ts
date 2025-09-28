@@ -12,7 +12,7 @@ interface IssuesFilterState {
    getActiveFiltersCount: () => number;
 }
 
-export const useIssuesFilterStore = create<IssuesFilterState>(() => ({
+export const useIssuesFilterStore = create<IssuesFilterState>((set, get) => ({
    // Filtering functions
    filterIssues: (issues: Issue[]) => {
       const { filters } = useFilterStore.getState();

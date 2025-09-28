@@ -89,7 +89,7 @@ Cursor must treat `refactor-plan.md` as the source of truth for overall sequenci
 ## Required Plan Format Example
 
 ```markdown
-- [x] Baseline build and TS strict id:baseline done:2025-09-10 sha:a1b2c3d notes:tsconfig tightened
+- [x] Baseline build and TS strict id:baseline done:YYYY-MM-DD sha:abc1234 notes:tsconfig tightened
 - [ ] Extract Header Menu id:menu-extract
 - [ ] Rename getUserPermissions to resolveUserPermissions id:perm-rename
 - [ ] Split API client by domain id:api-split
@@ -136,8 +136,10 @@ Before doing anything, Cursor must do a quick pass to confirm the requested refa
 
 ## Project command presets
 
+### Cross-Platform Commands
+
 ```
-BUILD_CMD: npm ci && npm run build
+BUILD_CMD: npm ci; if ($?) { npm run build }
 TEST_CMD_FAST: npm test -- -t "<pattern>"
 TEST_CMD_FULL: npm test
 LINT_CMD: npm run lint -- --max-warnings=0
@@ -147,14 +149,120 @@ PKG_MANAGER: npm
 RUN_IN_MONOREPO: false
 ```
 
+### Windows PowerShell Specific
+
+```
+BUILD_CMD_PS: npm ci; if ($LASTEXITCODE -eq 0) { npm run build } else { throw "npm ci failed" }
+TEST_CMD_FAST_PS: npm test -- -t "<pattern>"
+TEST_CMD_FULL_PS: npm test
+LINT_CMD_PS: npm run lint -- --max-warnings=0
+TYPECHECK_CMD_PS: npx tsc --noEmit
+```
+
+### Unix/Bash Specific
+
+```
+BUILD_CMD_BASH: npm ci && npm run build
+TEST_CMD_FAST_BASH: npm test -- -t "<pattern>"
+TEST_CMD_FULL_BASH: npm test
+LINT_CMD_BASH: npm run lint -- --max-warnings=0
+TYPECHECK_CMD_BASH: npx tsc --noEmit
+```
+
+## Windows Environment Adaptations
+
+### Command Execution Context
+
+- **Default Shell**: Windows uses PowerShell, not bash
+- **File Operations**: Use PowerShell equivalents instead of Unix commands
+- **Path Separators**: Use `\` for Windows paths, `/` for URLs and imports
+- **Environment Variables**: Use `$env:VARIABLE` instead of `$VARIABLE`
+
+### Windows-Specific Command Mappings
+
+| Unix Command               | Windows PowerShell Equivalent                            | Purpose                          |
+| -------------------------- | -------------------------------------------------------- | -------------------------------- | ----------------- |
+| `sed -n '1,10p' file.txt`  | `Get-Content file.txt -TotalCount 10`                    | Read first 10 lines              |
+| `sed -n '10,20p' file.txt` | `Get-Content file.txt                                    | Select-Object -Skip 9 -First 11` | Read lines 10-20  |
+| `grep "pattern" file.txt`  | `Select-String "pattern" file.txt`                       | Search for pattern               |
+| `head -n 5 file.txt`       | `Get-Content file.txt -TotalCount 5`                     | Read first 5 lines               |
+| `tail -n 5 file.txt`       | `Get-Content file.txt                                    | Select-Object -Last 5`           | Read last 5 lines |
+| `wc -l file.txt`           | `(Get-Content file.txt).Count`                           | Count lines                      |
+| `cat file.txt`             | `Get-Content file.txt`                                   | Display file contents            |
+| `ls -la`                   | `Get-ChildItem -Force`                                   | List files with details          |
+| `find . -name "*.ts"`      | `Get-ChildItem -Recurse -Filter "*.ts"`                  | Find TypeScript files            |
+| `mkdir -p dir/subdir`      | `New-Item -ItemType Directory -Path "dir\subdir" -Force` | Create directories               |
+| `rm -rf dir`               | `Remove-Item -Recurse -Force dir`                        | Remove directory                 |
+| `cp file.txt backup/`      | `Copy-Item file.txt backup\`                             | Copy file                        |
+| `mv file.txt newname.txt`  | `Move-Item file.txt newname.txt`                         | Rename/move file                 |
+
+### File Reading Patterns for Windows
+
+```powershell
+# Read specific line ranges (equivalent to sed)
+Get-Content file.txt -TotalCount 10                    # First 10 lines
+Get-Content file.txt | Select-Object -Skip 9 -First 11 # Lines 10-20
+Get-Content file.txt | Select-Object -Last 5           # Last 5 lines
+
+# Search and filter
+Get-Content file.txt | Select-String "pattern"         # Grep equivalent
+Get-Content file.txt | Where-Object { $_ -match "pattern" } # Advanced filtering
+
+# File operations
+Get-ChildItem -Recurse -Filter "*.ts" | ForEach-Object { $_.FullName } # Find all .ts files
+```
+
+### PowerShell Command Chaining Patterns
+
+**Sequential Execution (equivalent to `&&`):**
+
+```powershell
+# Method 1: Using semicolon with error checking
+npm ci; if ($?) { npm run build }
+
+# Method 2: Using $LASTEXITCODE
+npm ci; if ($LASTEXITCODE -eq 0) { npm run build } else { throw "Command failed" }
+
+# Method 3: Using try/catch
+try { npm ci; npm run build } catch { throw "Build failed" }
+```
+
+**Conditional Execution (equivalent to `||`):**
+
+```powershell
+# Run second command only if first fails
+npm run build || npm run build:fallback
+# PowerShell equivalent:
+npm run build; if ($LASTEXITCODE -ne 0) { npm run build:fallback }
+```
+
+**Pipeline Operations:**
+
+```powershell
+# Chain commands with pipeline
+Get-Content file.txt | Select-String "pattern" | Out-File results.txt
+```
+
+### Cross-Platform Compatibility Notes
+
+- Always test commands in the target environment
+- Use Node.js scripts for complex file operations when possible
+- Prefer npm scripts over direct shell commands
+- Document Windows-specific workarounds in commit messages
+- Use PowerShell-specific command variants when available
+
 ---
 
 ## Operating workflow
 
 ### 1) Preflight
 
-Produce Preflight JSON, then run `git status`, `git rev-parse --abbrev-ref HEAD`, `git log -5`.
-Pause if uncommitted work exists.
+Produce Preflight JSON, then run:
+
+- **Windows**: `git status`, `git rev-parse --abbrev-ref HEAD`, `git log -5`
+- **Alternative**: Use PowerShell to check git status: `git status | Out-String`
+- **File checks**: Use `Get-Content` instead of `cat` for reading files
+  Pause if uncommitted work exists.
 
 ### 2) Plan
 
@@ -224,6 +332,23 @@ Create small follow-up tickets for deferred items.
 - Revert minimal scope
 - If needed, revert last commit
 - Explain root cause & propose safer path
+
+### Windows-Specific Troubleshooting
+
+**Common Windows Issues:**
+
+- **PowerShell Execution Policy**: If scripts are blocked, run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+- **Path Length Limits**: Use short paths or enable long path support in Windows
+- **File Locking**: Close VS Code/editors before running git operations
+- **Line Ending Issues**: Use `git config core.autocrlf true` for consistent line endings
+- **Permission Errors**: Run PowerShell as Administrator if needed for system operations
+
+**Command Alternatives:**
+
+- If `sed` fails: Use `Get-Content` with `Select-Object` for line ranges
+- If `grep` fails: Use `Select-String` for pattern matching
+- If `find` fails: Use `Get-ChildItem -Recurse` for file searching
+- If `awk` fails: Use PowerShell's `ForEach-Object` with string manipulation
 
 ---
 
