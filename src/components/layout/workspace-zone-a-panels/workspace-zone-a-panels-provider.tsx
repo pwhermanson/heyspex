@@ -829,17 +829,24 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          setWorkspaceZoneBMode('push');
       }
 
-      // When transitioning from normal to hidden, automatically transition Workspace Zone B to fullscreen
-      if (uiState.workspaceZoneAMode === 'normal' && nextMode === 'hidden') {
+      // When transitioning to hidden, automatically transition Workspace Zone B to fullscreen
+      if (nextMode === 'hidden') {
          console.log(
             '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated'
          );
-         // Change mode first, then set height in next tick to ensure mode change takes effect
-         setWorkspaceZoneBMode('overlay');
-         setTimeout(() => {
+
+         // If Zone B is already in overlay mode, just expand it to fullscreen
+         if (workspaceZoneB.mode === 'overlay') {
             const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
             setWorkspaceZoneBHeight(viewportHeight);
-         }, 0);
+         } else {
+            // If Zone B is not in overlay mode, change mode first, then set height
+            setWorkspaceZoneBMode('overlay');
+            setTimeout(() => {
+               const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+               setWorkspaceZoneBHeight(viewportHeight);
+            }, 0);
+         }
       }
 
       // Save to localStorage
@@ -851,6 +858,7 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
    }, [
       stateMachineTransition,
       uiState.workspaceZoneAMode,
+      workspaceZoneB.mode,
       setWorkspaceZoneBMode,
       setWorkspaceZoneBHeight,
    ]);
