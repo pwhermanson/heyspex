@@ -834,10 +834,12 @@ export function WorkspaceZoneAPanelsProvider({ children }: { children: React.Rea
          console.log(
             '🔄 Auto-transitioning Workspace Zone B to fullscreen when Zone A is deactivated'
          );
+         // Change mode first, then set height in next tick to ensure mode change takes effect
          setWorkspaceZoneBMode('overlay');
-         // Set Zone B to fullscreen height
-         const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-         setWorkspaceZoneBHeight(viewportHeight);
+         setTimeout(() => {
+            const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+            setWorkspaceZoneBHeight(viewportHeight);
+         }, 0);
       }
 
       // Save to localStorage
