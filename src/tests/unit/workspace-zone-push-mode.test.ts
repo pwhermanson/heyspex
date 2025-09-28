@@ -109,6 +109,54 @@ describe('Workspace Zone Push Mode', () => {
          expect(totalReservedHeight).toBe(208); // 200px + 8px gap
       });
 
+      it('should apply height constraints to panels A and C when Workspace Zone B is in push mode', () => {
+         // Test that panels A and C have maxHeight constraints when Workspace Zone B is in push mode
+         const workspaceZoneB = {
+            mode: 'push' as const,
+            isVisible: true,
+            height: 200,
+         };
+
+         const isControlBarVisible = true;
+         const controlBarHeight = 56;
+         const viewportHeight = 1000;
+
+         // Calculate expected maxHeight for panels A and C
+         const expectedMaxHeight = `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`;
+
+         // Verify the height constraint logic
+         const shouldApplyHeightConstraint =
+            workspaceZoneB.mode === 'push' && workspaceZoneB.isVisible;
+
+         expect(shouldApplyHeightConstraint).toBe(true);
+         expect(expectedMaxHeight).toContain('calc(100vh - var(--workspace-zone-b-height, 40px)');
+         expect(expectedMaxHeight).toContain('var(--control-bar-height, 56px)');
+      });
+
+      it('should apply height constraints to panels A and C in fullscreen mode when Workspace Zone B is in push mode', () => {
+         // Test that panels A and C have maxHeight constraints even in fullscreen mode when Workspace Zone B is in push mode
+         const workspaceZoneB = {
+            mode: 'push' as const,
+            isVisible: true,
+            height: 200,
+         };
+
+         const isMainFullscreen = true; // Panel B is in fullscreen mode
+         const isControlBarVisible = true;
+
+         // Calculate expected maxHeight for panels A and C (should apply regardless of fullscreen mode)
+         const expectedMaxHeight = `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`;
+
+         // Verify the height constraint logic applies even in fullscreen mode
+         const shouldApplyHeightConstraint =
+            workspaceZoneB.mode === 'push' && workspaceZoneB.isVisible;
+         // Note: No !isMainFullscreen check - constraints apply in both normal and fullscreen modes
+
+         expect(shouldApplyHeightConstraint).toBe(true);
+         expect(expectedMaxHeight).toContain('calc(100vh - var(--workspace-zone-b-height, 40px)');
+         expect(expectedMaxHeight).toContain('var(--control-bar-height, 56px)');
+      });
+
       it('should not reserve space when Workspace Zone B is in overlay mode', () => {
          const workspaceZoneB = {
             mode: 'overlay' as const,

@@ -19,7 +19,7 @@ export function WorkspaceZoneAResizablePanel({
    const content = (
       <div
          className={cn(
-            'workspace-zone-a-panel flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-hidden',
+            'workspace-zone-a-panel flex h-full w-full flex-col border shadow-sm relative lg:rounded-md overflow-auto',
             side === 'right' && 'border-l border-r-0'
          )}
       >

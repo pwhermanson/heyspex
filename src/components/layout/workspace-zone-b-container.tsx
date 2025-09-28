@@ -49,6 +49,7 @@ export function WorkspaceZoneBContainer({
             className
          )}
          style={{
+            height: `${height}px`,
             backgroundColor: 'var(--workspace-zone-b-bg) !important',
             background: 'var(--workspace-zone-b-bg) !important',
          }}

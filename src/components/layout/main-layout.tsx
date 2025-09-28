@@ -146,6 +146,13 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                   isVisible={true}
                   mode={workspaceZoneAMode}
                   dataBottomMode={safeBottomEnabled ? workspaceZoneB.mode : undefined}
+                  className={cn(
+                     // Apply push mode class when Workspace Zone B is in push mode
+                     safeBottomEnabled &&
+                        workspaceZoneB.mode === 'push' &&
+                        workspaceZoneB.isVisible &&
+                        'workspace-zone-a-push-mode'
+                  )}
                >
                   <div
                      className={cn(
@@ -167,7 +174,17 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                            'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-2 lg:pr-1',
                            workspaceZoneAMode === 'fullscreen' && 'p-0'
                         )}
-                        style={{ gridArea: 'sidebar' }}
+                        style={{
+                           gridArea: 'sidebar',
+                           // When workspace zone B is in push mode, constrain the height to available space
+                           // This applies in both normal and fullscreen modes
+                           maxHeight:
+                              safeBottomEnabled &&
+                              workspaceZoneB.mode === 'push' &&
+                              workspaceZoneB.isVisible
+                                 ? `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarEnabled && isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`
+                                 : undefined,
+                        }}
                      >
                         <WorkspaceZoneAPanelA />
                      </div>
@@ -181,11 +198,11 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                         style={{
                            gridArea: 'main',
                            // When workspace zone B is in push mode, constrain the height to available space
+                           // This applies in both normal and fullscreen modes
                            maxHeight:
                               safeBottomEnabled &&
                               workspaceZoneB.mode === 'push' &&
-                              workspaceZoneB.isVisible &&
-                              !isMainFullscreen
+                              workspaceZoneB.isVisible
                                  ? `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarEnabled && isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`
                                  : undefined,
                         }}
@@ -287,7 +304,17 @@ const LayoutGrid = React.memo(function LayoutGrid({ children, header }: MainLayo
                            'overflow-hidden lg:pt-2 lg:pb-2 lg:pl-1 lg:pr-2',
                            workspaceZoneAMode === 'fullscreen' && 'p-0'
                         )}
-                        style={{ gridArea: 'right-sidebar' }}
+                        style={{
+                           gridArea: 'right-sidebar',
+                           // When workspace zone B is in push mode, constrain the height to available space
+                           // This applies in both normal and fullscreen modes
+                           maxHeight:
+                              safeBottomEnabled &&
+                              workspaceZoneB.mode === 'push' &&
+                              workspaceZoneB.isVisible
+                                 ? `calc(100vh - var(--workspace-zone-b-height, 40px) - ${isControlBarEnabled && isControlBarVisible ? 'var(--control-bar-height, 56px)' : '0px'})`
+                                 : undefined,
+                        }}
                      >
                         <WorkspaceZoneAPanelC />
                      </div>

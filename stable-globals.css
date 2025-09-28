@@ -12,43 +12,6 @@
 /* @import '../styles/tokens.css'; */ /* Permanently disabled - causes server hanging */
 
 :root {
-   /* Z-Index Custom Properties */
-   --z-background: 0;
-   --z-app-shell: 0;
-   --z-decorative: 1;
-   --z-glow-effects: 2;
-   --z-main-content: 10;
-   --z-panel-content: 10;
-   --z-sidebar-content: 10;
-   --z-sticky-headers: 10;
-   --z-global-control-bar: 20;
-   --z-panel-control-bar: 20;
-   --z-screen-control-bar: 10;
-   --z-workspace-zone-b: 20;
-   --z-interactive-elements: 30;
-   --z-buttons: 30;
-   --z-inputs: 30;
-   --z-drag-handles: 50;
-   --z-tooltips: 50;
-   --z-dropdown-menus: 50;
-   --z-popovers: 50;
-   --z-select-dropdowns: 50;
-   --z-context-menus: 50;
-   --z-sheets: 50;
-   --z-command-palette: 50;
-   --z-modals: 200;
-   --z-dialogs: 200;
-   --z-notifications: 60;
-   --z-alerts: 60;
-   --z-loading-overlays: 60;
-   --z-debug-overlays: 70;
-   --z-dev-tools: 70;
-   --z-error-boundaries: 90;
-   --z-critical-loading: 90;
-   --z-emergency-override: 100;
-   --z-workspace-zone-b-overlay: 100;
-   --z-workspace-zone-b-push: 50;
-
    --card: oklch(0.99 0.002 240);
    --card-foreground: oklch(0.25 0.008 285.823);
    --popover: oklch(0.985 0.003 240);
@@ -203,7 +166,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      z-index: var(--z-decorative);
+      z-index: 1;
    }
 
    .group:hover .radial-glow-explosion-active {
@@ -216,18 +179,7 @@
    }
 
    .workspace-zone-a-panel {
-      background-color: #ffffff !important;
-      background: #ffffff !important;
-      opacity: 1 !important;
-   }
-
-   .dark .workspace-zone-a-panel {
-      background-color: #1a1a1a !important;
-      background: #1a1a1a !important;
-   }
-
-   .bg-container {
-      background-color: hsl(var(--container));
+      background-color: hsl(var(--card));
    }
 
    /* Base workspace zone b styling */
@@ -250,57 +202,10 @@
       color: hsl(var(--foreground));
    }
 
-   /* Workspace Zone A push mode styling - 8px gap above Workspace Zone B */
-   .workspace-zone-a-push-mode {
-      margin-bottom: 8px;
-   }
-
-   /* Workspace Zone A - Base styling */
-   .workspace-zone-a {
-      position: relative;
-      z-index: var(--z-main-content);
-      transition: all var(--layout-motion-duration-medium) var(--layout-motion-easing);
-   }
-
-   /* Workspace Zone A - Visible state (PRESERVES EXISTING VISUAL DESIGN) */
-   .workspace-zone-a-visible {
-      --left-width: 244px;
-      --right-width: 320px;
-      --grid-template-columns: 244px 1fr 320px;
-      --sidebar-left-width: 244px;
-      --sidebar-right-width: 320px;
-   }
-
-   /* Workspace Zone A - Hidden state (PRESERVES EXISTING VISUAL DESIGN) */
-   .workspace-zone-a-hidden {
-      display: none !important;
-   }
-
-   /* Workspace Zone A - Fullscreen state (Panel B full width, Panels A and C hidden) */
-   .workspace-zone-a-fullscreen {
-      --left-width: 0px;
-      --right-width: 0px;
-      --grid-template-columns: 0px 1fr 0px;
-      --sidebar-left-width: 0px;
-      --sidebar-right-width: 0px;
-   }
-
-   /* Workspace Zone A - Fullscreen state specific styling */
-   .workspace-zone-a.workspace-zone-a-fullscreen {
-      /* Ensure the container is visible but panels A and C are hidden */
-      display: block;
-   }
-
-   /* Disable transitions during toggle - unified approach */
-   .workspace-zone-a-toggling,
-   .workspace-zone-b-toggling {
-      transition: none !important;
-   }
-
    /* Legacy support for existing fixed positioning class */
    .fixed.left-0.right-0.z-\[100\].workspace-zone-b {
-      background-color: hsl(var(--card)) !important;
-      background: hsl(var(--card)) !important;
+      background-color: hsl(var(--muted)) !important;
+      background: hsl(var(--muted)) !important;
       opacity: 1 !important;
       color: hsl(var(--foreground));
    }
@@ -310,7 +215,7 @@
       border-top: 1px solid hsl(var(--border));
       border-bottom: 1px solid hsl(var(--border));
       position: relative;
-      z-index: var(--z-screen-control-bar);
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -421,8 +326,8 @@ input[type='search'] {
    --right-open: 320px;
    --right-hidden: 0px;
    --right-width: var(--right-hidden);
-   --control-bar-height: 56px;
-   --workspace-zone-b-height: 40px;
+   --topbar-height: 56px;
+   --bottombar-height: 40px;
    --center-bottom-split: 0px;
    --layout-motion-duration-short: 160ms;
    --layout-motion-duration-medium: 240ms;
@@ -455,14 +360,6 @@ input[type='search'] {
 /* Disable ALL transitions during drag for maximum performance */
 .sidebar-dragging,
 .sidebar-dragging * {
-   transition: none !important;
-}
-
-/* Disable transitions when toggling Workspace Zone A for instant feedback */
-.workspace-zone-a-toggling [data-resizable-sidebar='left'],
-.workspace-zone-a-toggling [data-resizable-sidebar='right'],
-.workspace-zone-a-toggling [data-resizable-sidebar='main-content'],
-.workspace-zone-a-toggling [data-resizable-sidebar='content-inner'] {
    transition: none !important;
 }
 
