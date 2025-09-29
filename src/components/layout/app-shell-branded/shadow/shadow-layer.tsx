@@ -56,6 +56,7 @@ export const ShadowLayer = memo<ShadowLayerProps>(function ShadowLayer({
             transform: 'translate3d(0, 0, 0)',
             willChange: 'filter, opacity',
          }}
+         data-testid="shadow-layer"
       >
          <Image
             src={logoSrc}

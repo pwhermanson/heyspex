@@ -24,7 +24,13 @@ export const GridBackground = memo<GridBackgroundProps>(function GridBackground(
    style,
    className = '',
 }) {
-   return <div className={`absolute inset-0 ${className}`} style={style} />;
+   return (
+      <div
+         className={`absolute inset-0 ${className}`}
+         style={style}
+         data-testid="grid-background"
+      />
+   );
 });
 
 GridBackground.displayName = 'GridBackground';

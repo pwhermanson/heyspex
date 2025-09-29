@@ -48,6 +48,7 @@ export const GlowEffect = memo<GlowEffectProps>(function GlowEffect({
                : `background ${VISUAL_CONSTANTS.FILTER_TRANSITION_DURATION} ease-out, opacity ${VISUAL_CONSTANTS.QUICK_TRANSITION_DURATION} ease-out`,
             opacity: isFading ? 0 : isMouseMoving ? 0.7 : 0.4,
          }}
+         data-testid="glow-effect"
       />
    );
 });
