@@ -1,5 +1,0 @@
-1. Phase 1 stabilization delivered green test suites enabling confidence in the refactor rollout.
-2. Validating evidence and rollback steps now ensures reviewers can approve safely without surprises.
-3. No new regressions or blockers surfaced since the last plan update; the branch remains focused on test hardening.
-4. Outstanding risk is residual Next.js build crash history, mitigated by fresh build logs captured in this pass.
-5. If instability reappears we should pause approval, address the build crash, and refresh this evidence package.

@@ -12,7 +12,8 @@ interface IssuesFilterState {
    getActiveFiltersCount: () => number;
 }
 
-export const useIssuesFilterStore = create<IssuesFilterState>(() => ({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const useIssuesFilterStore = create<IssuesFilterState>((set, get) => ({
    // Filtering functions
    filterIssues: (issues: Issue[]) => {
       const { filters } = useFilterStore.getState();

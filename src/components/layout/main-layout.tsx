@@ -27,7 +27,7 @@ import { CommandPaletteModal } from '@/src/components/command-palette/command-pa
 import { useCommandPaletteShortcuts } from '@/src/lib/lib/command-palette/use-command-palette-shortcuts';
 import { useWorkspaceInitialization } from '@/src/lib/hooks/use-workspace-initialization';
 import { useWorkspaceZoneBCSSVariables } from '@/src/lib';
-import { StableAppShell } from '@/src/components/layout/stable-app-shell';
+import { StableAppShell } from '@/src/components/layout/app-shell-branded';
 // Import panel commands to register them
 import '@/src/lib/lib/command-palette/commands/panel-commands';
 // Import workspace commands to register them

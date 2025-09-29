@@ -19,6 +19,12 @@
       "test:ui": "vitest --ui",
       "test:coverage": "vitest run --coverage",
       "test:palette": "cross-env TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"commonjs\\\"}\" ts-node lib/command-palette/__tests__/search-engine.test.ts",
+      "test:e2e": "playwright test",
+      "test:e2e:ui": "playwright test --ui",
+      "test:e2e:headed": "playwright test --headed",
+      "test:visual": "playwright test --project=chromium",
+      "test:visual:headed": "playwright test --project=chromium --headed",
+      "test:visual:ui": "playwright test --project=chromium --ui",
       "clean": "powershell -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }; if (Test-Path node_modules/.cache) { Remove-Item -Recurse -Force node_modules/.cache }\""
    },
    "dependencies": {
@@ -70,6 +76,7 @@
    },
    "devDependencies": {
       "@eslint/eslintrc": "^3",
+      "@playwright/test": "^1.48.0",
       "@tailwindcss/postcss": "^4",
       "@testing-library/jest-dom": "^6.8.0",
       "@testing-library/react": "^16.3.0",
